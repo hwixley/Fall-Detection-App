@@ -12,57 +12,39 @@ struct ContentView: View {
         VStack {
             VStack {
                 Text("Fall Detection System")
-                    .padding()
-                    .foregroundColor(.white)
-                    .font(.largeTitle)
+                    .modifier(TitleText())
                 
                 Text("Using movement and heart rate data")
-                    .padding()
-                    .foregroundColor(.white)
-                    .font(.subheadline)
-                
-                Divider()
-                Spacer()
+                    .modifier(SubtitleText())
             }
             .background(.black)
-            
+            .frame(width: 400, height: 300, alignment: .center)
+
             VStack {
-                Spacer()
-                
                 Button(action: {
                     
                 }) {
                     HStack {
                         Text("Log in")
-                            .padding()
-                            .foregroundColor(.white)
-                            .frame(width: 350, height: 60)
+                            .modifier(ClassicButtonText())
                     }
                 }
-                .background(.blue)
-                .cornerRadius(20)
-                
-                Spacer()
-                
+                .buttonStyle(ClassicButtonStyle())
+
                 Button(action: {
                     
                 }) {
                     HStack {
                         Text("Register")
-                            .padding()
-                            .foregroundColor(.white)
-                            .frame(width: 350, height: 60)
+                            .modifier(ClassicButtonText())
                     }
                 }
-                .background(.blue)
-                .cornerRadius(20)
-                
-                Divider()
-                Spacer()
+                .buttonStyle(ClassicButtonStyle())
             }
             .background(.black)
             .frame(width: 400, height: 200, alignment: .center)
         }
+        .modifier(BackgroundStack())
     }
 }
 
