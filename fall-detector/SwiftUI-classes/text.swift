@@ -8,23 +8,24 @@
 import Foundation
 import SwiftUI
 
-public let fontfamily = "DIN Alternate Bold"
-public let textcolor = Color.white
+private let fontfamily = "DIN Alternate Bold"
+private let textcolor = Color.white
 
 struct DefaultText: ViewModifier {
+    var size: CGFloat
+    
     func body(content: Content) -> some View {
         content
             .foregroundColor(textcolor)
-            .padding()
+            .font(Font.custom(fontfamily, size: size))
     }
 }
 
 struct ClassicButtonText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .modifier(DefaultText())
+            .modifier(DefaultText(size: 25))
             .frame(width: UIScreen.screenWidth, height: 70, alignment: .center)
-            .font(Font.custom(fontfamily, size: 25))
             .multilineTextAlignment(.center)
     }
 }
@@ -32,8 +33,7 @@ struct ClassicButtonText: ViewModifier {
 struct TitleText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .modifier(DefaultText())
-            .font(Font.custom(fontfamily, size: 40))
+            .modifier(DefaultText(size: 40))
             .multilineTextAlignment(.center)
     }
 }
@@ -41,7 +41,15 @@ struct TitleText: ViewModifier {
 struct SubtitleText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .modifier(DefaultText())
-            .font(Font.custom(fontfamily, size: 20))
+            .modifier(DefaultText(size: 20))
+    }
+}
+
+struct LabelText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .modifier(SubtitleText())
+            .multilineTextAlignment(.trailing)
+            .frame(maxWidth: .infinity, alignment: .trailing)
     }
 }

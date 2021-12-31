@@ -17,6 +17,7 @@
 		D05879D9277F56D600427BAB /* stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D8277F56D600427BAB /* stack.swift */; };
 		D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DD277F6B7F00427BAB /* LoginView.swift */; };
 		D05879E0277F6DE400427BAB /* textfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DF277F6DE400427BAB /* textfield.swift */; };
+		D05879E2277F80EE00427BAB /* navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879E1277F80EE00427BAB /* navigation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		D05879D8277F56D600427BAB /* stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stack.swift; sourceTree = "<group>"; };
 		D05879DD277F6B7F00427BAB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D05879DF277F6DE400427BAB /* textfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = textfield.swift; sourceTree = "<group>"; };
+		D05879E1277F80EE00427BAB /* navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = navigation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 				D05879D6277F55E300427BAB /* screen.swift */,
 				D05879D8277F56D600427BAB /* stack.swift */,
 				D05879DF277F6DE400427BAB /* textfield.swift */,
+				D05879E1277F80EE00427BAB /* navigation.swift */,
 			);
 			path = "SwiftUI-classes";
 			sourceTree = "<group>";
@@ -172,6 +175,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
+				D05879E2277F80EE00427BAB /* navigation.swift in Sources */,
 				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
 				D05879D7277F55E300427BAB /* screen.swift in Sources */,
 				D05879E0277F6DE400427BAB /* textfield.swift in Sources */,

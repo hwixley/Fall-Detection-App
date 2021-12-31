@@ -12,36 +12,61 @@ struct LoginView: View {
     @State private var password: String = ""
     
     var body: some View {
-        VStack {
-            HStack {
-                VStack {
-                    Text("Email")
-                        .modifier(SubtitleText())
-                    Text("Password")
-                        .modifier(SubtitleText())
+        NavigationView {
+            VStack {
+                HStack(spacing: 10) {
+                    VStack(spacing: 6) {
+                        
+                        Spacer()
+                        
+                        Text("Email")
+                            .modifier(LabelText())
+                            .frame(width: 90, alignment: .trailing)
+                        
+                        Spacer()
+                        
+                        Text("Password")
+                            .modifier(LabelText())
+                            .frame(width: 90, alignment: .trailing)
+                        
+                        Spacer()
+                    }
+                    
+                    VStack(spacing: 10) {
+                        TextField("Enter your email...", text: $email)
+                            .modifier(PlaceholderStyle(input: email, placeholder: "Enter your email..."))
+                        
+                        TextField("Enter your password...", text: $password)
+                            .modifier(PlaceholderStyle(input: password, placeholder: "Enter your password..."))
+                    }
                 }
-                //.modifier(Class)
+                .padding()
+                .frame(height: 100)
                 
-                VStack {
-                    TextField("Email", text: $email)
-                        .modifier(ClassicTextfield())
-                    TextField("Password", text: $password)
-                        .modifier(ClassicTextfield())
+                Button(action: {
+                    
+                }) {
+                    HStack {
+                        Text("Login")
+                            .modifier(ClassicButtonText())
+                    }
                 }
-            }
-            .padding()
-            
-            Button(action: {
+                .buttonStyle(ClassicButtonStyle())
                 
-            }) {
-                HStack {
-                    Text("Login")
-                        .modifier(ClassicButtonText())
+                Button(action: {
+                    
+                }) {
+                    HStack {
+                        Text("I forgot my password")
+                            .modifier(ClassicButtonText())
+                    }
                 }
+                .buttonStyle(ClassicButtonStyle())
             }
-            .buttonStyle(ClassicButtonStyle())
+            .modifier(BackgroundStack())
+            .modifier(NavigationBarStyle(title: "Login"))
         }
-        //.modifier(BackgroundStack())
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

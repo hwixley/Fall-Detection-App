@@ -14,8 +14,8 @@ struct EntryView: View {
                 Text("Fall Detection System")
                     .modifier(TitleText())
                 
-                Text("Using movement and heart rate data")
-                    .modifier(SubtitleText())
+                //Text("Using movement and heart rate data")
+                //    .modifier(SubtitleText())
             }
             .background(.black)
             .frame(width: UIScreen.screenWidth, height: 300, alignment: .center)
