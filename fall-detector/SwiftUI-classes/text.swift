@@ -8,13 +8,23 @@
 import Foundation
 import SwiftUI
 
+public let fontfamily = "DIN Alternate Bold"
+public let textcolor = Color.white
+
+struct DefaultText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(textcolor)
+            .padding()
+    }
+}
+
 struct ClassicButtonText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding()
-            .foregroundColor(.white)
+            .modifier(DefaultText())
             .frame(width: UIScreen.screenWidth, height: 70, alignment: .center)
-            .font(Font.custom("DIN Alternate Bold", size: 25))
+            .font(Font.custom(fontfamily, size: 25))
             .multilineTextAlignment(.center)
     }
 }
@@ -22,9 +32,8 @@ struct ClassicButtonText: ViewModifier {
 struct TitleText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding()
-            .foregroundColor(.white)
-            .font(Font.custom("DIN Alternate Bold", size: 40))
+            .modifier(DefaultText())
+            .font(Font.custom(fontfamily, size: 40))
             .multilineTextAlignment(.center)
     }
 }
@@ -32,8 +41,7 @@ struct TitleText: ViewModifier {
 struct SubtitleText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding()
-            .foregroundColor(.white)
-            .font(Font.custom("DIN Alternate Bold", size: 20))
+            .modifier(DefaultText())
+            .font(Font.custom(fontfamily, size: 20))
     }
 }

@@ -11,7 +11,7 @@ import SwiftUI
 struct fall_detectorApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            EntryView()
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  EntryView.swift
 //  fall-detector
 //
 //  Created by Harry Wixley on 31/12/2021.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct EntryView: View {
     var body: some View {
         VStack {
             VStack {
@@ -50,6 +50,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        EntryView()
     }
 }

@@ -15,7 +15,8 @@
 		D05879D5277F51B800427BAB /* text.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D4277F51B800427BAB /* text.swift */; };
 		D05879D7277F55E300427BAB /* screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D6277F55E300427BAB /* screen.swift */; };
 		D05879D9277F56D600427BAB /* stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D8277F56D600427BAB /* stack.swift */; };
-		D05879DC277F5B2200427BAB /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DB277F5B2200427BAB /* TabView.swift */; };
+		D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DD277F6B7F00427BAB /* LoginView.swift */; };
+		D05879E0277F6DE400427BAB /* textfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DF277F6DE400427BAB /* textfield.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,7 +29,8 @@
 		D05879D4277F51B800427BAB /* text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = text.swift; sourceTree = "<group>"; };
 		D05879D6277F55E300427BAB /* screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen.swift; sourceTree = "<group>"; };
 		D05879D8277F56D600427BAB /* stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stack.swift; sourceTree = "<group>"; };
-		D05879DB277F5B2200427BAB /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
+		D05879DD277F6B7F00427BAB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		D05879DF277F6DE400427BAB /* textfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = textfield.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				D05879D4277F51B800427BAB /* text.swift */,
 				D05879D6277F55E300427BAB /* screen.swift */,
 				D05879D8277F56D600427BAB /* stack.swift */,
+				D05879DF277F6DE400427BAB /* textfield.swift */,
 			);
 			path = "SwiftUI-classes";
 			sourceTree = "<group>";
@@ -93,7 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				D05879C1277F381100427BAB /* EntryView.swift */,
-				D05879DB277F5B2200427BAB /* TabView.swift */,
+				D05879DD277F6B7F00427BAB /* LoginView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -169,10 +172,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
+				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
 				D05879D7277F55E300427BAB /* screen.swift in Sources */,
+				D05879E0277F6DE400427BAB /* textfield.swift in Sources */,
 				D05879D2277F50A600427BAB /* buttons.swift in Sources */,
 				D05879D5277F51B800427BAB /* text.swift in Sources */,
-				D05879DC277F5B2200427BAB /* TabView.swift in Sources */,
 				D05879D9277F56D600427BAB /* stack.swift in Sources */,
 				D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */,
 			);
