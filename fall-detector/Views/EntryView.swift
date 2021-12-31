@@ -18,9 +18,9 @@ struct ContentView: View {
                     .modifier(SubtitleText())
             }
             .background(.black)
-            .frame(width: 400, height: 300, alignment: .center)
+            .frame(width: UIScreen.screenWidth, height: 300, alignment: .center)
 
-            VStack {
+            VStack(spacing: 20) {
                 Button(action: {
                     
                 }) {
@@ -30,7 +30,7 @@ struct ContentView: View {
                     }
                 }
                 .buttonStyle(ClassicButtonStyle())
-
+                
                 Button(action: {
                     
                 }) {
@@ -42,7 +42,7 @@ struct ContentView: View {
                 .buttonStyle(ClassicButtonStyle())
             }
             .background(.black)
-            .frame(width: 400, height: 200, alignment: .center)
+            .frame(width: UIScreen.screenWidth, height: 200, alignment: .center)
         }
         .modifier(BackgroundStack())
     }

@@ -13,9 +13,9 @@ struct ClassicButtonText: ViewModifier {
         content
             .padding()
             .foregroundColor(.white)
-            .frame(width: 350, height: 60)
-            .font(.system(size: 25, weight: .bold, design: .default))
-        
+            .frame(width: UIScreen.screenWidth, height: 70, alignment: .center)
+            .font(Font.custom("DIN Alternate Bold", size: 25))
+            .multilineTextAlignment(.center)
     }
 }
 
@@ -24,7 +24,8 @@ struct TitleText: ViewModifier {
         content
             .padding()
             .foregroundColor(.white)
-            .font(.largeTitle)
+            .font(Font.custom("DIN Alternate Bold", size: 40))
+            .multilineTextAlignment(.center)
     }
 }
 
@@ -33,6 +34,6 @@ struct SubtitleText: ViewModifier {
         content
             .padding()
             .foregroundColor(.white)
-            .font(.subheadline)
+            .font(Font.custom("DIN Alternate Bold", size: 20))
     }
 }

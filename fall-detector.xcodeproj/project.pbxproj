@@ -8,25 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879BF277F381100427BAB /* fall_detectorApp.swift */; };
-		D05879C2277F381100427BAB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879C1277F381100427BAB /* ContentView.swift */; };
+		D05879C2277F381100427BAB /* EntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879C1277F381100427BAB /* EntryView.swift */; };
 		D05879C4277F381500427BAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D05879C3277F381500427BAB /* Assets.xcassets */; };
 		D05879C7277F381500427BAB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D05879C6277F381500427BAB /* Preview Assets.xcassets */; };
 		D05879D2277F50A600427BAB /* buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D1277F50A500427BAB /* buttons.swift */; };
 		D05879D5277F51B800427BAB /* text.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D4277F51B800427BAB /* text.swift */; };
 		D05879D7277F55E300427BAB /* screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D6277F55E300427BAB /* screen.swift */; };
 		D05879D9277F56D600427BAB /* stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879D8277F56D600427BAB /* stack.swift */; };
+		D05879DC277F5B2200427BAB /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DB277F5B2200427BAB /* TabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D05879BC277F381100427BAB /* fall-detector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fall-detector.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D05879BF277F381100427BAB /* fall_detectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fall_detectorApp.swift; sourceTree = "<group>"; };
-		D05879C1277F381100427BAB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D05879C1277F381100427BAB /* EntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryView.swift; sourceTree = "<group>"; };
 		D05879C3277F381500427BAB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D05879C6277F381500427BAB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D05879D1277F50A500427BAB /* buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = buttons.swift; sourceTree = "<group>"; };
 		D05879D4277F51B800427BAB /* text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = text.swift; sourceTree = "<group>"; };
 		D05879D6277F55E300427BAB /* screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen.swift; sourceTree = "<group>"; };
 		D05879D8277F56D600427BAB /* stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stack.swift; sourceTree = "<group>"; };
+		D05879DB277F5B2200427BAB /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,9 +61,9 @@
 		D05879BE277F381100427BAB /* fall-detector */ = {
 			isa = PBXGroup;
 			children = (
+				D05879DA277F5AB100427BAB /* Views */,
 				D05879CD277F502E00427BAB /* SwiftUI-classes */,
 				D05879BF277F381100427BAB /* fall_detectorApp.swift */,
-				D05879C1277F381100427BAB /* ContentView.swift */,
 				D05879C3277F381500427BAB /* Assets.xcassets */,
 				D05879C5277F381500427BAB /* Preview Content */,
 			);
@@ -85,6 +87,15 @@
 				D05879D8277F56D600427BAB /* stack.swift */,
 			);
 			path = "SwiftUI-classes";
+			sourceTree = "<group>";
+		};
+		D05879DA277F5AB100427BAB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D05879C1277F381100427BAB /* EntryView.swift */,
+				D05879DB277F5B2200427BAB /* TabView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -157,10 +168,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D05879C2277F381100427BAB /* ContentView.swift in Sources */,
+				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
 				D05879D7277F55E300427BAB /* screen.swift in Sources */,
 				D05879D2277F50A600427BAB /* buttons.swift in Sources */,
 				D05879D5277F51B800427BAB /* text.swift in Sources */,
+				D05879DC277F5B2200427BAB /* TabView.swift in Sources */,
 				D05879D9277F56D600427BAB /* stack.swift in Sources */,
 				D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */,
 			);
