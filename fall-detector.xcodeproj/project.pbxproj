@@ -17,6 +17,7 @@
 		D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CD92780B43D00C9D1ED /* CustomViews.swift */; };
 		D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */; };
 		D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */; };
+		D0C66CE02781181200C9D1ED /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDF2781181100C9D1ED /* HomeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		D0C66CD92780B43D00C9D1ED /* CustomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewModifiers.swift; sourceTree = "<group>"; };
 		D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyles.swift; sourceTree = "<group>"; };
+		D0C66CDF2781181100C9D1ED /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				D05879C1277F381100427BAB /* EntryView.swift */,
 				D05879DD277F6B7F00427BAB /* LoginView.swift */,
 				D04BCF1A27808552009E81A7 /* RegisterView.swift */,
+				D0C66CDF2781181100C9D1ED /* HomeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -188,6 +191,7 @@
 				D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */,
 				D04BCF20278090C0009E81A7 /* FormattingConstants.swift in Sources */,
 				D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */,
+				D0C66CE02781181200C9D1ED /* HomeView.swift in Sources */,
 				D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

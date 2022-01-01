@@ -40,13 +40,15 @@ struct RegisterView: View {
                     .padding(.top, 10)
                     
                     Button(action: {
-                        
+                        if password1 == password2 && NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) {
+                            appState.inappState = .home
+                        }
                     }) {
                         MainButton(title: "Register")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: true))
                 }
-                .modifier(NavigationBarStyle(title: "Register", onboardingState: .entry, appState: appState))
+                .modifier(NavigationBarStyle(title: "Register", inappState: .entry, hideBackButton: false, appState: appState))
             }
             .modifier(BackgroundStack())
         }

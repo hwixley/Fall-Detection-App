@@ -32,14 +32,14 @@ struct EntryView: View {
 
             VStack(spacing: 20) {
                 Button(action: {
-                    appState.onboardingState = .login
+                    appState.inappState = .login
                 }, label: {
                     MainButton(title: "Log in")
                 })
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                 
                 Button(action: {
-                    appState.onboardingState = .register
+                    appState.inappState = .register
                 }, label: {
                     MainButton(title: "Register")
                 })
