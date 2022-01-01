@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 
+
 //MARK: Navigation
 
 struct NavigationConfigurator: UIViewControllerRepresentable {
@@ -27,7 +28,7 @@ struct NavigationConfigurator: UIViewControllerRepresentable {
 
 struct NavigationBarStyle: ViewModifier {
     var title: String
-    @Binding var mode: Binding<PresentationMode>
+    @Binding var pressedBack: Bool
     
     func body(content: Content) -> some View {
         content
@@ -41,13 +42,11 @@ struct NavigationBarStyle: ViewModifier {
             })
             .navigationBarItems(leading:
                 Button(action: {
-                    mode.wrappedValue.dismiss()
+                
                 }) {
                     HStack {
                         Image(systemName: "arrow.left")
-                            .foregroundColor(.white)
-                        Text("Back")
-                            .foregroundColor(.white)
+                            .foregroundColor(.purple)
                     }
                 })
     }
@@ -59,7 +58,7 @@ struct ClassicButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
+            .background(MyColours.g0)
             .cornerRadius(20)
             .scaleEffect(configuration.isPressed ? 1.05 : 1.0)
     }
@@ -68,7 +67,7 @@ struct ClassicButtonStyle: ButtonStyle {
 struct ClassicSubButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing))
+            .background(MyColours.g0)
             .cornerRadius(20)
             .scaleEffect(configuration.isPressed ? 1.05 : 1.0)
     }

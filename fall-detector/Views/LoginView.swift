@@ -9,10 +9,10 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var pressedBack: Bool = false
     
     var body: some View {
         NavigationView {
@@ -41,7 +41,7 @@ struct LoginView: View {
                         .buttonStyle(ClassicSubButtonStyle())
                     }
                 }
-                .modifier(NavigationBarStyle(title: "Log in"))
+                .modifier(NavigationBarStyle(title: "Log in", pressedBack: $pressedBack))
                 
 
             }
