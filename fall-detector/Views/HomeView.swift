@@ -23,6 +23,9 @@ struct HomeView: View {
                 .modifier(BackgroundStack())
             }
             .navigationViewStyle(StackNavigationViewStyle())
+            .tabItem {
+                Label("Home", systemImage: "home")
+            }
         }
     }
 }
