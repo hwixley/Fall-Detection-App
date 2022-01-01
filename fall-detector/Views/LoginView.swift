@@ -8,63 +8,44 @@
 import SwiftUI
 
 struct LoginView: View {
+    @EnvironmentObject var appState: AppState
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    
     @State private var email: String = ""
     @State private var password: String = ""
     
     var body: some View {
         NavigationView {
-            VStack {
-                HStack(spacing: 10) {
-                    VStack(spacing: 6) {
-                        
-                        Spacer()
-                        
-                        Text("Email")
-                            .modifier(LabelText())
-                            .frame(width: 90, alignment: .trailing)
-                        
-                        Spacer()
-                        
-                        Text("Password")
-                            .modifier(LabelText())
-                            .frame(width: 90, alignment: .trailing)
-                        
-                        Spacer()
+            ZStack(alignment: .top) {
+                MyColours.b1.edgesIgnoringSafeArea(.all)
+                VStack(spacing:40) {
+                    VStack {
+                        Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
+                        SecureTextfield(title: "Password", labelWidth: 90, output: $password)
                     }
+                    .padding(.top, 10)
                     
-                    VStack(spacing: 10) {
-                        TextField("Enter your email...", text: $email)
-                            .modifier(PlaceholderStyle(input: email, placeholder: "Enter your email..."))
+                    VStack(spacing: 20) {
+                        Button(action: {
+                            
+                        }) {
+                            MainButton(title: "Log in")
+                        }
+                        .buttonStyle(ClassicButtonStyle())
                         
-                        TextField("Enter your password...", text: $password)
-                            .modifier(PlaceholderStyle(input: password, placeholder: "Enter your password..."))
+                        Button(action: {
+                            
+                        }) {
+                            SubButton(title: "I forgot my password")
+                        }
+                        .buttonStyle(ClassicSubButtonStyle())
                     }
                 }
-                .padding()
-                .frame(height: 100)
+                .modifier(NavigationBarStyle(title: "Log in"))
                 
-                Button(action: {
-                    
-                }) {
-                    HStack {
-                        Text("Login")
-                            .modifier(ClassicButtonText())
-                    }
-                }
-                .buttonStyle(ClassicButtonStyle())
-                
-                Button(action: {
-                    
-                }) {
-                    HStack {
-                        Text("I forgot my password")
-                            .modifier(ClassicButtonText())
-                    }
-                }
-                .buttonStyle(ClassicButtonStyle())
+
             }
             .modifier(BackgroundStack())
-            .modifier(NavigationBarStyle(title: "Login"))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

@@ -8,6 +8,17 @@
 import SwiftUI
 
 struct EntryView: View {
+    @EnvironmentObject var appState: AppState
+    
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.largeTitleTextAttributes = [.foregroundColor : UIColor.white, .font : UIFont(name: fontfamily, size: 30)!]
+        appearance.titleTextAttributes = [.foregroundColor : UIColor.white, .font : UIFont(name: fontfamily, size: 30)!]
+        UINavigationBar.appearance().barTintColor = UIColor.blue
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
     var body: some View {
         VStack {
             VStack {
@@ -22,33 +33,27 @@ struct EntryView: View {
 
             VStack(spacing: 20) {
                 Button(action: {
-                    
-                }) {
-                    HStack {
-                        Text("Log in")
-                            .modifier(ClassicButtonText())
-                    }
-                }
+                    appState.onboardingState = .login
+                }, label: {
+                    MainButton(title: "Log in")
+                })
                 .buttonStyle(ClassicButtonStyle())
                 
                 Button(action: {
-                    
-                }) {
-                    HStack {
-                        Text("Register")
-                            .modifier(ClassicButtonText())
-                    }
-                }
+                    appState.onboardingState = .register
+                }, label: {
+                    MainButton(title: "Register")
+                })
                 .buttonStyle(ClassicButtonStyle())
+                 
             }
-            .background(.black)
             .frame(width: UIScreen.screenWidth, height: 200, alignment: .center)
         }
-        .modifier(BackgroundStack())
+        .modifier(FullBackgroundStack())
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct EntryView_Previews: PreviewProvider {
     static var previews: some View {
         EntryView()
     }
