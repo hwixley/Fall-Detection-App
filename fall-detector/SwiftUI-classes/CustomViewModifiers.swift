@@ -17,6 +17,7 @@ struct FullBackgroundStack: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .center)
+            .background(MyColours.g0)
     }
 }
 

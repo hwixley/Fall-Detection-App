@@ -23,5 +23,8 @@ public struct MyColours {
     static let t1 = Color(white: 1, opacity: 0.6)
     static let t2 = Color(white: 1, opacity: 0.3)
     
-    static let g0 = LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]), startPoint: .leading, endPoint: .trailing)
+    static let g_colours = [Color.purple, Color.blue]
+    static let g = Gradient(colors: g_colours)
+    static let g0 = LinearGradient(gradient: g, startPoint: .leading, endPoint: .trailing)
+    static let gb = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .leading, endPoint: .trailing)
 }

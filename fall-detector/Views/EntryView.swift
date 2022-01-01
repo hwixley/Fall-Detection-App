@@ -28,8 +28,7 @@ struct EntryView: View {
                 //Text("Using movement and heart rate data")
                 //    .modifier(SubtitleText())
             }
-            .background(.black)
-            .frame(width: UIScreen.screenWidth, height: 300, alignment: .center)
+            .frame(width: UIScreen.screenWidth - 20, height: 300, alignment: .center)
 
             VStack(spacing: 20) {
                 Button(action: {
@@ -37,14 +36,14 @@ struct EntryView: View {
                 }, label: {
                     MainButton(title: "Log in")
                 })
-                .buttonStyle(ClassicButtonStyle())
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
                 
                 Button(action: {
                     appState.onboardingState = .register
                 }, label: {
                     MainButton(title: "Register")
                 })
-                .buttonStyle(ClassicButtonStyle())
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
                  
             }
             .frame(width: UIScreen.screenWidth, height: 200, alignment: .center)

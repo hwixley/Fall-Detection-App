@@ -31,17 +31,17 @@ struct LoginView: View {
                         }) {
                             MainButton(title: "Log in")
                         }
-                        .buttonStyle(ClassicButtonStyle())
+                        .buttonStyle(ClassicButtonStyle(useGradient: true))
                         
                         Button(action: {
                             
                         }) {
                             SubButton(title: "I forgot my password")
                         }
-                        .buttonStyle(ClassicSubButtonStyle())
+                        .buttonStyle(ClassicButtonStyle(useGradient: true))
                     }
                 }
-                .modifier(NavigationBarStyle(title: "Log in", pressedBack: $pressedBack))
+                .modifier(NavigationBarStyle(title: "Log in", onboardingState: .entry, appState: appState))
                 
 
             }

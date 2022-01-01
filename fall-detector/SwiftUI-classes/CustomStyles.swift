@@ -28,7 +28,11 @@ struct NavigationConfigurator: UIViewControllerRepresentable {
 
 struct NavigationBarStyle: ViewModifier {
     var title: String
-    @Binding var pressedBack: Bool
+    var superState: SuperState? = nil
+    var onboardingState: OnboardingState? = nil
+    var inappState: InAppState? = nil
+    
+    @ObservedObject var appState: AppState
     
     func body(content: Content) -> some View {
         content
@@ -42,7 +46,15 @@ struct NavigationBarStyle: ViewModifier {
             })
             .navigationBarItems(leading:
                 Button(action: {
-                
+                if superState != nil {
+                    appState.superState = superState!
+                }
+                if onboardingState != nil {
+                    appState.onboardingState = onboardingState!
+                }
+                if inappState != nil {
+                    appState.inappState = inappState!
+                }
                 }) {
                     HStack {
                         Image(systemName: "arrow.left")
@@ -55,19 +67,11 @@ struct NavigationBarStyle: ViewModifier {
 //MARK: Buttons
 
 struct ClassicButtonStyle: ButtonStyle {
+    var useGradient: Bool
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(MyColours.g0)
-            .cornerRadius(20)
-            .scaleEffect(configuration.isPressed ? 1.05 : 1.0)
-    }
-}
-
-struct ClassicSubButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(MyColours.g0)
+            .background(useGradient ? MyColours.g0 : MyColours.gb)
             .cornerRadius(20)
             .scaleEffect(configuration.isPressed ? 1.05 : 1.0)
     }
