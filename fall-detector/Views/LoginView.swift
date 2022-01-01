@@ -12,7 +12,6 @@ struct LoginView: View {
     
     @State private var email: String = ""
     @State private var password: String = ""
-    @State private var pressedBack: Bool = false
     
     var body: some View {
         NavigationView {
