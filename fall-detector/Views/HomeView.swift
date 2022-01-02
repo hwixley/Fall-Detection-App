@@ -1,8 +1,8 @@
 //
-//  TabView.swift
+//  HomeView.swift
 //  fall-detector
 //
-//  Created by Harry Wixley on 01/01/2022.
+//  Created by Harry Wixley on 02/01/2022.
 //
 
 import SwiftUI
@@ -11,22 +11,17 @@ struct HomeView: View {
     @EnvironmentObject var appState: AppState
     
     var body: some View {
-        TabView {
-            NavigationView {
-                ZStack(alignment: .top) {
-                    MyColours.b1.edgesIgnoringSafeArea(.all)
-                    VStack(spacing:40) {
+        NavigationView {
+            ZStack(alignment: .top) {
+                MyColours.b1.edgesIgnoringSafeArea(.all)
+                VStack(spacing:40) {
 
-                    }
-                    .modifier(NavigationBarStyle(title: "Home", inappState: .entry, hideBackButton: true, appState: appState))
                 }
-                .modifier(BackgroundStack())
+                .modifier(NavigationBarStyle(title: "Home", inappState: .entry, hideBackButton: true, appState: appState))
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Label("Home", systemImage: "home")
-            }
+            .modifier(BackgroundStack())
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

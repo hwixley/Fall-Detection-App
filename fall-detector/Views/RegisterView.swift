@@ -14,8 +14,6 @@ struct RegisterView: View {
     @State var password1: String = ""
     @State var password2: String = ""
     
-    static var passwordStrength = 0
-    
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {

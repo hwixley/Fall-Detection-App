@@ -39,7 +39,7 @@ struct fall_detectorApp: App {
                 RegisterView()
                     .environmentObject(appState)
             case .home:
-                HomeView()
+                MainView()
                     .environmentObject(appState)
             }
         }
