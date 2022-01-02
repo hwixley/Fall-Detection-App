@@ -17,7 +17,7 @@ struct HomeView: View {
                 VStack(spacing:40) {
 
                 }
-                .modifier(NavigationBarStyle(title: "Home", inappState: .entry, hideBackButton: true, appState: appState))
+                .modifier(NavigationBarStyle(title: "Home", page: .entry, hideBackButton: true, appState: appState))
             }
             .modifier(BackgroundStack())
         }

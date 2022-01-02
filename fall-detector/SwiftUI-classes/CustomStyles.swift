@@ -28,7 +28,7 @@ struct NavigationConfigurator: UIViewControllerRepresentable {
 
 struct NavigationBarStyle: ViewModifier {
     var title: String
-    var inappState: InAppState
+    var page: Page
     var hideBackButton: Bool
     
     @ObservedObject var appState: AppState
@@ -46,7 +46,7 @@ struct NavigationBarStyle: ViewModifier {
             .navigationBarItems(leading:
                 Button(action: {
                 if !hideBackButton {
-                    appState.inappState = inappState
+                    appState.inappState.page = page
                 }
                 }) {
                     if !hideBackButton {

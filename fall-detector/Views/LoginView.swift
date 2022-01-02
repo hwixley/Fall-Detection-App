@@ -26,7 +26,7 @@ struct LoginView: View {
                     
                     VStack(spacing: 20) {
                         Button(action: {
-                            appState.inappState = .home
+                            appState.inappState.page = .main
                         }) {
                             MainButton(title: "Log in")
                         }
@@ -40,7 +40,7 @@ struct LoginView: View {
                         .buttonStyle(ClassicButtonStyle(useGradient: true))
                     }
                 }
-                .modifier(NavigationBarStyle(title: "Log in", inappState: .entry, hideBackButton: false, appState: appState))
+                .modifier(NavigationBarStyle(title: "Log in", page: .entry, hideBackButton: false, appState: appState))
             }
             .modifier(BackgroundStack())
         }

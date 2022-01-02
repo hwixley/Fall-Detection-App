@@ -17,7 +17,7 @@ struct StatsView: View {
                 VStack(spacing:40) {
 
                 }
-                .modifier(NavigationBarStyle(title: "Stats", inappState: .entry, hideBackButton: true, appState: appState))
+                .modifier(NavigationBarStyle(title: "Stats", page: .entry, hideBackButton: true, appState: appState))
             }
             .modifier(BackgroundStack())
         }

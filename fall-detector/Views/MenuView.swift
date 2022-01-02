@@ -17,7 +17,7 @@ struct MenuView: View {
                 VStack(spacing:40) {
 
                 }
-                .modifier(NavigationBarStyle(title: "Menu", inappState: .entry, hideBackButton: true, appState: appState))
+                .modifier(NavigationBarStyle(title: "Menu", page: .entry, hideBackButton: true, appState: appState))
             }
             .modifier(BackgroundStack())
         }
