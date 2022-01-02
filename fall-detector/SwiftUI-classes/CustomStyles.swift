@@ -52,7 +52,7 @@ struct NavigationBarStyle: ViewModifier {
                     if !hideBackButton {
                         HStack {
                             Image(systemName: "arrow.left")
-                                .foregroundColor(.purple)
+                                .foregroundColor(MyColours.p0)
                         }
                     }
                 })

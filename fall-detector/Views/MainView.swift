@@ -39,7 +39,7 @@ struct MainView: View {
                         .scaleEffect(selectedTab == 2 ? 1.05 : 1)
                 }
         }
-        .accentColor(.purple)
+        .accentColor(MyColours.p0)
     }
 }
 

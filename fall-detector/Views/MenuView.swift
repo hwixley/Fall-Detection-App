@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct MenuView: View {
+    @EnvironmentObject var appState: AppState
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView {
+            ZStack(alignment: .top) {
+                MyColours.b1.edgesIgnoringSafeArea(.all)
+                VStack(spacing:40) {
+
+                }
+                .modifier(NavigationBarStyle(title: "Menu", inappState: .entry, hideBackButton: true, appState: appState))
+            }
+            .modifier(BackgroundStack())
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
