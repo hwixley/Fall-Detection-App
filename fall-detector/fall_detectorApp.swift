@@ -26,10 +26,10 @@ enum Page {
     case main
 }
 
-enum Connection {
-    case disconnected
-    case searching
-    case connected
+enum Connection: String {
+    case disconnected = "Disconnected"
+    case searching = "Searching"
+    case connected = "Connected"
 }
 
 struct User {

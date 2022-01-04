@@ -12,10 +12,11 @@ struct HomeView: View {
     
     var body: some View {
         NavigationView {
-            ZStack(alignment: .top) {
+            ZStack(alignment: .center) {
                 MyColours.b1.edgesIgnoringSafeArea(.all)
-                VStack(spacing:40) {
-
+                VStack {
+                    Label("Connection Status:", systemImage: "antenna.radiowaves.left.and.right")
+                    Text(self.appState.inappState.connection.rawValue)
                 }
                 .modifier(NavigationBarStyle(title: "Home", page: .entry, hideBackButton: true, appState: appState))
             }
