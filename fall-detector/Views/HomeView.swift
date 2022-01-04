@@ -15,9 +15,9 @@ struct HomeView: View {
             ZStack(alignment: .center) {
                 MyColours.b1.edgesIgnoringSafeArea(.all)
                 VStack {
-                    Label("Connection Status:", systemImage: "antenna.radiowaves.left.and.right")
-                    Text(self.appState.inappState.connection.rawValue)
+                    ConnectionView(appState: self.appState)
                 }
+                .padding(.all, 10)
                 .modifier(NavigationBarStyle(title: "Home", page: .entry, hideBackButton: true, appState: appState))
             }
             .modifier(BackgroundStack())

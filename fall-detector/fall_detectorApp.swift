@@ -28,9 +28,10 @@ enum Page {
 
 enum Connection: String {
     case disconnected = "Disconnected"
-    case searching = "Searching"
+    case searching = "Searching for your device..."
     case connected = "Connected"
 }
+
 
 struct User {
     var info: Person

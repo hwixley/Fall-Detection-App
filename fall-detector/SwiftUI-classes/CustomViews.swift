@@ -85,3 +85,31 @@ struct SubButton : View {
             .modifier(ClassicSubButtonText())
     }
 }
+
+struct ConnectionView: View {
+    @ObservedObject var appState: AppState
+    
+    var body: some View {
+        VStack {
+            let connection = self.appState.inappState.connection
+            let image = (connection == .connected) ? "antenna.radiowaves.left.and.right" : (connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : "magnifyingglass"
+            
+            Label(connection.rawValue, systemImage: image)
+                .modifier(ClassicButtonText())
+            
+            if connection == .searching {
+                ProgressView()
+            } else {
+                Button(action: {
+                    self.appState.inappState.connection = connection == .connected ? .disconnected : connection == .disconnected ? .searching : .connected
+                }) {
+                    SubButton(title: connection == .connected ? "Disconnect" : "Connect")
+                }
+                .buttonStyle(ClassicButtonStyle(useGradient: true))
+            }
+        }
+        .padding(.all, 10)
+        .cornerRadius(20)
+        .background(MyColours.b2)
+    }
+}

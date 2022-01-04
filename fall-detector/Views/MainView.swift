@@ -21,21 +21,21 @@ struct MainView: View {
             HomeView()
                 .environmentObject(appState)
                 .tabItem {
-                    Image(systemName: "house.fill")
+                    Label("Home", systemImage: "house.fill")
                         .scaleEffect(selectedTab == 0 ? 1.05 : 1)
                 }
             
             StatsView()
                 .environmentObject(appState)
                 .tabItem {
-                    Image(systemName: "chart.xyaxis.line")
+                    Label("Stats", systemImage: "chart.xyaxis.line")
                         .scaleEffect(selectedTab == 1 ? 1.05 : 1)
                 }
             
             MenuView()
                 .environmentObject(appState)
                 .tabItem {
-                    Image(systemName: "line.3.horizontal")
+                    Label("Menu", systemImage: "line.3.horizontal")
                         .scaleEffect(selectedTab == 2 ? 1.05 : 1)
                 }
         }
