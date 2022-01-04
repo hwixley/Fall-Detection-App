@@ -34,14 +34,14 @@ struct EntryView: View {
                 Button(action: {
                     appState.inappState.page = .login
                 }, label: {
-                    MainButton(title: "Log in")
+                    MainButton(title: "Log in", image: "")
                 })
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                 
                 Button(action: {
                     appState.inappState.page = .register
                 }, label: {
-                    MainButton(title: "Register")
+                    MainButton(title: "Register", image: "")
                 })
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                  

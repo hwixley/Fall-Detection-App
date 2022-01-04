@@ -28,7 +28,7 @@ struct LoginView: View {
                         Button(action: {
                             appState.inappState.page = .main
                         }) {
-                            MainButton(title: "Log in")
+                            MainButton(title: "Log in", image: "")
                         }
                         .buttonStyle(ClassicButtonStyle(useGradient: true))
                         

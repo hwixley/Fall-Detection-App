@@ -12,11 +12,45 @@ struct MenuView: View {
     
     var body: some View {
         NavigationView {
-            ZStack(alignment: .top) {
-                MyColours.b1.edgesIgnoringSafeArea(.all)
-                VStack(spacing:40) {
-
+            ZStack(alignment: .center) {
+                MyColours.g0.edgesIgnoringSafeArea(.all)
+                VStack(spacing: 30) {
+                    Button {
+                        //
+                    } label: {
+                        MainButton(title: "Account", image: "person.crop.circle")
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
+                    
+                    Button {
+                        //
+                    } label: {
+                        MainButton(title: "About", image: "info.circle")
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
+                    
+                    Button {
+                        //
+                    } label: {
+                        MainButton(title: "Help", image: "questionmark.circle")
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
+                    
+                    Button {
+                        //
+                    } label: {
+                        MainButton(title: "Settings", image: "gear")
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
+                    
+                    Button {
+                        //
+                    } label: {
+                        MainButton(title: "Log Out", image: "figure.walk")
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: false))
                 }
+                .accentColor(MyColours.p0)
                 .modifier(NavigationBarStyle(title: "Menu", page: .entry, hideBackButton: true, appState: appState))
             }
             .modifier(BackgroundStack())

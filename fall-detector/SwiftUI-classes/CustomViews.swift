@@ -64,10 +64,16 @@ struct SecureTextfield : View {
 
 struct MainButton : View {
     let title: String
+    let image: String
     
     var body: some View {
-        Text(title)
-            .modifier(ClassicButtonText())
+        if image == "" {
+            Text(title)
+                .modifier(ClassicButtonText())
+        } else {
+            Label(title, systemImage: image)
+                .modifier(ClassicButtonText())
+        }
     }
 }
 

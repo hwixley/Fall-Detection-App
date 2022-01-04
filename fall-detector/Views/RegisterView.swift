@@ -42,7 +42,7 @@ struct RegisterView: View {
                             appState.inappState.page = .main
                         }
                     }) {
-                        MainButton(title: "Register")
+                        MainButton(title: "Register", image: "")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: true))
                 }
