@@ -92,18 +92,27 @@ struct ConnectionView: View {
     var body: some View {
         VStack {
             let connection = self.appState.inappState.connection
-            let image = (connection == .connected) ? "antenna.radiowaves.left.and.right" : (connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : "magnifyingglass"
+            let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "antenna.radiowaves.left.and.right.slash"
             
-            Label(connection.rawValue, systemImage: image)
-                .modifier(ClassicButtonText())
+            Label(self.appState.inappState.connection.rawValue, systemImage: image)
+                .modifier(ClassicText(height: 90))
             
             if connection == .searching {
                 ProgressView()
             } else {
                 Button(action: {
-                    self.appState.inappState.connection = connection == .connected ? .disconnected : connection == .disconnected ? .searching : .connected
+                    self.appState.inappState.connection = self.appState.inappState.connection == .connected ? .disconnected : (self.appState.inappState.connection == .disconnected || self.appState.inappState.connection == .retry) ? .searching : .connected
+                    
+                    if self.appState.inappState.connection == .searching {
+                        Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { timer in
+                            if self.appState.inappState.connection == .searching {
+                                self.appState.inappState.connection = .retry
+                            }
+                            timer.invalidate()
+                        }
+                    }
                 }) {
-                    SubButton(title: connection == .connected ? "Disconnect" : "Connect")
+                    SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Retry")
                 }
                 .buttonStyle(ClassicButtonStyle(useGradient: true))
             }

@@ -64,12 +64,22 @@ struct DefaultText: ViewModifier {
     }
 }
 
-struct ClassicButtonText: ViewModifier {
+struct ClassicText: ViewModifier {
+    var height: CGFloat? = nil
+    
     func body(content: Content) -> some View {
         content
             .modifier(HPadding(pad: 10))
             .modifier(DefaultText(size: 25))
-            .frame(width: UIScreen.screenWidth - 20, height: 70, alignment: .center)
+            .frame(width: UIScreen.screenWidth - 20, height: height, alignment: .center)
+            .multilineTextAlignment(.leading)
+    }
+}
+
+struct ClassicButtonText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .modifier(ClassicText(height: 70))
             .multilineTextAlignment(.center)
     }
 }
@@ -77,9 +87,7 @@ struct ClassicButtonText: ViewModifier {
 struct ClassicSubButtonText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .modifier(HPadding(pad: 10))
-            .modifier(DefaultText(size: 25))
-            .frame(width: UIScreen.screenWidth - 20, height: 50, alignment: .center)
+            .modifier(ClassicText(height: 50))
             .multilineTextAlignment(.center)
     }
 }

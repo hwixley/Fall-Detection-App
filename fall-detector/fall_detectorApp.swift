@@ -29,6 +29,7 @@ enum Page {
 enum Connection: String {
     case disconnected = "Disconnected"
     case searching = "Searching for your device..."
+    case retry = "We could not find your device. Please make sure it is turned on and try again."
     case connected = "Connected"
 }
 
