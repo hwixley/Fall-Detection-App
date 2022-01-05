@@ -79,10 +79,11 @@ struct MainButton : View {
 
 struct SubButton : View {
     let title: String
+    var width: CGFloat? = nil
     
     var body: some View {
         Text(title)
-            .modifier(ClassicSubButtonText())
+            .modifier(ClassicSubButtonText(width: width ?? UIScreen.screenWidth - 20))
     }
 }
 
@@ -95,10 +96,12 @@ struct ConnectionView: View {
             let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "antenna.radiowaves.left.and.right.slash"
             
             Label(self.appState.inappState.connection.rawValue, systemImage: image)
-                .modifier(ClassicText(height: 90))
+                .modifier(ClassicText(height: self.appState.inappState.connection == .searching ? 50 : 90))
+                .padding(.top, self.appState.inappState.connection == .searching ? 20 : 0)
             
             if connection == .searching {
                 ProgressView()
+                    .padding(.bottom, 20)
             } else {
                 Button(action: {
                     self.appState.inappState.connection = self.appState.inappState.connection == .connected ? .disconnected : (self.appState.inappState.connection == .disconnected || self.appState.inappState.connection == .retry) ? .searching : .connected
@@ -112,13 +115,13 @@ struct ConnectionView: View {
                         }
                     }
                 }) {
-                    SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Retry")
+                    SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
                 }
                 .buttonStyle(ClassicButtonStyle(useGradient: true))
             }
         }
-        .padding(.all, 10)
-        .cornerRadius(20)
+        .frame(width: UIScreen.screenWidth - 20)
+        .modifier(VPadding(pad: 10))
         .background(MyColours.b2)
     }
 }
