@@ -16,35 +16,40 @@ struct MenuView: View {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 VStack(spacing: 30) {
                     Button {
-                        //
+                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.page = .account
                     } label: {
                         MainButton(title: "Account", image: "person.crop.circle")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        //
+                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.page = .about
                     } label: {
                         MainButton(title: "About", image: "info.circle")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        //
+                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.page = .help
                     } label: {
                         MainButton(title: "Help", image: "questionmark.circle")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        //
+                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.page = .settings
                     } label: {
                         MainButton(title: "Settings", image: "gear")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        //
+                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.page = .entry
                     } label: {
                         MainButton(title: "Log Out", image: "figure.walk")
                     }

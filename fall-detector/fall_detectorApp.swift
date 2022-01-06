@@ -9,11 +9,13 @@ import SwiftUI
 
 struct InAppState {
     var page: Page
+    var lastTab: Int
     var connection: Connection
     var user: User? = nil
     
-    init(page: Page, connection: Connection, user: User? = nil) {
+    init(page: Page, lastTab: Int, connection: Connection, user: User? = nil) {
         self.page = page
+        self.lastTab = lastTab
         self.connection = connection
         self.user = user
     }
@@ -24,6 +26,10 @@ enum Page {
     case login
     case register
     case main
+    case account
+    case about
+    case help
+    case settings
 }
 
 enum Connection: String {
@@ -59,7 +65,7 @@ struct Person {
 }
 
 class AppState: ObservableObject {
-    @Published var inappState: InAppState = InAppState(page: .entry, connection: .disconnected, user: nil)
+    @Published var inappState: InAppState = InAppState(page: .entry, lastTab: 0, connection: .disconnected, user: nil)
     
     init(inappState: InAppState) {
         self.inappState = inappState
@@ -68,7 +74,7 @@ class AppState: ObservableObject {
 
 @main
 struct fall_detectorApp: App {
-    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, connection: .disconnected, user: nil))
+    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, lastTab: 0, connection: .disconnected, user: nil))
     
     var body: some Scene {
         WindowGroup {
@@ -84,6 +90,18 @@ struct fall_detectorApp: App {
                     .environmentObject(appState)
             case .main:
                 MainView()
+                    .environmentObject(appState)
+            case .account:
+                mnAccountView()
+                    .environmentObject(appState)
+            case .about:
+                mnAboutView()
+                    .environmentObject(appState)
+            case .help:
+                mnHelpView()
+                    .environmentObject(appState)
+            case .settings:
+                mnSettingsView()
                     .environmentObject(appState)
             }
         }

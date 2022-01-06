@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D00E765A2786F88E006263CB /* mnAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E76592786F88E006263CB /* mnAccountView.swift */; };
+		D00E765C2786F897006263CB /* mnAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E765B2786F897006263CB /* mnAboutView.swift */; };
+		D00E765E2786F8A0006263CB /* mnHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E765D2786F8A0006263CB /* mnHelpView.swift */; };
+		D00E76602786F8AD006263CB /* mnSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E765F2786F8AD006263CB /* mnSettingsView.swift */; };
 		D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BCF1A27808552009E81A7 /* RegisterView.swift */; };
 		D04BCF20278090C0009E81A7 /* FormattingConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BCF1F278090C0009E81A7 /* FormattingConstants.swift */; };
 		D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879BF277F381100427BAB /* fall_detectorApp.swift */; };
@@ -24,6 +28,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D00E76592786F88E006263CB /* mnAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnAccountView.swift; sourceTree = "<group>"; };
+		D00E765B2786F897006263CB /* mnAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnAboutView.swift; sourceTree = "<group>"; };
+		D00E765D2786F8A0006263CB /* mnHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnHelpView.swift; sourceTree = "<group>"; };
+		D00E765F2786F8AD006263CB /* mnSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnSettingsView.swift; sourceTree = "<group>"; };
 		D04BCF1A27808552009E81A7 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		D04BCF1F278090C0009E81A7 /* FormattingConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormattingConstants.swift; sourceTree = "<group>"; };
 		D04BCF2127809E1C009E81A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -119,6 +127,10 @@
 				D0C66CE12781C8F600C9D1ED /* HomeView.swift */,
 				D0C66CE32781C98800C9D1ED /* StatsView.swift */,
 				D0C66CE52781C98F00C9D1ED /* MenuView.swift */,
+				D00E76592786F88E006263CB /* mnAccountView.swift */,
+				D00E765B2786F897006263CB /* mnAboutView.swift */,
+				D00E765D2786F8A0006263CB /* mnHelpView.swift */,
+				D00E765F2786F8AD006263CB /* mnSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -196,12 +208,16 @@
 				D0C66CE42781C98800C9D1ED /* StatsView.swift in Sources */,
 				D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */,
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
+				D00E765C2786F897006263CB /* mnAboutView.swift in Sources */,
 				D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */,
 				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
+				D00E76602786F8AD006263CB /* mnSettingsView.swift in Sources */,
 				D0C66CE22781C8F600C9D1ED /* HomeView.swift in Sources */,
 				D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */,
 				D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */,
 				D04BCF20278090C0009E81A7 /* FormattingConstants.swift in Sources */,
+				D00E765E2786F8A0006263CB /* mnHelpView.swift in Sources */,
+				D00E765A2786F88E006263CB /* mnAccountView.swift in Sources */,
 				D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */,
 				D0C66CE02781181200C9D1ED /* MainView.swift in Sources */,
 				D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */,

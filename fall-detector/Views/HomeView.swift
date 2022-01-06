@@ -31,6 +31,6 @@ struct HomeView: View {
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView()
-            .environmentObject(AppState(inappState: InAppState(page: .main, connection: .disconnected, user: nil)))
+            .environmentObject(AppState(inappState: InAppState(page: .main, lastTab: 0, connection: .disconnected, user: nil)))
     }
 }

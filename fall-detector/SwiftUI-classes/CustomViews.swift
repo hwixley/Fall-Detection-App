@@ -93,7 +93,7 @@ struct ConnectionView: View {
     var body: some View {
         VStack {
             let connection = self.appState.inappState.connection
-            let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "antenna.radiowaves.left.and.right.slash"
+            let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
             
             Label(self.appState.inappState.connection.rawValue, systemImage: image)
                 .modifier(ClassicText(height: self.appState.inappState.connection == .searching ? 50 : 90))
