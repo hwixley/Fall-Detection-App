@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MenuView: View {
     @EnvironmentObject var appState: AppState
+    @State private var showLogoutAlert = false
     
     var body: some View {
         NavigationView {
@@ -48,12 +49,20 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        self.appState.inappState.tab = 2
-                        self.appState.inappState.page = .entry
+                        showLogoutAlert = true
                     } label: {
                         MainButton(title: "Log Out", image: "figure.walk")
                     }
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
+                    .alert("Are you sure you want to log out?", isPresented: $showLogoutAlert) {
+                        Button("Yes", role: .none) {
+                            self.appState.inappState.tab = 2
+                            self.appState.inappState.page = .entry
+                        }
+                        Button("No, cancel", role: .cancel) {
+                            showLogoutAlert = false
+                        }
+                    }
                 }
                 .accentColor(MyColours.p0)
                 .modifier(NavigationBarStyle(title: "Menu", page: .entry, hideBackButton: true, appState: appState))
