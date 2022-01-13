@@ -13,7 +13,7 @@ struct StatsView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                MyColours.b1.edgesIgnoringSafeArea(.all)
+                MyColours.g0.edgesIgnoringSafeArea(.all)
                 VStack(spacing:40) {
 
                 }

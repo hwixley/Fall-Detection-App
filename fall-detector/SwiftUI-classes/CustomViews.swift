@@ -123,7 +123,7 @@ struct ConnectionView: View {
                 }) {
                     SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
                 }
-                .buttonStyle(ClassicButtonStyle(useGradient: false, colour: MyColours.gp0))
+                .buttonStyle(ClassicButtonStyle(useGradient: true))
             }
         }
         .frame(width: UIScreen.screenWidth - 20)

@@ -64,11 +64,10 @@ struct NavigationBarStyle: ViewModifier {
 
 struct ClassicButtonStyle: ButtonStyle {
     var useGradient: Bool
-    var colour: LinearGradient?
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(useGradient ? MyColours.g0 : colour != nil ? colour! : MyColours.gb)
+            .background(useGradient ? MyColours.g0_t : MyColours.gb)
             .cornerRadius(20)
             .scaleEffect(configuration.isPressed ? 1.05 : 1.0)
     }
