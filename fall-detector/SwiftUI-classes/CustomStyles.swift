@@ -51,8 +51,9 @@ struct NavigationBarStyle: ViewModifier {
                 }) {
                     if !hideBackButton {
                         HStack {
-                            Image(systemName: "arrow.left")
+                            Image(systemName: "chevron.backward")
                                 .foregroundColor(MyColours.p0)
+                                .padding(.all, 10)
                         }
                     }
                 })

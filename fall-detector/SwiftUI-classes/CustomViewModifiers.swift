@@ -28,7 +28,7 @@ struct BackgroundStack: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(width: UIScreen.screenWidth, alignment: .top)
-            .gesture(DragGesture(minimumDistance: 150, coordinateSpace: .local)
+            .gesture(DragGesture(minimumDistance: 100, coordinateSpace: .local)
                         .onEnded({ value in
                 if backPage != nil {
                     if value.translation.width > 0 {
