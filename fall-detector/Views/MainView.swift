@@ -10,34 +10,36 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var appState: AppState
     
-    @State var selectedTab = 0
-    
     init() {
         UITabBar.appearance().backgroundColor = UIColor(MyColours.b2)
     }
     
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $appState.inappState.tab) {
             HomeView()
                 .environmentObject(appState)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
-                        .scaleEffect(selectedTab == 0 ? 1.05 : 1)
+                        .scaleEffect(self.appState.inappState.tab == 0 ? 1.05 : 1)
                 }
+                .tag(0)
             
             StatsView()
                 .environmentObject(appState)
                 .tabItem {
                     Label("Stats", systemImage: "chart.xyaxis.line")
-                        .scaleEffect(selectedTab == 1 ? 1.05 : 1)
+                        .scaleEffect(self.appState.inappState.tab == 1 ? 1.05 : 1)
                 }
+                .tag(1)
             
             MenuView()
                 .environmentObject(appState)
                 .tabItem {
+                    
                     Label("Menu", systemImage: "line.3.horizontal")
-                        .scaleEffect(selectedTab == 2 ? 1.05 : 1)
+                        .scaleEffect(self.appState.inappState.tab == 2 ? 1.05 : 1)
                 }
+                .tag(2)
         }
         .accentColor(MyColours.p0)
     }

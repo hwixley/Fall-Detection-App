@@ -48,7 +48,7 @@ struct RegisterView: View {
                 }
                 .modifier(NavigationBarStyle(title: "Register", page: .entry, hideBackButton: false, appState: appState))
             }
-            .modifier(BackgroundStack())
+            .modifier(BackgroundStack(appState: appState, backPage: .entry))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

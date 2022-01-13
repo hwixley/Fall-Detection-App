@@ -19,7 +19,7 @@ struct StatsView: View {
                 }
                 .modifier(NavigationBarStyle(title: "Stats", page: .entry, hideBackButton: true, appState: appState))
             }
-            .modifier(BackgroundStack())
+            .modifier(BackgroundStack(appState: appState, backPage: nil))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

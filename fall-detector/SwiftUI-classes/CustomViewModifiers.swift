@@ -22,9 +22,20 @@ struct FullBackgroundStack: ViewModifier {
 }
 
 struct BackgroundStack: ViewModifier {
+    @ObservedObject var appState: AppState
+    let backPage: Page?
+    
     func body(content: Content) -> some View {
         content
             .frame(width: UIScreen.screenWidth, alignment: .top)
+            .gesture(DragGesture(minimumDistance: 150, coordinateSpace: .local)
+                        .onEnded({ value in
+                if backPage != nil {
+                    if value.translation.width > 0 {
+                        appState.inappState.page = backPage!
+                    }
+                }
+            }))
     }
 }
 

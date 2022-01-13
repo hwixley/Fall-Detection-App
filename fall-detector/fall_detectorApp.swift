@@ -9,13 +9,13 @@ import SwiftUI
 
 struct InAppState {
     var page: Page
-    var lastTab: Int
+    var tab: Int
     var connection: Connection
     var user: User? = nil
     
-    init(page: Page, lastTab: Int, connection: Connection, user: User? = nil) {
+    init(page: Page, tab: Int, connection: Connection, user: User? = nil) {
         self.page = page
-        self.lastTab = lastTab
+        self.tab = tab
         self.connection = connection
         self.user = user
     }
@@ -65,7 +65,7 @@ struct Person {
 }
 
 class AppState: ObservableObject {
-    @Published var inappState: InAppState = InAppState(page: .entry, lastTab: 0, connection: .disconnected, user: nil)
+    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected)
     
     init(inappState: InAppState) {
         self.inappState = inappState
@@ -74,7 +74,7 @@ class AppState: ObservableObject {
 
 @main
 struct fall_detectorApp: App {
-    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, lastTab: 0, connection: .disconnected, user: nil))
+    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, connection: .disconnected))
     
     var body: some Scene {
         WindowGroup {

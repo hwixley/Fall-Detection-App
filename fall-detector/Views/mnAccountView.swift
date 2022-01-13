@@ -19,7 +19,7 @@ struct mnAccountView: View {
                 }
                 .modifier(NavigationBarStyle(title: "Account", page: .main, hideBackButton: false, appState: appState))
             }
-            .modifier(BackgroundStack())
+            .modifier(BackgroundStack(appState: appState, backPage: .main))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

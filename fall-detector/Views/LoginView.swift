@@ -42,7 +42,7 @@ struct LoginView: View {
                 }
                 .modifier(NavigationBarStyle(title: "Log in", page: .entry, hideBackButton: false, appState: appState))
             }
-            .modifier(BackgroundStack())
+            .modifier(BackgroundStack(appState: appState, backPage: .entry))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

@@ -16,7 +16,7 @@ struct MenuView: View {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 VStack(spacing: 30) {
                     Button {
-                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.tab = 2
                         self.appState.inappState.page = .account
                     } label: {
                         MainButton(title: "Account", image: "person.crop.circle")
@@ -24,7 +24,7 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.tab = 2
                         self.appState.inappState.page = .about
                     } label: {
                         MainButton(title: "About", image: "info.circle")
@@ -32,7 +32,7 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.tab = 2
                         self.appState.inappState.page = .help
                     } label: {
                         MainButton(title: "Help", image: "questionmark.circle")
@@ -40,7 +40,7 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.tab = 2
                         self.appState.inappState.page = .settings
                     } label: {
                         MainButton(title: "Settings", image: "gear")
@@ -48,7 +48,7 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     
                     Button {
-                        self.appState.inappState.lastTab = 2
+                        self.appState.inappState.tab = 2
                         self.appState.inappState.page = .entry
                     } label: {
                         MainButton(title: "Log Out", image: "figure.walk")
@@ -58,7 +58,7 @@ struct MenuView: View {
                 .accentColor(MyColours.p0)
                 .modifier(NavigationBarStyle(title: "Menu", page: .entry, hideBackButton: true, appState: appState))
             }
-            .modifier(BackgroundStack())
+            .modifier(BackgroundStack(appState: appState, backPage: nil))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

@@ -21,7 +21,7 @@ struct HomeView: View {
                 }
                 .padding(.all, 10)
             }
-            .modifier(BackgroundStack())
+            .modifier(BackgroundStack(appState: appState, backPage: nil))
             .modifier(NavigationBarStyle(title: "Home", page: .entry, hideBackButton: true, appState: appState))
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -31,6 +31,6 @@ struct HomeView: View {
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView()
-            .environmentObject(AppState(inappState: InAppState(page: .main, lastTab: 0, connection: .disconnected, user: nil)))
+            .environmentObject(AppState(inappState: InAppState(page: .main, tab: 0, connection: .disconnected, user: nil)))
     }
 }
