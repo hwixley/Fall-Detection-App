@@ -123,11 +123,11 @@ struct ConnectionView: View {
                 }) {
                     SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
                 }
-                .buttonStyle(ClassicButtonStyle(useGradient: true))
+                .buttonStyle(ClassicButtonStyle(useGradient: false, colour: MyColours.gp0))
             }
         }
         .frame(width: UIScreen.screenWidth - 20)
         .modifier(VPadding(pad: 10))
-        .background(MyColours.b2)
+        .background(MyColours.b1)
     }
 }
