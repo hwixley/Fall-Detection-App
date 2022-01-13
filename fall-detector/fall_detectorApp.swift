@@ -74,7 +74,11 @@ class AppState: ObservableObject {
 
 @main
 struct fall_detectorApp: App {
-    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, connection: .disconnected))
+    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, connection: .connected))
+    
+    init() {
+        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
+    }
     
     var body: some Scene {
         WindowGroup {

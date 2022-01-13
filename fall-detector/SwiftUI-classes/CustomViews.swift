@@ -131,3 +131,40 @@ struct ConnectionView: View {
         .background(MyColours.b1)
     }
 }
+
+struct DetectorView: View {
+    @ObservedObject var appState: AppState
+    @State private var detectionOn = true
+    @State private var showAlert = false
+    
+    var body: some View {
+        VStack(spacing: 30) {
+            Toggle(isOn: $detectionOn) {
+                Label("Fall detection is " + (detectionOn ? "ON" : "OFF"), systemImage: "waveform.path.ecg")
+            }
+            .onChange(of: detectionOn, perform: { value in
+                if !value {
+                    self.showAlert = true
+                }
+            })
+            .alert("Are you sure you want to turn off fall detection?", isPresented: $showAlert) {
+                Button("Yes", role: .destructive) {
+                    self.detectionOn = false
+                }
+                .modifier(ClassicButtonText())
+                Button("No, cancel", role: .cancel) {
+                    self.showAlert = false
+                    self.detectionOn = true
+                }
+                .modifier(ClassicButtonText())
+            }
+            .labelStyle(CustomLabelStyle())
+            .modifier(DefaultText(size: 30))
+            .modifier(HPadding(pad: 10))
+            .tint(MyColours.p0)
+        }
+        .frame(width: UIScreen.screenWidth - 20, height: 100)
+        .modifier(VPadding(pad: 10))
+        .background(MyColours.b1)
+    }
+}

@@ -87,3 +87,15 @@ struct DefaultTextfieldStyle: TextFieldStyle {
             ).padding(.trailing, 10)
     }
 }
+
+
+//MARK: Labels
+
+struct CustomLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.icon
+            configuration.title
+        }
+    }
+}

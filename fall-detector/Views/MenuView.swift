@@ -11,10 +11,6 @@ struct MenuView: View {
     @EnvironmentObject var appState: AppState
     @State private var showLogoutAlert = false
     
-    init() {
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
-    }
-    
     var body: some View {
         NavigationView {
             ZStack(alignment: .center) {

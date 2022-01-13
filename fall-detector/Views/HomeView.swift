@@ -18,6 +18,11 @@ struct HomeView: View {
                 VStack {
                     ConnectionView(appState: self.appState)
                         .cornerRadius(20)
+                    
+                    if self.appState.inappState.connection == .connected {
+                        DetectorView(appState: self.appState)
+                            .cornerRadius(20)
+                    }
                 }
                 .padding(.all, 10)
             }
