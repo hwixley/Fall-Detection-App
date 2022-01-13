@@ -11,6 +11,10 @@ struct MenuView: View {
     @EnvironmentObject var appState: AppState
     @State private var showLogoutAlert = false
     
+    init() {
+        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
+    }
+    
     var body: some View {
         NavigationView {
             ZStack(alignment: .center) {
@@ -59,9 +63,11 @@ struct MenuView: View {
                             self.appState.inappState.tab = 2
                             self.appState.inappState.page = .entry
                         }
+                        .modifier(ClassicButtonText())
                         Button("No, cancel", role: .cancel) {
                             showLogoutAlert = false
                         }
+                        .modifier(ClassicButtonText())
                     }
                 }
                 .accentColor(MyColours.p0)
