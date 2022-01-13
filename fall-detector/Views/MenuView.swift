@@ -56,7 +56,7 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     .alert("Are you sure you want to log out?", isPresented: $showLogoutAlert) {
                         Button("Yes", role: .destructive) {
-                            self.appState.inappState = InAppState(page: .entry, tab: 0, connection: .disconnected)
+                            self.appState.inappState = InAppState(page: .entry, tab: 0, connection: .disconnected, fallDetection: true)
                         }
                         .modifier(ClassicButtonText())
                         Button("No, cancel", role: .cancel) {

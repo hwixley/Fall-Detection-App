@@ -11,12 +11,14 @@ struct InAppState {
     var page: Page
     var tab: Int
     var connection: Connection
+    var fallDetection: Bool
     var user: User? = nil
     
-    init(page: Page, tab: Int, connection: Connection, user: User? = nil) {
+    init(page: Page, tab: Int, connection: Connection, fallDetection: Bool, user: User? = nil) {
         self.page = page
         self.tab = tab
         self.connection = connection
+        self.fallDetection = fallDetection
         self.user = user
     }
 }
@@ -65,7 +67,7 @@ struct Person {
 }
 
 class AppState: ObservableObject {
-    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected)
+    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected, fallDetection: true)
     
     init(inappState: InAppState) {
         self.inappState = inappState
@@ -74,7 +76,7 @@ class AppState: ObservableObject {
 
 @main
 struct fall_detectorApp: App {
-    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, connection: .connected))
+    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, connection: .connected, fallDetection: true))
     
     init() {
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
