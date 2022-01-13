@@ -91,17 +91,23 @@ struct ConnectionView: View {
     @ObservedObject var appState: AppState
     
     var body: some View {
-        VStack {
+        VStack(spacing: 15) {
             let connection = self.appState.inappState.connection
             let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
             
+            Text("Connection Status:")
+                .modifier(DefaultText(size: 25))
+                .multilineTextAlignment(.center)
+            
+            Divider()
+            
             Label(self.appState.inappState.connection.rawValue, systemImage: image)
-                .modifier(ClassicText(height: self.appState.inappState.connection == .searching ? 50 : 90))
-                .padding(.top, self.appState.inappState.connection == .searching ? 20 : 0)
+                .modifier(DefaultText(size: 22))
+                .multilineTextAlignment(.center)
             
             if connection == .searching {
                 ProgressView()
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
             } else {
                 Button(action: {
                     self.appState.inappState.connection = self.appState.inappState.connection == .connected ? .disconnected : (self.appState.inappState.connection == .disconnected || self.appState.inappState.connection == .retry) ? .searching : .connected
