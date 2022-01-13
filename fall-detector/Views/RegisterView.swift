@@ -23,9 +23,9 @@ struct RegisterView: View {
                         VStack(spacing: 50) {
                             Text("")
                             Text("●")
-                                .foregroundColor(password1 != password2 ? .red : password1 == "" ? .white : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) ? .green : .red)
+                                .foregroundColor(password1 == "" ? .white : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) && password1 == password2 ? .green : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) ? .orange : .red)
                             Text("●")
-                                .foregroundColor(password1 != password2 ? .red : password1 == "" ? .white : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) ? .green : .red)
+                                .foregroundColor(password2 == "" ? .white : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) && password1 == password2 ? .green : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password2) ? .orange : .red)
                         }
                         .padding(.leading, 10)
                         
@@ -39,7 +39,7 @@ struct RegisterView: View {
                     
                     Button(action: {
                         if password1 == password2 && NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) {
-                            appState.inappState.page = .main
+                            self.appState.inappState.page = .main
                         }
                     }) {
                         MainButton(title: "Register", image: "")
