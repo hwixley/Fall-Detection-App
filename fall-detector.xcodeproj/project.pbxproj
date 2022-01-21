@@ -18,6 +18,8 @@
 		D05879C4277F381500427BAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D05879C3277F381500427BAB /* Assets.xcassets */; };
 		D05879C7277F381500427BAB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D05879C6277F381500427BAB /* Preview Assets.xcassets */; };
 		D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DD277F6B7F00427BAB /* LoginView.swift */; };
+		D0BCE4B6279B1C5D0052CC9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */; };
+		D0BCE4B8279B1D8B0052CC9B /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B7279B1D8B0052CC9B /* Podfile */; };
 		D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CD92780B43D00C9D1ED /* CustomViews.swift */; };
 		D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */; };
 		D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */; };
@@ -27,9 +29,13 @@
 		D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CE52781C98F00C9D1ED /* MenuView.swift */; };
 		D0F7AAE6279AB3B700611182 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F7AAE5279AB3B700611182 /* AppState.swift */; };
 		D0F7AAE8279AB42000611182 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F7AAE7279AB42000611182 /* Recording.swift */; };
+		EDCF7D984D4E70346EC6EC72 /* Pods_fall_detector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1CC234839CDF952A97D80C3 /* Pods_fall_detector.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		91C0FD9856791700A92AE0ED /* Pods-fall-detector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fall-detector.release.xcconfig"; path = "Target Support Files/Pods-fall-detector/Pods-fall-detector.release.xcconfig"; sourceTree = "<group>"; };
+		A1CC234839CDF952A97D80C3 /* Pods_fall_detector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_fall_detector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCD9D5F60737BDB4B8E40026 /* Pods-fall-detector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-fall-detector.debug.xcconfig"; path = "Target Support Files/Pods-fall-detector/Pods-fall-detector.debug.xcconfig"; sourceTree = "<group>"; };
 		D00E76592786F88E006263CB /* mnAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnAccountView.swift; sourceTree = "<group>"; };
 		D00E765B2786F897006263CB /* mnAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnAboutView.swift; sourceTree = "<group>"; };
 		D00E765D2786F8A0006263CB /* mnHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnHelpView.swift; sourceTree = "<group>"; };
@@ -43,6 +49,8 @@
 		D05879C3277F381500427BAB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D05879C6277F381500427BAB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D05879DD277F6B7F00427BAB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D0BCE4B7279B1D8B0052CC9B /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		D0C66CD92780B43D00C9D1ED /* CustomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewModifiers.swift; sourceTree = "<group>"; };
 		D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyles.swift; sourceTree = "<group>"; };
@@ -59,12 +67,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDCF7D984D4E70346EC6EC72 /* Pods_fall_detector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		517F5E361C1F34DD24304ECE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BCD9D5F60737BDB4B8E40026 /* Pods-fall-detector.debug.xcconfig */,
+				91C0FD9856791700A92AE0ED /* Pods-fall-detector.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		D04BCF1E278090AE009E81A7 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
@@ -76,8 +95,11 @@
 		D05879B3277F381100427BAB = {
 			isa = PBXGroup;
 			children = (
+				D0BCE4B7279B1D8B0052CC9B /* Podfile */,
 				D05879BE277F381100427BAB /* fall-detector */,
 				D05879BD277F381100427BAB /* Products */,
+				517F5E361C1F34DD24304ECE /* Pods */,
+				F3623BAB2C5D18C499EFFB02 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +114,7 @@
 		D05879BE277F381100427BAB /* fall-detector */ = {
 			isa = PBXGroup;
 			children = (
+				D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */,
 				D0F7AAE4279AB39500611182 /* DataObjects */,
 				D04BCF2127809E1C009E81A7 /* Info.plist */,
 				D04BCF1E278090AE009E81A7 /* Constants */,
@@ -149,6 +172,14 @@
 			path = DataObjects;
 			sourceTree = "<group>";
 		};
+		F3623BAB2C5D18C499EFFB02 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A1CC234839CDF952A97D80C3 /* Pods_fall_detector.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -156,9 +187,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D05879CA277F381500427BAB /* Build configuration list for PBXNativeTarget "fall-detector" */;
 			buildPhases = (
+				2C4AF52D26E9D4D737E3F75D /* [CP] Check Pods Manifest.lock */,
 				D05879B8277F381100427BAB /* Sources */,
 				D05879B9277F381100427BAB /* Frameworks */,
 				D05879BA277F381100427BAB /* Resources */,
+				AD8D7DFE915B6DA39DBA5B67 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -209,10 +242,54 @@
 			files = (
 				D05879C7277F381500427BAB /* Preview Assets.xcassets in Resources */,
 				D05879C4277F381500427BAB /* Assets.xcassets in Resources */,
+				D0BCE4B8279B1D8B0052CC9B /* Podfile in Resources */,
+				D0BCE4B6279B1C5D0052CC9B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2C4AF52D26E9D4D737E3F75D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-fall-detector-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AD8D7DFE915B6DA39DBA5B67 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-fall-detector/Pods-fall-detector-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-fall-detector/Pods-fall-detector-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-fall-detector/Pods-fall-detector-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D05879B8277F381100427BAB /* Sources */ = {
@@ -361,6 +438,7 @@
 		};
 		D05879CB277F381500427BAB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCD9D5F60737BDB4B8E40026 /* Pods-fall-detector.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -393,6 +471,7 @@
 		};
 		D05879CC277F381500427BAB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 91C0FD9856791700A92AE0ED /* Pods-fall-detector.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
