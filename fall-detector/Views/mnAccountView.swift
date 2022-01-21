@@ -20,9 +20,9 @@ struct mnAccountView: View {
                         
                         Divider()
                         
-                        Text("Name: \(appState.inappState.user!.info.name)")
-                        Text("Phone number: \(appState.inappState.user!.info.phone)")
-                        Text("Email: \(appState.inappState.user!.info.email)")
+                        Text("Name: \(appState.inappState.user!.name)")
+                        Text("Phone number: \(appState.inappState.user!.phone)")
+                        Text("Email: \(appState.inappState.user!.email)")
                         
                         Divider()
                         
