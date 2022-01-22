@@ -33,8 +33,7 @@ struct LoginView: View {
                                     if err != nil {
                                         return
                                     } else if authDataResult != nil {
-                                        MyData.user = initUser(authDataResult: authDataResult!)
-                                        if MyData.user != nil {
+                                        if loginUser(authDataResult: authDataResult!) {
                                             appState.inappState.page = .main
                                         }
                                     }

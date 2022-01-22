@@ -9,18 +9,19 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
-func initUser(authDataResult: AuthDataResult) -> User? {
-    var user: User? = nil
-
+func loginUser(authDataResult: AuthDataResult) -> Bool {
+    var success = false
+    
     Firestore.firestore().collection("users").document(authDataResult.user.uid).getDocument { docSnapshot, err in
         if err != nil {
         } else if docSnapshot != nil && docSnapshot!.exists && docSnapshot!.data() != nil {
             let ddata = docSnapshot!.data()!
             
-            user = User(id: authDataResult.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, phone: ddata["phone"] as! String, age: ddata["age"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: getContacts(id: authDataResult.user.uid))
+            MyData.user = User(id: authDataResult.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, phone: ddata["phone"] as! String, age: ddata["age"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: getContacts(id: authDataResult.user.uid))
+            success = true
         }
     }
-    return user
+    return success
 }
 
 func getContacts(id: String) -> [Person] {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 struct InAppState {
     var page: Page
