@@ -20,6 +20,9 @@
 		D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DD277F6B7F00427BAB /* LoginView.swift */; };
 		D0BCE4B6279B1C5D0052CC9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */; };
 		D0BCE4B8279B1D8B0052CC9B /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B7279B1D8B0052CC9B /* Podfile */; };
+		D0BCE4BA279C17330052CC9B /* DataConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4B9279C17330052CC9B /* DataConstants.swift */; };
+		D0BCE4BD279C180F0052CC9B /* TextHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4BC279C180F0052CC9B /* TextHandling.swift */; };
+		D0BCE4BF279C19B30052CC9B /* FirebaseHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4BE279C19B30052CC9B /* FirebaseHandling.swift */; };
 		D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CD92780B43D00C9D1ED /* CustomViews.swift */; };
 		D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */; };
 		D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */; };
@@ -51,6 +54,9 @@
 		D05879DD277F6B7F00427BAB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0BCE4B7279B1D8B0052CC9B /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		D0BCE4B9279C17330052CC9B /* DataConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConstants.swift; sourceTree = "<group>"; };
+		D0BCE4BC279C180F0052CC9B /* TextHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextHandling.swift; sourceTree = "<group>"; };
+		D0BCE4BE279C19B30052CC9B /* FirebaseHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHandling.swift; sourceTree = "<group>"; };
 		D0C66CD92780B43D00C9D1ED /* CustomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewModifiers.swift; sourceTree = "<group>"; };
 		D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyles.swift; sourceTree = "<group>"; };
@@ -80,7 +86,6 @@
 				BCD9D5F60737BDB4B8E40026 /* Pods-fall-detector.debug.xcconfig */,
 				91C0FD9856791700A92AE0ED /* Pods-fall-detector.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -88,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				D04BCF1F278090C0009E81A7 /* FormattingConstants.swift */,
+				D0BCE4B9279C17330052CC9B /* DataConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -114,6 +120,7 @@
 		D05879BE277F381100427BAB /* fall-detector */ = {
 			isa = PBXGroup;
 			children = (
+				D0BCE4BB279C17FC0052CC9B /* Functions */,
 				D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */,
 				D0F7AAE4279AB39500611182 /* DataObjects */,
 				D04BCF2127809E1C009E81A7 /* Info.plist */,
@@ -161,6 +168,15 @@
 				D00E765F2786F8AD006263CB /* mnSettingsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		D0BCE4BB279C17FC0052CC9B /* Functions */ = {
+			isa = PBXGroup;
+			children = (
+				D0BCE4BC279C180F0052CC9B /* TextHandling.swift */,
+				D0BCE4BE279C19B30052CC9B /* FirebaseHandling.swift */,
+			);
+			path = Functions;
 			sourceTree = "<group>";
 		};
 		D0F7AAE4279AB39500611182 /* DataObjects */ = {
@@ -299,6 +315,8 @@
 				D0C66CE42781C98800C9D1ED /* StatsView.swift in Sources */,
 				D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */,
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
+				D0BCE4BF279C19B30052CC9B /* FirebaseHandling.swift in Sources */,
+				D0BCE4BD279C180F0052CC9B /* TextHandling.swift in Sources */,
 				D00E765C2786F897006263CB /* mnAboutView.swift in Sources */,
 				D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */,
 				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
@@ -312,6 +330,7 @@
 				D0F7AAE8279AB42000611182 /* Recording.swift in Sources */,
 				D00E765A2786F88E006263CB /* mnAccountView.swift in Sources */,
 				D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */,
+				D0BCE4BA279C17330052CC9B /* DataConstants.swift in Sources */,
 				D0C66CE02781181200C9D1ED /* MainView.swift in Sources */,
 				D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */,
 			);

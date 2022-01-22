@@ -23,9 +23,9 @@ struct RegisterView: View {
                         VStack(spacing: 50) {
                             Text("")
                             Text("●")
-                                .foregroundColor(password1 == "" ? .white : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) && password1 == password2 ? .green : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) ? .orange : .red)
+                                .foregroundColor(password1 == "" ? .white : isValidPass(password1) && password1 == password2 ? .green : isValidPass(password1) ? .orange : .red)
                             Text("●")
-                                .foregroundColor(password2 == "" ? .white : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) && password1 == password2 ? .green : NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password2) ? .orange : .red)
+                                .foregroundColor(password2 == "" ? .white : isValidPass(password1) && password1 == password2 ? .green : isValidPass(password2) ? .orange : .red)
                         }
                         .padding(.leading, 10)
                         
@@ -38,7 +38,7 @@ struct RegisterView: View {
                     .padding(.top, 10)
                     
                     Button(action: {
-                        if password1 == password2 && NSPredicate(format: "SELF MATCHES %@ ", "^(?=.*[0-9]).{8,}$").evaluate(with: password1) {
+                        if isValidEmail(email) && password1 == password2 && isValidPass(password1) {
                             self.appState.inappState.page = .main
                         }
                     }) {
