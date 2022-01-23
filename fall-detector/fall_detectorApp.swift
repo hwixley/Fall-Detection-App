@@ -10,7 +10,7 @@ import Firebase
 
 @main
 struct fall_detectorApp: App {
-    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, regSection: 0, connection: .connected, fallDetection: true))
+    @ObservedObject var appState = AppState(inappState: InAppState(connection: .connected))
     
     init() {
         FirebaseApp.configure()

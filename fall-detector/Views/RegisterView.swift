@@ -20,7 +20,6 @@ struct RegisterView: View {
     @State var email: String = ""
     @State var password1: String = ""
     @State var password2: String = ""
-    @State var showSpinner = false
     
     var body: some View {
         NavigationView {
@@ -93,25 +92,29 @@ struct RegisterView: View {
                             })
                         }
                         
-                        if showSpinner {
+                        if appState.inappState.showSpinner {
                             ProgressView()
                         }
                         
                         Button(action: {
+                            appState.inappState.showSpinner = true
+                            
                             if isValidEmail(email) && password1 == password2 && isValidPass(password1) {
                                 let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
                                 
                                 createAccount(user: user, completion: { success in
                                     if success {
+                                        appState.inappState.showSpinner = false
                                         appState.inappState.page = .main
                                     }
                                 })
                             }
+                            appState.inappState.showSpinner = false
                         }) {
                             MainButton(title: "Register", image: "")
                         }
                         .buttonStyle(ClassicButtonStyle(useGradient: true))
-                        .disabled(showSpinner)
+                        .isHidden(appState.inappState.showSpinner)
                     }
                 }
                 .modifier(NavigationBarStyle(title: "Register", page: .entry, hideBackButton: false, appState: appState))
