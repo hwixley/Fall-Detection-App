@@ -8,11 +8,12 @@
 import Foundation
 
 struct InAppState {
-    var page: Page
-    var tab: Int
-    var regSection: Int
-    var connection: Connection
-    var fallDetection: Bool
+    var page: Page = .entry
+    var tab: Int = 0
+    var showSpinner: Bool = false
+    var regSection: Int = 0
+    var connection: Connection = .disconnected
+    var fallDetection: Bool = true
     var user: User? = nil
 }
 

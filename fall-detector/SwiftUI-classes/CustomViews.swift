@@ -167,3 +167,13 @@ struct DetectorView: View {
         .background(MyColours.b1)
     }
 }
+
+extension View {
+    @ViewBuilder func isHidden(_ hidden: Bool, remove: Bool = false) -> some View {
+        if hidden && !remove {
+            self.hidden()
+        } else {
+            self
+        }
+    }
+}

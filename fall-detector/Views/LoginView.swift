@@ -23,16 +23,24 @@ struct LoginView: View {
                         SecureTextfield(title: "Password", labelWidth: 90, output: $password)
                     }
                     .padding(.top, 10)
+
+                    if appState.inappState.showSpinner {
+                        ProgressView()
+                    }
                     
                     VStack(spacing: 20) {
                         Button(action: {
+                            appState.inappState.showSpinner = true
+                            
                             if isValidEmail(email) && isValidPass(password) {
                                 loginUser(email: email, password: password) { success in
                                     if success {
+                                        appState.inappState.showSpinner = false
                                         appState.inappState.page = .main
                                     }
                                 }
                             }
+                            appState.inappState.showSpinner = true
                         }) {
                             MainButton(title: "Log in", image: "")
                         }
@@ -45,6 +53,7 @@ struct LoginView: View {
                         }
                         .buttonStyle(ClassicButtonStyle(useGradient: true))
                     }
+                    .isHidden(appState.inappState.showSpinner)
                 }
                 .modifier(NavigationBarStyle(title: "Log in", page: .entry, hideBackButton: false, appState: appState))
             }

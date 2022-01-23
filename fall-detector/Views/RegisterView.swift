@@ -20,6 +20,7 @@ struct RegisterView: View {
     @State var email: String = ""
     @State var password1: String = ""
     @State var password2: String = ""
+    @State var showSpinner = false
     
     var body: some View {
         NavigationView {
@@ -41,8 +42,8 @@ struct RegisterView: View {
                                     }
                                     .tint(MyColours.p0)
                                 }
-                                Textfield(title: "*Height", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 90, output: $height)
-                                Textfield(title: "*Weight", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 90, output: $weight)
+                                Textfield(title: "*Height (cm)", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 90, output: $height)
+                                Textfield(title: "*Weight (kg)", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 90, output: $weight)
                                 HStack(spacing: 0) {
                                     Text("*Gender")
                                         .modifier(LabelText())
@@ -92,9 +93,13 @@ struct RegisterView: View {
                             })
                         }
                         
+                        if showSpinner {
+                            ProgressView()
+                        }
+                        
                         Button(action: {
                             if isValidEmail(email) && password1 == password2 && isValidPass(password1) {
-                                let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: yob, height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
+                                let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
                                 
                                 createAccount(user: user, completion: { success in
                                     if success {
@@ -106,6 +111,7 @@ struct RegisterView: View {
                             MainButton(title: "Register", image: "")
                         }
                         .buttonStyle(ClassicButtonStyle(useGradient: true))
+                        .disabled(showSpinner)
                     }
                 }
                 .modifier(NavigationBarStyle(title: "Register", page: .entry, hideBackButton: false, appState: appState))
