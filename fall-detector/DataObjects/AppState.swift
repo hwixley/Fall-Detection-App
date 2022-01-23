@@ -39,8 +39,9 @@ struct User {
     var id: String
     var name: String
     var email: String
+    var password: String
     var phone: String
-    var age: Int
+    var yob: Int
     var height: Int
     var weight: Int
     var is_female: Bool

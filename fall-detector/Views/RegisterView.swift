@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct RegisterView: View {
     @EnvironmentObject var appState: AppState
@@ -93,7 +94,13 @@ struct RegisterView: View {
                         
                         Button(action: {
                             if isValidEmail(email) && password1 == password2 && isValidPass(password1) {
-                                self.appState.inappState.page = .main
+                                let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: yob, height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
+                                
+                                createAccount(user: user, completion: { success in
+                                    if success {
+                                        appState.inappState.page = .main
+                                    }
+                                })
                             }
                         }) {
                             MainButton(title: "Register", image: "")
@@ -105,6 +112,9 @@ struct RegisterView: View {
                 .padding(.bottom, 10)
             }
             .modifier(BackgroundStack(appState: appState, backPage: appState.inappState.regSection == 0 ? .entry : .register))
+        }
+        .onDisappear {
+            appState.inappState.regSection = 0
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

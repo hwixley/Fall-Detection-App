@@ -8,20 +8,46 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import RxSwift
 
-func loginUser(authDataResult: AuthDataResult) -> Bool {
-    var success = false
+func createAccount(user: User, completion: @escaping ((Bool) -> Void)) {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     
-    Firestore.firestore().collection("users").document(authDataResult.user.uid).getDocument { docSnapshot, err in
+    Auth.auth().createUser(withEmail: user.email, password: user.password) { authDataResult, err in
         if err != nil {
-        } else if docSnapshot != nil && docSnapshot!.exists && docSnapshot!.data() != nil {
-            let ddata = docSnapshot!.data()!
-            
-            MyData.user = User(id: authDataResult.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, phone: ddata["phone"] as! String, age: ddata["age"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: getContacts(id: authDataResult.user.uid))
-            success = true
+        } else if authDataResult != nil {
+            Firestore.firestore().collection("users").document(authDataResult!.user.uid).setData(["name": user.name, "email": user.email, "phone": user.phone, "yob": user.yob, "height": user.height, "weight": user.weight, "is_female": user.is_female, "medical_conditions": user.medical_conditions]) { (err) in
+                if err != nil {
+                    completion(false)
+                } else {
+                    completion(true)
+                }
+            }
         }
     }
-    return success
+}
+
+func loginUser(email: String, password: String, completion: @escaping ((Bool) -> Void)) {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    
+    Auth.auth().signIn(withEmail: email, password: password) { authDataResult, err in
+        if err != nil {
+            completion(false)
+        } else if authDataResult != nil {
+            Firestore.firestore().collection("users").document(authDataResult!.user.uid).getDocument { docSnapshot, err in
+                if err != nil {
+                    completion(false)
+                } else if docSnapshot != nil && docSnapshot!.exists && docSnapshot!.data() != nil {
+                    let ddata = docSnapshot!.data()!
+                    
+                    MyData.user = User(id: authDataResult!.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, password: password, phone: ddata["phone"] as! String, yob: ddata["yob"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: getContacts(id: authDataResult!.user.uid))
+                    completion(true)
+                } else {
+                    completion(false)
+                }
+            }
+        }
+    }
 }
 
 func getContacts(id: String) -> [Person] {

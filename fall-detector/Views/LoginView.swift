@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseAuth
-import FirebaseFirestore
 
 struct LoginView: View {
     @EnvironmentObject var appState: AppState
@@ -29,13 +27,9 @@ struct LoginView: View {
                     VStack(spacing: 20) {
                         Button(action: {
                             if isValidEmail(email) && isValidPass(password) {
-                                Auth.auth().signIn(withEmail: email, password: password) { authDataResult, err in
-                                    if err != nil {
-                                        return
-                                    } else if authDataResult != nil {
-                                        if loginUser(authDataResult: authDataResult!) {
-                                            appState.inappState.page = .main
-                                        }
+                                loginUser(email: email, password: password) { success in
+                                    if success {
+                                        appState.inappState.page = .main
                                     }
                                 }
                             }

@@ -32,7 +32,11 @@ struct BackgroundStack: ViewModifier {
                         .onEnded({ value in
                 if backPage != nil {
                     if value.translation.width > 0 {
-                        appState.inappState.page = backPage!
+                        if appState.inappState.page == .register && appState.inappState.regSection == 1 {
+                            appState.inappState.regSection = 0
+                        } else {
+                            appState.inappState.page = backPage!
+                        }
                     }
                 }
             }))
