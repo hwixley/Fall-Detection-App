@@ -10,12 +10,13 @@ import Firebase
 
 @main
 struct fall_detectorApp: App {
-    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, connection: .connected, fallDetection: true))
+    @ObservedObject var appState = AppState(inappState: InAppState(page: .entry, tab: 0, regSection: 0, connection: .connected, fallDetection: true))
     
     init() {
         FirebaseApp.configure()
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(MyColours.p0)
+        UIPickerView.appearance().tintColor = UIColor(MyColours.p0)
     }
     
     var body: some Scene {

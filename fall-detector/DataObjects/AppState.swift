@@ -10,6 +10,7 @@ import Foundation
 struct InAppState {
     var page: Page
     var tab: Int
+    var regSection: Int
     var connection: Connection
     var fallDetection: Bool
     var user: User? = nil
@@ -55,7 +56,7 @@ struct Person {
 }
 
 class AppState: ObservableObject {
-    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected, fallDetection: true)
+    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, regSection: 0, connection: .disconnected, fallDetection: true)
     
     init(inappState: InAppState) {
         self.inappState = inappState

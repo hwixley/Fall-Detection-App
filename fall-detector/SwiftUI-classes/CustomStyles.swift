@@ -46,7 +46,11 @@ struct NavigationBarStyle: ViewModifier {
             .navigationBarItems(leading:
                 Button(action: {
                 if !hideBackButton {
-                    appState.inappState.page = page
+                    if appState.inappState.page == .register && appState.inappState.regSection == 1 {
+                        appState.inappState.regSection = 0
+                    } else {
+                        appState.inappState.page = page
+                    }
                 }
                 }) {
                     if !hideBackButton {
