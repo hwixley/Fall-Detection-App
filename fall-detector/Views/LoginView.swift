@@ -19,15 +19,13 @@ struct LoginView: View {
                 MyColours.b1.edgesIgnoringSafeArea(.all)
                 VStack {
                     Form {
-                        Section(header: Text("Login Details")) {
+                        Section(header: Text("Account Details")) {
                             Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
                             SecureTextfield(title: "Password", labelWidth: 90, output: $password)
                         }
                     }
                     
                     Button(action: {
-                        appState.inappState.showSpinner = true
-                        
                         if isValidEmail(email) && isValidPass(password) {
                             loginUser(email: email, password: password) { success in
                                 if success {
@@ -35,7 +33,6 @@ struct LoginView: View {
                                 }
                             }
                         }
-                        appState.inappState.showSpinner = false
                     }) {
                         MainButton(title: "Log in", image: "")
                     }

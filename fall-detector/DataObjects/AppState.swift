@@ -11,6 +11,7 @@ struct InAppState {
     var page: Page = .entry
     var tab: Int = 0
     var showSpinner: Bool = false
+    var taskSuccess: Bool? = nil
     var regSection: Int = 0
     var connection: Connection = .disconnected
     var fallDetection: Bool = true
