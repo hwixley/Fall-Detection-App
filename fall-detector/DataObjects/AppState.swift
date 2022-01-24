@@ -20,6 +20,7 @@ struct InAppState {
 enum Page {
     case entry
     case login
+    case resetpass
     case register
     case main
     case account

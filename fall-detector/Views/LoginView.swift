@@ -17,49 +17,47 @@ struct LoginView: View {
         NavigationView {
             ZStack(alignment: .top) {
                 MyColours.b1.edgesIgnoringSafeArea(.all)
-                VStack(spacing:40) {
-                    VStack {
-                        Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
-                        SecureTextfield(title: "Password", labelWidth: 90, output: $password)
-                    }
-                    .padding(.top, 10)
-
-                    if appState.inappState.showSpinner {
-                        ProgressView()
+                VStack {
+                    Form {
+                        Section(header: Text("Login Details")) {
+                            Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
+                            SecureTextfield(title: "Password", labelWidth: 90, output: $password)
+                        }
                     }
                     
-                    VStack(spacing: 20) {
-                        Button(action: {
-                            appState.inappState.showSpinner = true
-                            
-                            if isValidEmail(email) && isValidPass(password) {
-                                loginUser(email: email, password: password) { success in
-                                    if success {
-                                        appState.inappState.showSpinner = false
-                                        appState.inappState.page = .main
-                                    }
+                    Button(action: {
+                        appState.inappState.showSpinner = true
+                        
+                        if isValidEmail(email) && isValidPass(password) {
+                            loginUser(email: email, password: password) { success in
+                                if success {
+                                    appState.inappState.page = .main
                                 }
                             }
-                            appState.inappState.showSpinner = true
-                        }) {
-                            MainButton(title: "Log in", image: "")
                         }
-                        .buttonStyle(ClassicButtonStyle(useGradient: true))
-                        
-                        Button(action: {
-                            
-                        }) {
-                            SubButton(title: "I forgot my password")
-                        }
-                        .buttonStyle(ClassicButtonStyle(useGradient: true))
+                        appState.inappState.showSpinner = false
+                    }) {
+                        MainButton(title: "Log in", image: "")
                     }
-                    .isHidden(appState.inappState.showSpinner)
+                    .buttonStyle(ClassicButtonStyle(useGradient: true))
+                    
+                    Button(action: {
+                        appState.inappState.page = .resetpass
+                    }) {
+                        SubButton(title: "I forgot my password")
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: true))
+                    
+                    Spacer()
                 }
                 .modifier(NavigationBarStyle(title: "Log in", page: .entry, hideBackButton: false, appState: appState))
             }
             .modifier(BackgroundStack(appState: appState, backPage: .entry))
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onDisappear {
+            appState.inappState.showSpinner = false
+        }
     }
 }
 

@@ -17,6 +17,7 @@ struct fall_detectorApp: App {
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(MyColours.p0)
         UIPickerView.appearance().tintColor = UIColor(MyColours.p0)
+        UIProgressView.appearance().tintColor = UIColor(MyColours.p0)
     }
     
     var body: some Scene {
@@ -27,6 +28,9 @@ struct fall_detectorApp: App {
                     .environmentObject(appState)
             case .login:
                 LoginView()
+                    .environmentObject(appState)
+            case .resetpass:
+                liForgotPasswordView()
                     .environmentObject(appState)
             case .register:
                 RegisterView()
