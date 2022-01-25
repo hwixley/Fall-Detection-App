@@ -81,3 +81,13 @@ func getContacts(id: String) -> [Person] {
     }
     return contacts
 }
+
+func updateUser(updatedFields: [AnyHashable : Any], completion: @escaping  ((Bool) -> Void)) {
+    Firestore.firestore().collection("users").document(MyData.user!.id).updateData(updatedFields) { err in
+        if err != nil {
+            completion(false)
+        } else {
+            completion(true)
+        }
+    }
+}
