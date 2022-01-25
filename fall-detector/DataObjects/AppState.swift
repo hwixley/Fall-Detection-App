@@ -15,7 +15,6 @@ struct InAppState {
     var regSection: Int = 0
     var connection: Connection = .disconnected
     var fallDetection: Bool = true
-    var user: User? = nil
 }
 
 enum Page {

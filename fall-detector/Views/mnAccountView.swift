@@ -10,39 +10,36 @@ import SwiftUI
 struct mnAccountView: View {
     @EnvironmentObject var appState: AppState
     
+    @State private var isEditing = false
+    
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 VStack(spacing:40) {
-                    if self.appState.inappState.user != nil {
-                        Text("Personal Information:")
-                        
-                        Divider()
-                        
-                        Text("Name: \(appState.inappState.user!.name)")
-                        Text("Phone number: \(appState.inappState.user!.phone)")
-                        Text("Email: \(appState.inappState.user!.email)")
-                        
-                        Divider()
-                        
-                        Text("Emergency Contacts:")
-                        
-                        Divider()
-                        
-                        let numContacts = appState.inappState.user!.contacts.count
-                        ForEach(0..<numContacts) { i in
-                            let contact = appState.inappState.user!.contacts[i]
-                            
-                            Divider()
-                            
-                            Text("Contact \(i+1):")
-                            
-                            Divider()
-                            
-                            Text("Name: \(contact.name)")
-                            Text("Phone number: \(contact.phone)")
-                            Text("Email: \(contact.email)")
+                    if MyData.user != nil {
+                        Form {
+                            Section("Account Information") {
+                                CustLabel(title: "Name:", value: MyData.user!.name)
+                                CustLabel(title: "Phone:", value: MyData.user!.phone)
+                                CustLabel(title: "Email:", value: MyData.user!.email)
+                            }
+                            Section("Emergency Contacts") {
+                                let numContacts = MyData.user!.contacts.count
+                                ForEach(0..<numContacts) { i in
+                                    let contact = MyData.user!.contacts[i]
+                                    
+                                    Divider()
+                                    
+                                    Text("Contact \(i+1):")
+                                    
+                                    Divider()
+                                    
+                                    CustLabel(title: "Name:", value: contact.name)
+                                    CustLabel(title: "Phone:", value: contact.phone)
+                                    CustLabel(title: "Email:", value: contact.email)
+                                }
+                            }
                         }
                     }
                 }

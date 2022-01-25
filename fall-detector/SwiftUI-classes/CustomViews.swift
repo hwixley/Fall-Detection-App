@@ -20,6 +20,21 @@ struct Warning : View {
     }
 }
 
+struct CustLabel : View {
+    let title: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .modifier(SubtitleText())
+                .multilineTextAlignment(.leading)
+            Text(value)
+                .modifier(LabelText())
+        }
+    }
+}
+
 
 struct Textfield : View {
     let title: String
