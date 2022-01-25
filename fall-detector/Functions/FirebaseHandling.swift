@@ -9,6 +9,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import RxSwift
+import UIKit
 
 
 func resetPassword(email: String, completion: @escaping ((Bool) -> Void)) {
@@ -35,6 +36,9 @@ func createAccount(user: User, completion: @escaping ((Bool) -> Void)) {
         if err == nil && authDataResult != nil {
             Firestore.firestore().collection("users").document(authDataResult!.user.uid).setData(["name": user.name, "email": user.email, "phone": user.phone, "yob": user.yob, "height": user.height, "weight": user.weight, "is_female": user.is_female, "medical_conditions": user.medical_conditions]) { (err) in
                 if err == nil {
+                    for c in user.contacts {
+                        Firestore.firestore().collection("users").document(authDataResult!.user.uid).collection("contacts").addDocument(data: ["name": c.name, "phone": c.phone])
+                    }
                     completion(true)
                 } else {
                     completion(false)

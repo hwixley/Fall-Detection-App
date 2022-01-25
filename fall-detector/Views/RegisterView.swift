@@ -21,14 +21,18 @@ struct RegisterView: View {
     @State var password1: String = ""
     @State var password2: String = ""
     @State var showErr = false
+    @State var contacts: [Person] = []
+    @State var newContactName = ""
+    @State var newContactPhone = ""
+    @State var showAddErr = false
     
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
                 MyColours.b1.edgesIgnoringSafeArea(.all)
                 VStack {
-                    if appState.inappState.regSection == 0 {
-                        Form {
+                    Form {
+                        if appState.inappState.regSection == 0 {
                             Section(header: Text("About You")) {
                                 Textfield(title: "*Name", contentType: UITextContentType.name, keyboardType: UIKeyboardType.asciiCapable, labelWidth: 90, output: $name)
                                 HStack(spacing: 10) {
@@ -65,21 +69,41 @@ struct RegisterView: View {
                                     Warning(text: "Please fill in all the required fields")
                                 }
                             }
-                        }
-                            
-                        Button(action: {
-                            if name != "" && height != "" && weight != "" {
-                                showErr = false
-                                appState.inappState.regSection = 1
-                            } else {
-                                showErr = true
+                        } else if appState.inappState.regSection == 1 {
+                            Section("Emergency Contacts") {
+                                if contacts.count > 0 {
+                                    List {
+                                        ForEach(contacts, id: \.self) { contact in
+                                            ContactView(contact: contact)
+                                        }
+                                        .onDelete(perform: deleteContacts)
+                                    }
+                                } else {
+                                    Warning(text: "You have no emergency contacts! Please add some so we can contact someone if you fall over")
+                                }
                             }
-                        }) {
-                            MainButton(title: "Next", image: "")
-                        }
-                        .buttonStyle(ClassicButtonStyle(useGradient: true))
-                    } else {
-                        Form {
+                            Section("Add new contact") {
+                                Textfield(title: "Name", contentType: UITextContentType.name, keyboardType: UIKeyboardType.asciiCapable, labelWidth: 70, output: $newContactName)
+                                Textfield(title: "Phone", contentType: UITextContentType.telephoneNumber, keyboardType: UIKeyboardType.numberPad, labelWidth: 70, output: $newContactPhone)
+                                
+                                if showAddErr {
+                                    Warning(text: "You must fill in both fields to add a contact")
+                                }
+                                
+                                Button(action: {
+                                    if newContactName != "" && newContactPhone != "" {
+                                        contacts.append(Person(id: "", name: newContactName, email: "", phone: newContactPhone))
+                                        newContactName = ""
+                                        newContactPhone = ""
+                                    } else {
+                                        showAddErr = true
+                                    }
+                                }) {
+                                    MainButton(title: "Add Contact", image: "phone.fill.badge.plus", color: MyColours.p0)
+                                }
+                                .buttonStyle(ClassicButtonStyle(useGradient: false))
+                            }
+                        } else {
                             Section(header: Text("Account Details"), content: {
                                 Textfield(title: "*Phone", contentType: UITextContentType.telephoneNumber, keyboardType: UIKeyboardType.phonePad, labelWidth: 90, output: $phone)
                                 Textfield(title: "*Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
@@ -102,20 +126,44 @@ struct RegisterView: View {
                                     Warning(text: "Please fill in all the required fields")
                                 }
                             })
-                        }.onDisappear {
+                            .onDisappear {
+                                showErr = false
+                            }
+                            
+                            if appState.inappState.showSpinner {
+                                ProgressView()
+                            }
+                        }
+                    }
+                    if appState.inappState.regSection == 0 {
+                        Button(action: {
+                            if name != "" && height != "" && weight != "" {
+                                showErr = false
+                                appState.inappState.regSection = 1
+                            } else {
+                                showErr = true
+                            }
+                        }) {
+                            MainButton(title: "Next", image: "")
+                        }
+                        .buttonStyle(ClassicButtonStyle(useGradient: true))
+                        
+                    } else if appState.inappState.regSection == 1 {
+                        Button(action: {
                             showErr = false
+                            appState.inappState.regSection = 2
+                        }) {
+                            MainButton(title: "Next", image: "")
                         }
+                        .buttonStyle(ClassicButtonStyle(useGradient: true))
                         
-                        if appState.inappState.showSpinner {
-                            ProgressView()
-                        }
-                        
+                    } else {
                         Button(action: {
                             appState.inappState.showSpinner = true
                             
                             if isValidEmail(email) && password1 == password2 && isValidPass(password1) {
                                 showErr = false
-                                let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
+                                let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: contacts)
                                 
                                 createAccount(user: user, completion: { success in
                                     if success {
@@ -146,6 +194,10 @@ struct RegisterView: View {
             
         }
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+    
+    private func deleteContacts(offsets: IndexSet) {
+        contacts.remove(atOffsets: offsets)
     }
 }
 
