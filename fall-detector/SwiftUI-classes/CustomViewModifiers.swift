@@ -71,10 +71,11 @@ struct VPadding: ViewModifier {
 
 struct DefaultText: ViewModifier {
     var size: CGFloat
+    var color: Color? = nil
     
     func body(content: Content) -> some View {
         content
-            .foregroundColor(textcolor)
+            .foregroundColor(color ?? textcolor)
             .font(Font.custom(fontfamily, size: size))
     }
 }
@@ -82,11 +83,12 @@ struct DefaultText: ViewModifier {
 struct ClassicText: ViewModifier {
     var height: CGFloat? = nil
     var width: CGFloat? = nil
+    var color: Color? = nil
     
     func body(content: Content) -> some View {
         content
             .modifier(HPadding(pad: 10))
-            .modifier(DefaultText(size: 25))
+            .modifier(DefaultText(size: 25, color: color))
             .frame(width: width ?? UIScreen.screenWidth - 20, height: height, alignment: .center)
             .multilineTextAlignment(.leading)
     }
@@ -94,10 +96,11 @@ struct ClassicText: ViewModifier {
 
 struct ClassicButtonText: ViewModifier {
     var width: CGFloat? = nil
+    var color: Color? = nil
     
     func body(content: Content) -> some View {
         content
-            .modifier(ClassicText(height: 70, width: width ?? UIScreen.screenWidth - 20))
+            .modifier(ClassicText(height: 70, width: width ?? UIScreen.screenWidth - 20, color: color))
             .multilineTextAlignment(.center)
     }
 }

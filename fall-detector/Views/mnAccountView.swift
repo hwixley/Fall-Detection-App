@@ -18,6 +18,10 @@ struct mnAccountView: View {
     @State var weight: String = ""
     @State var is_female = MyData.user!.is_female ? 1 : 0
     @State var phone: String = ""
+    @State var contacts = [Person(id: "", name: "Harry Potter", email: "adsfgasd", phone: "1922323462"), Person(id: "", name: "Albus Dumble", email: "jhkh", phone: "1234567890")]//MyData.user!.contacts
+    @State var newContactName = ""
+    @State var newContactPhone = ""
+    @State var showAddErr = false
     
     var body: some View {
         NavigationView {
@@ -77,27 +81,47 @@ struct mnAccountView: View {
                             }
                             Section("Emergency Contacts") {
                                 if !isEditing {
-                                    let numContacts = MyData.user!.contacts.count
+                                    let numContacts = contacts.count
                                     
                                     if numContacts > 0 {
-                                        ForEach(0..<numContacts) { i in
-                                            let contact = MyData.user!.contacts[i]
-                                            
-                                            Divider()
-                                            
-                                            Text("Contact \(i+1):")
-                                            
-                                            Divider()
-                                            
-                                            CustLabel(title: "Name:", value: contact.name)
-                                            CustLabel(title: "Phone:", value: contact.phone)
-                                            CustLabel(title: "Email:", value: contact.email)
+                                        List {
+                                            ForEach(contacts, id: \.self) { contact in
+                                                ContactView(contact: contact)
+                                            }
                                         }
                                     } else {
                                         Warning(text: "You have no emergency contacts! Please add some so we can contact someone if you fall over")
                                     }
                                 } else {
+                                    List {
+                                        ForEach(contacts, id: \.self) { contact in
+                                            ContactView(contact: contact)
+                                        }
+                                        .onDelete(perform: deleteContacts)
+                                    }
+                                }
+                            }
+                            if isEditing {
+                                Section("Add new contact") {
+                                    Textfield(title: "Name", contentType: UITextContentType.name, keyboardType: UIKeyboardType.asciiCapable, labelWidth: 70, output: $newContactName)
+                                    Textfield(title: "Phone", contentType: UITextContentType.telephoneNumber, keyboardType: UIKeyboardType.numberPad, labelWidth: 70, output: $newContactPhone)
                                     
+                                    if showAddErr {
+                                        Warning(text: "You must fill in both fields to add a contact")
+                                    }
+                                    
+                                    Button(action: {
+                                        if newContactName != "" && newContactPhone != "" {
+                                            contacts.append(Person(id: "", name: newContactName, email: "", phone: newContactPhone))
+                                            newContactName = ""
+                                            newContactPhone = ""
+                                        } else {
+                                            showAddErr = true
+                                        }
+                                    }) {
+                                        MainButton(title: "Add Contact", image: "phone.fill.badge.plus", color: MyColours.p0)
+                                    }
+                                    .buttonStyle(ClassicButtonStyle(useGradient: false))
                                 }
                             }
                         }
@@ -138,6 +162,9 @@ struct mnAccountView: View {
                                     fields["weight"] = Int(weight)!
                                     userCopy.weight = Int(weight)!
                                 }
+                                if contacts != MyData.user!.contacts {
+                                    userCopy.contacts = contacts
+                                }
                                 
                                 updateUser(updatedFields: fields) { success in
                                     if success {
@@ -175,6 +202,11 @@ struct mnAccountView: View {
         weight = ""
         is_female = MyData.user!.is_female ? 1 : 0
         phone = ""
+        contacts = MyData.user!.contacts
+    }
+    
+    private func deleteContacts(offsets: IndexSet) {
+        contacts.remove(atOffsets: offsets)
     }
 }
 

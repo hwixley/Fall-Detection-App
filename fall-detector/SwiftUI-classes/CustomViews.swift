@@ -91,14 +91,15 @@ struct SecureTextfield : View {
 struct MainButton : View {
     let title: String
     let image: String
+    var color: Color? = nil
     
     var body: some View {
         if image == "" {
             Text(title)
-                .modifier(ClassicButtonText())
+                .modifier(ClassicButtonText(color: color))
         } else {
             Label(title, systemImage: image)
-                .modifier(ClassicButtonText())
+                .modifier(ClassicButtonText(color: color))
         }
     }
 }
@@ -197,6 +198,20 @@ struct DetectorView: View {
         .frame(width: UIScreen.screenWidth - 20, height: 100)
         .modifier(VPadding(pad: 10))
         .background(MyColours.b1)
+    }
+}
+
+struct ContactView: View {
+    let contact: Person
+    
+    var body: some View {
+        HStack {
+            Text(contact.name)
+                .modifier(SubtitleText())
+                .multilineTextAlignment(.leading)
+            Label(contact.phone, systemImage: "phone.fill")
+                .modifier(LabelText())
+        }
     }
 }
 
