@@ -18,7 +18,7 @@ struct mnAccountView: View {
     @State var weight: String = ""
     @State var is_female = MyData.user!.is_female ? 1 : 0
     @State var phone: String = ""
-    @State var contacts = [Person(id: "", name: "Harry Potter", email: "adsfgasd", phone: "1922323462"), Person(id: "", name: "Albus Dumble", email: "jhkh", phone: "1234567890")]//MyData.user!.contacts
+    @State var contacts = MyData.user!.contacts
     @State var newContactName = ""
     @State var newContactPhone = ""
     @State var showAddErr = false
@@ -81,9 +81,7 @@ struct mnAccountView: View {
                             }
                             Section("Emergency Contacts") {
                                 if !isEditing {
-                                    let numContacts = contacts.count
-                                    
-                                    if numContacts > 0 {
+                                    if contacts.count > 0 {
                                         List {
                                             ForEach(contacts, id: \.self) { contact in
                                                 ContactView(contact: contact)
@@ -93,11 +91,15 @@ struct mnAccountView: View {
                                         Warning(text: "You have no emergency contacts! Please add some so we can contact someone if you fall over")
                                     }
                                 } else {
-                                    List {
-                                        ForEach(contacts, id: \.self) { contact in
-                                            ContactView(contact: contact)
+                                    if contacts.count > 0 {
+                                        List {
+                                            ForEach(contacts, id: \.self) { contact in
+                                                ContactView(contact: contact)
+                                            }
+                                            .onDelete(perform: deleteContacts)
                                         }
-                                        .onDelete(perform: deleteContacts)
+                                    } else {
+                                        Warning(text: "You have no emergency contacts! Please add some so we can contact someone if you fall over")
                                     }
                                 }
                             }
@@ -186,7 +188,7 @@ struct mnAccountView: View {
                         }
                     }
                 }
-                .modifier(NavigationBarStyle(title: "Account", page: .main, hideBackButton: false, appState: appState))
+                .modifier(NavigationBarStyle(title: isEditing ? "Edit Account" : "Account", page: .main, hideBackButton: isEditing ? true : false, appState: appState))
                 .padding(.bottom, 10)
             }
             .modifier(BackgroundStack(appState: appState, backPage: .main))
