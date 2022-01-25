@@ -12,9 +12,13 @@ struct mnAccountView: View {
     
     @State private var isEditing = false
     
-    @State private var name = ""
-    @State private var phone = ""
-    @State private var email = ""
+    @State var name: String = ""
+    @State var yob = MyData.years.firstIndex(of: MyData.user!.yob)!
+    @State var height: String = ""
+    @State var weight: String = ""
+    @State var is_female = MyData.user!.is_female ? 1 : 0
+    @State var phone: String = ""
+    @State var email: String = ""
     
     var body: some View {
         NavigationView {
@@ -29,16 +33,47 @@ struct mnAccountView: View {
                                     CustLabel(title: "Phone:", value: MyData.user!.phone)
                                     CustLabel(title: "Email:", value: MyData.user!.email)
                                 } else {
-                                    //Label
+                                    Textfield(title: "Name", contentType: UITextContentType.name, keyboardType: UIKeyboardType.asciiCapable, labelWidth: 90, placeholder: MyData.user!.name, output: $name)
+                                    Textfield(title: "Phone", contentType: UITextContentType.telephoneNumber, keyboardType: UIKeyboardType.phonePad, labelWidth: 90, placeholder: MyData.user!.phone, output: $phone)
+                                    Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, placeholder: MyData.user!.email, output: $email)
                                 }
                             }
                             Section("Biometric Data") {
                                 if !isEditing {
+                                    CustLabel(title: "Gender:", value: MyData.user!.is_female ? "Female" : "Male")
                                     CustLabel(title: "Year of Birth:", value: String(MyData.user!.yob))
                                     CustLabel(title: "Height (cm):", value: String(MyData.user!.height))
                                     CustLabel(title: "Weight (kg):", value: String(MyData.user!.weight))
                                 } else {
-                                    
+                                    HStack(spacing: 0) {
+                                        Text("Gender")
+                                            .modifier(LabelText())
+                                            .frame(width: 90, alignment: .trailing)
+                                        Picker("Gender", selection: $is_female) {
+                                            Text("Male")
+                                                .modifier(LabelText())
+                                                .tag(0)
+                                            Text("Female")
+                                                .modifier(LabelText())
+                                                .tag(1)
+                                        }
+                                        .frame(height: 30)
+                                        .modifier(HPadding(pad: 10))
+                                        .pickerStyle(SegmentedPickerStyle())
+                                    }
+                                    HStack(spacing: 10) {
+                                        Text("Year of Birth")
+                                            .modifier(LabelText())
+                                            .frame(width: 90, alignment: .trailing)
+                                        Picker(selection: $yob, label: Text("")) {
+                                            ForEach(0..<MyData.years.count) { idx in
+                                                Text(String(MyData.years[idx])).tag(idx)
+                                            }
+                                        }
+                                        .tint(MyColours.p0)
+                                    }
+                                    Textfield(title: "Height (cm)", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 90, placeholder: String(MyData.user!.height), output: $height)
+                                    Textfield(title: "Weight (kg)", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 90, placeholder: String(MyData.user!.weight), output: $weight)
                                 }
                             }
                             Section("Emergency Contacts") {
@@ -72,14 +107,23 @@ struct mnAccountView: View {
                             Button(action: {
                                 isEditing = true
                             }) {
-                                MainButton(title: "Edit", image: "")
+                                MainButton(title: "Edit", image: "pencil")
                             }
                             .buttonStyle(ClassicButtonStyle(useGradient: true))
                         } else {
                             Button(action: {
                                 
                             }) {
-                                MainButton(title: "Save Changes", image: "")
+                                MainButton(title: "Save Changes", image: "checkmark")
+                            }
+                            .buttonStyle(ClassicButtonStyle(useGradient: true))
+                            
+                            Button(action: {
+                                isEditing = false
+                                name = ""
+                                
+                            }) {
+                                MainButton(title: "Cancel", image: "trash")
                             }
                             .buttonStyle(ClassicButtonStyle(useGradient: true))
                         }

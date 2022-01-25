@@ -41,6 +41,7 @@ struct Textfield : View {
     let contentType : UITextContentType
     let keyboardType : UIKeyboardType
     let labelWidth: CGFloat
+    var placeholder: String = "Tap to enter..."
     
     @Binding var output : String
     
@@ -50,7 +51,7 @@ struct Textfield : View {
                 .modifier(LabelText())
                 .frame(width: labelWidth, alignment: .trailing)
             
-            TextField("Tap to enter...", text: $output)
+            TextField(placeholder, text: $output)
                 .onSubmit {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
@@ -105,10 +106,16 @@ struct MainButton : View {
 struct SubButton : View {
     let title: String
     var width: CGFloat? = nil
+    var image: String? = nil
     
     var body: some View {
-        Text(title)
-            .modifier(ClassicSubButtonText(width: width ?? UIScreen.screenWidth - 20))
+        if image == nil {
+            Text(title)
+                .modifier(ClassicSubButtonText(width: width ?? UIScreen.screenWidth - 20))
+        } else {
+            Label(title, systemImage: image!)
+                .modifier(ClassicSubButtonText(width: width ?? UIScreen.screenWidth - 20))
+        }
     }
 }
 
