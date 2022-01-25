@@ -12,6 +12,7 @@ struct LoginView: View {
     
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var showErr: Bool = false
     
     var body: some View {
         NavigationView {
@@ -22,16 +23,24 @@ struct LoginView: View {
                         Section(header: Text("Account Details")) {
                             Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
                             SecureTextfield(title: "Password", labelWidth: 90, output: $password)
+                            if showErr {
+                                Warning(text: "Sorry we could not seem to find an account with that email and password. Please try again.")
+                            }
                         }
                     }
                     
                     Button(action: {
                         if isValidEmail(email) && isValidPass(password) {
+                            showErr = false
                             loginUser(email: email, password: password) { success in
                                 if success {
                                     appState.inappState.page = .main
+                                } else {
+                                    showErr = true
                                 }
                             }
+                        } else {
+                            showErr = true
                         }
                     }) {
                         MainButton(title: "Log in", image: "")

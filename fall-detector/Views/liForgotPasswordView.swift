@@ -24,9 +24,9 @@ struct liForgotPasswordView: View {
                                 Textfield(title: "Email", contentType: UITextContentType.emailAddress, keyboardType: UIKeyboardType.emailAddress, labelWidth: 90, output: $email)
                                 if showErr {
                                     if appState.inappState.taskSuccess == nil {
-                                        Label("Error: please enter a valid email address", systemImage: "exclamationmark.triangle.fill")
+                                        Warning(text: "Please enter a valid email address")
                                     } else {
-                                        Label("Error: for some reason we are unable to send a password reset link to your email. Please check your internet connection and try again.", systemImage: "exclamationmark.triangle.fill")
+                                        Warning(text: "Error: for some reason we are unable to send a password reset link to your email. Please check your internet connection and try again.")
                                     }
                                 }
                             }

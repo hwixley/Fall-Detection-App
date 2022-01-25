@@ -11,6 +11,16 @@ import SwiftUI
 
 //MARK: Input fields
 
+struct Warning : View {
+    let text: String
+    
+    var body: some View {
+        Label(text, systemImage: "exclamationmark.triangle.fill")
+            .foregroundColor(Color(UIColor.systemPink))
+    }
+}
+
+
 struct Textfield : View {
     let title: String
     let contentType : UITextContentType

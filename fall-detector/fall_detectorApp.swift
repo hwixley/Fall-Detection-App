@@ -18,6 +18,7 @@ struct fall_detectorApp: App {
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(MyColours.p0)
         UIPickerView.appearance().tintColor = UIColor(MyColours.p0)
         UIProgressView.appearance().tintColor = UIColor(MyColours.p0)
+        UILabel.appearance().tintColor = UIColor(MyColours.p0)
     }
     
     var body: some Scene {

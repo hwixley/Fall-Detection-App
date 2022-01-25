@@ -20,6 +20,7 @@ struct RegisterView: View {
     @State var email: String = ""
     @State var password1: String = ""
     @State var password2: String = ""
+    @State var showErr = false
     
     var body: some View {
         NavigationView {
@@ -59,12 +60,19 @@ struct RegisterView: View {
                                     .modifier(HPadding(pad: 10))
                                     .pickerStyle(SegmentedPickerStyle())
                                 }
+                                
+                                if showErr {
+                                    Warning(text: "Please fill in all the required fields")
+                                }
                             }
                         }
                             
                         Button(action: {
                             if name != "" && height != "" && weight != "" {
+                                showErr = false
                                 appState.inappState.regSection = 1
+                            } else {
+                                showErr = true
                             }
                         }) {
                             MainButton(title: "Next", image: "")
@@ -89,7 +97,13 @@ struct RegisterView: View {
                                         SecureTextfield(title: "*Re-enter Password", labelWidth: 90, output: $password2)
                                     }
                                 }
+                                
+                                if showErr {
+                                    Warning(text: "Please fill in all the required fields")
+                                }
                             })
+                        }.onDisappear {
+                            showErr = false
                         }
                         
                         if appState.inappState.showSpinner {
@@ -100,14 +114,19 @@ struct RegisterView: View {
                             appState.inappState.showSpinner = true
                             
                             if isValidEmail(email) && password1 == password2 && isValidPass(password1) {
+                                showErr = false
                                 let user = User(id: "", name: name, email: email, password: password1, phone: phone, yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
                                 
                                 createAccount(user: user, completion: { success in
                                     if success {
                                         appState.inappState.showSpinner = false
                                         appState.inappState.page = .main
+                                    } else {
+                                        showErr = true
                                     }
                                 })
+                            } else {
+                                showErr = true
                             }
                             appState.inappState.showSpinner = false
                         }) {
@@ -124,6 +143,7 @@ struct RegisterView: View {
         }
         .onDisappear {
             appState.inappState.regSection = 0
+            
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
