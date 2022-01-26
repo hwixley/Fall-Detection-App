@@ -10,7 +10,7 @@ import SwiftUI
 struct Register1View: View {
     @EnvironmentObject var appState: AppState
     
-    @State var contacts: [Person] = []
+    @State var contacts: [Person] = MyData.user!.contacts
     @State var newContactName = ""
     @State var newContactPhone = ""
     @State var showAddErr = false

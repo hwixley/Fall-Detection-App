@@ -11,11 +11,11 @@ import FirebaseAuth
 struct RegisterView: View {
     @EnvironmentObject var appState: AppState
     
-    @State var name: String = ""
-    @State var yob = 0
-    @State var height: String = ""
-    @State var weight: String = ""
-    @State var is_female = 0
+    @State var name: String = MyData.user == nil ? "" : MyData.user!.name
+    @State var yob = MyData.user == nil ? 0 : MyData.years.firstIndex(of: MyData.user!.yob) ?? 0
+    @State var height: String = MyData.user == nil ? "" : String(MyData.user!.height)
+    @State var weight: String = MyData.user == nil ? "" : String(MyData.user!.weight)
+    @State var is_female = MyData.user == nil ? 0 : (MyData.user!.is_female ? 1 : 0)
     @State var showErr = false
     
     var body: some View {
@@ -67,7 +67,15 @@ struct RegisterView: View {
                         
                         if name != "" && height != "" && weight != "" {
                             showErr = false
-                            MyData.user = User(id: "", name: name, email: "", password: "", phone: "", yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
+                            if MyData.user == nil {
+                                MyData.user = User(id: "", name: name, email: "", password: "", phone: "", yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
+                            } else {
+                                MyData.user!.name = name
+                                MyData.user!.yob = MyData.years[yob]
+                                MyData.user!.height = Int(height)!
+                                MyData.user!.weight = Int(weight)!
+                                MyData.user!.is_female = is_female == 0 ? false : true
+                            }
                             appState.inappState.page = .register1
                         } else {
                             showErr = true

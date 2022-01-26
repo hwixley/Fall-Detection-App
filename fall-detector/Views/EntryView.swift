@@ -39,6 +39,7 @@ struct EntryView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                 
                 Button(action: {
+                    MyData.user = nil
                     appState.inappState.page = .register
                 }, label: {
                     MainButton(title: "Register", image: "")

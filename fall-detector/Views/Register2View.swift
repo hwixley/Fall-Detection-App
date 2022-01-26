@@ -10,8 +10,8 @@ import SwiftUI
 struct Register2View: View {
     @EnvironmentObject var appState: AppState
     
-    @State var phone: String = ""
-    @State var email: String = ""
+    @State var phone: String = MyData.user!.phone
+    @State var email: String = MyData.user!.email
     @State var password1: String = ""
     @State var password2: String = ""
     @State var showErr = false
