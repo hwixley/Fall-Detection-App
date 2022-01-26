@@ -92,7 +92,7 @@ struct RegisterView: View {
                                 
                                 Button(action: {
                                     if newContactName != "" && newContactPhone != "" {
-                                        contacts.append(Person(id: "", name: newContactName, email: "", phone: newContactPhone))
+                                        contacts.append(Person(id: "", name: newContactName, phone: newContactPhone, isOnFirebase: false))
                                         newContactName = ""
                                         newContactPhone = ""
                                     } else {

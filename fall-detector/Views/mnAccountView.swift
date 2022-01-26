@@ -114,7 +114,7 @@ struct mnAccountView: View {
                                     
                                     Button(action: {
                                         if newContactName != "" && newContactPhone != "" {
-                                            contacts.append(Person(id: "", name: newContactName, email: "", phone: newContactPhone))
+                                            contacts.append(Person(id: NSUUID().uuidString, name: newContactName, phone: newContactPhone, isOnFirebase: false))
                                             newContactName = ""
                                             newContactPhone = ""
                                         } else {
@@ -164,15 +164,18 @@ struct mnAccountView: View {
                                     fields["weight"] = Int(weight)!
                                     userCopy.weight = Int(weight)!
                                 }
+                                var newContacts : [Person] = []
                                 if contacts != MyData.user!.contacts {
                                     userCopy.contacts = contacts
+                                    newContacts = contacts
                                 }
                                 
-                                updateUser(updatedFields: fields) { success in
-                                    if success {
-                                        MyData.user = userCopy
-                                        exitEditing()
-                                    }
+                                if userCopy.isEqual(user: MyData.user!) {
+                                    exitEditing()
+                                } else {
+                                    updateUser(updatedFields: fields, newContacts: newContacts, oldContacts: MyData.user!.contacts)
+                                    MyData.user = userCopy
+                                    exitEditing()
                                 }
                             }) {
                                 MainButton(title: "Save Changes", image: "checkmark")

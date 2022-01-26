@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import RxSwift
 import UIKit
+import SwiftUI
 
 
 func resetPassword(email: String, completion: @escaping ((Bool) -> Void)) {
@@ -59,8 +60,11 @@ func loginUser(email: String, password: String, completion: @escaping ((Bool) ->
                 if err == nil && docSnapshot != nil && docSnapshot!.exists && docSnapshot!.data() != nil {
                     let ddata = docSnapshot!.data()!
                     
-                    MyData.user = User(id: authDataResult!.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, password: password, phone: ddata["phone"] as! String, yob: ddata["yob"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: getContacts(id: authDataResult!.user.uid))
-                    completion(true)
+                    MyData.user = User(id: authDataResult!.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, password: password, phone: ddata["phone"] as! String, yob: ddata["yob"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: [])
+                    
+                    getContacts(id: authDataResult!.user.uid, completion: { success in
+                        completion(success)
+                    })
                 } else {
                     completion(false)
                 }
@@ -71,7 +75,7 @@ func loginUser(email: String, password: String, completion: @escaping ((Bool) ->
     }
 }
 
-func getContacts(id: String) -> [Person] {
+func getContacts(id: String, completion: @escaping ((Bool) -> Void)) {
     var contacts: [Person] = []
     
     Firestore.firestore().collection("users").document(id).collection("contacts").getDocuments { querySnapshot, err in
@@ -79,19 +83,50 @@ func getContacts(id: String) -> [Person] {
             for doc in querySnapshot!.documents {
                 let ddata = doc.data()
                 
-                contacts.append(Person(id: doc.documentID, name: ddata["name"] as! String, email: ddata["email"] as! String, phone: ddata["phone"] as! String))
+                contacts.append(Person(id: doc.documentID, name: ddata["name"] as! String, phone: ddata["phone"] as! String, isOnFirebase: true))
+            }
+            MyData.user!.contacts = contacts
+            completion(true)
+        } else {
+            completion(false)
+        }
+    }
+}
+
+func updateUser(updatedFields: [AnyHashable : Any], newContacts: [Person], oldContacts: [Person]) {
+    Firestore.firestore().collection("users").document(MyData.user!.id).updateData(updatedFields) { err in
+        if err == nil {
+            // Delete all deleted contacts on Firestore
+            if oldContacts.count > 0 {
+                for c in oldContacts {
+                    var found = false
+                    
+                    for nc in newContacts {
+                        if nc.isEqual(pers: c) {
+                            found = true
+                            break
+                        }
+                    }
+                    if !found {
+                        deleteContact(uid: MyData.user!.id, contactID: c.id)
+                    }
+                }
+            }
+            
+            // Add all new contacts on Firestore
+            for c in newContacts {
+                if !c.isOnFirebase {
+                    addContact(uid: MyData.user!.id, contact: c)
+                }
             }
         }
     }
-    return contacts
 }
 
-func updateUser(updatedFields: [AnyHashable : Any], completion: @escaping  ((Bool) -> Void)) {
-    Firestore.firestore().collection("users").document(MyData.user!.id).updateData(updatedFields) { err in
-        if err != nil {
-            completion(false)
-        } else {
-            completion(true)
-        }
-    }
+func addContact(uid: String, contact: Person) {
+    Firestore.firestore().collection("users").document(uid).collection("contacts").document(contact.id).setData(["name": contact.name, "phone": contact.phone])
+}
+
+func deleteContact(uid: String, contactID: String) {
+    Firestore.firestore().collection("users").document(uid).collection("contacts").document(contactID).delete()
 }
