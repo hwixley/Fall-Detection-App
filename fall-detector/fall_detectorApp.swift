@@ -36,6 +36,12 @@ struct fall_detectorApp: App {
             case .register:
                 RegisterView()
                     .environmentObject(appState)
+            case .register1:
+                Register1View()
+                    .environmentObject(appState)
+            case .register2:
+                Register2View()
+                    .environmentObject(appState)
             case .main:
                 MainView()
                     .environmentObject(appState)

@@ -24,6 +24,8 @@
 		D0BCE4BD279C180F0052CC9B /* TextHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4BC279C180F0052CC9B /* TextHandling.swift */; };
 		D0BCE4BF279C19B30052CC9B /* FirebaseHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4BE279C19B30052CC9B /* FirebaseHandling.swift */; };
 		D0BCE4C1279EE1770052CC9B /* liForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C0279EE1770052CC9B /* liForgotPasswordView.swift */; };
+		D0BCE4C327A1C1110052CC9B /* Register1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C227A1C1110052CC9B /* Register1View.swift */; };
+		D0BCE4C527A1C1230052CC9B /* Register2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C427A1C1220052CC9B /* Register2View.swift */; };
 		D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CD92780B43D00C9D1ED /* CustomViews.swift */; };
 		D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */; };
 		D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */; };
@@ -59,6 +61,8 @@
 		D0BCE4BC279C180F0052CC9B /* TextHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextHandling.swift; sourceTree = "<group>"; };
 		D0BCE4BE279C19B30052CC9B /* FirebaseHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHandling.swift; sourceTree = "<group>"; };
 		D0BCE4C0279EE1770052CC9B /* liForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = liForgotPasswordView.swift; sourceTree = "<group>"; };
+		D0BCE4C227A1C1110052CC9B /* Register1View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register1View.swift; sourceTree = "<group>"; };
+		D0BCE4C427A1C1220052CC9B /* Register2View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register2View.swift; sourceTree = "<group>"; };
 		D0C66CD92780B43D00C9D1ED /* CustomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewModifiers.swift; sourceTree = "<group>"; };
 		D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyles.swift; sourceTree = "<group>"; };
@@ -169,6 +173,8 @@
 				D00E765D2786F8A0006263CB /* mnHelpView.swift */,
 				D00E765F2786F8AD006263CB /* mnSettingsView.swift */,
 				D0BCE4C0279EE1770052CC9B /* liForgotPasswordView.swift */,
+				D0BCE4C227A1C1110052CC9B /* Register1View.swift */,
+				D0BCE4C427A1C1220052CC9B /* Register2View.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -319,9 +325,11 @@
 				D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */,
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
 				D0BCE4BF279C19B30052CC9B /* FirebaseHandling.swift in Sources */,
+				D0BCE4C327A1C1110052CC9B /* Register1View.swift in Sources */,
 				D0BCE4BD279C180F0052CC9B /* TextHandling.swift in Sources */,
 				D00E765C2786F897006263CB /* mnAboutView.swift in Sources */,
 				D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */,
+				D0BCE4C527A1C1230052CC9B /* Register2View.swift in Sources */,
 				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
 				D0F7AAE6279AB3B700611182 /* AppState.swift in Sources */,
 				D00E76602786F8AD006263CB /* mnSettingsView.swift in Sources */,

@@ -35,10 +35,12 @@ func createAccount(user: User, completion: @escaping ((Bool) -> Void)) {
     
     Auth.auth().createUser(withEmail: user.email, password: user.password) { authDataResult, err in
         if err == nil && authDataResult != nil {
+            MyData.user!.id = authDataResult!.user.uid
+            
             Firestore.firestore().collection("users").document(authDataResult!.user.uid).setData(["name": user.name, "email": user.email, "phone": user.phone, "yob": user.yob, "height": user.height, "weight": user.weight, "is_female": user.is_female, "medical_conditions": user.medical_conditions]) { (err) in
                 if err == nil {
                     for c in user.contacts {
-                        Firestore.firestore().collection("users").document(authDataResult!.user.uid).collection("contacts").addDocument(data: ["name": c.name, "phone": c.phone])
+                        addContact(uid: authDataResult!.user.uid, contact: c)
                     }
                     completion(true)
                 } else {
@@ -94,6 +96,8 @@ func getContacts(id: String, completion: @escaping ((Bool) -> Void)) {
 }
 
 func updateUser(updatedFields: [AnyHashable : Any], newContacts: [Person], oldContacts: [Person]) {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    
     Firestore.firestore().collection("users").document(MyData.user!.id).updateData(updatedFields) { err in
         if err == nil {
             // Delete all deleted contacts on Firestore
@@ -108,6 +112,7 @@ func updateUser(updatedFields: [AnyHashable : Any], newContacts: [Person], oldCo
                         }
                     }
                     if !found {
+                        print(c.id)
                         deleteContact(uid: MyData.user!.id, contactID: c.id)
                     }
                 }

@@ -12,7 +12,6 @@ struct InAppState {
     var tab: Int = 0
     var showSpinner: Bool = false
     var taskSuccess: Bool? = nil
-    var regSection: Int = 0
     var connection: Connection = .disconnected
     var fallDetection: Bool = true
 }
@@ -22,6 +21,8 @@ enum Page {
     case login
     case resetpass
     case register
+    case register1
+    case register2
     case main
     case account
     case about
@@ -97,7 +98,7 @@ struct Person: Hashable {
 }
 
 class AppState: ObservableObject {
-    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, regSection: 0, connection: .disconnected, fallDetection: true)
+    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected, fallDetection: true)
     
     init(inappState: InAppState) {
         self.inappState = inappState
