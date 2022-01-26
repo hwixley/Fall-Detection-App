@@ -15,7 +15,7 @@ struct fall_detectorApp: App {
     init() {
         FirebaseApp.configure()
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(MyColours.p0)
-        UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(MyColours.p0)
+        UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(MyColours.p0).darker(by: 30)
         UIPickerView.appearance().tintColor = UIColor(MyColours.p0)
         UIProgressView.appearance().tintColor = UIColor(MyColours.p0)
         UILabel.appearance().tintColor = UIColor(MyColours.p0)

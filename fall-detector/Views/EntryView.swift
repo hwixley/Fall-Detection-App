@@ -50,6 +50,9 @@ struct EntryView: View {
             .frame(width: UIScreen.screenWidth, height: 200, alignment: .center)
         }
         .modifier(FullBackgroundStack())
+        .onAppear {
+            MyData.user = nil
+        }
     }
 }
 
