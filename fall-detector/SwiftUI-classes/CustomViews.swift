@@ -122,10 +122,10 @@ struct SubButton : View {
 
 struct ConnectionView: View {
     @ObservedObject var appState: AppState
+    @ObservedObject var polarManager : PolarBleSdkManager = MyData.polarManager
     
     var body: some View {
         VStack(spacing: 15) {
-            let connection = self.appState.inappState.connection
             let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
             
             Text("Connection Status:")
@@ -138,20 +138,16 @@ struct ConnectionView: View {
                 .modifier(DefaultText(size: 22))
                 .multilineTextAlignment(.center)
             
-            if connection == .searching {
+            if self.appState.inappState.connection == .searching {
                 ProgressView()
                     .padding(.bottom, 10)
             } else {
                 Button(action: {
-                    self.appState.inappState.connection = self.appState.inappState.connection == .connected ? .disconnected : (self.appState.inappState.connection == .disconnected || self.appState.inappState.connection == .retry) ? .searching : .connected
-                    
-                    if self.appState.inappState.connection == .searching {
-                        Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { timer in
-                            if self.appState.inappState.connection == .searching {
-                                self.appState.inappState.connection = .retry
-                            }
-                            timer.invalidate()
-                        }
+                    if appState.inappState.connection == .connected {
+                        appState.inappState.connection = .disconnected
+                        polarManager.disconnectFromDevice()
+                    } else if appState.inappState.connection == .disconnected || appState.inappState.connection == .retry {
+                        connect()
                     }
                 }) {
                     SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
@@ -162,6 +158,24 @@ struct ConnectionView: View {
         .frame(width: UIScreen.screenWidth - 20)
         .modifier(VPadding(pad: 10))
         .background(MyColours.b1)
+    }
+    
+    func connect() {
+        self.appState.inappState.connection = .searching
+        
+        polarManager.autoConnect()
+        
+        var time = 0
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
+            time += 2
+            
+            if self.polarManager.deviceConnectionState == .connected {
+                self.appState.inappState.connection = .connected
+            } else if time == 10 {
+                self.appState.inappState.connection = .retry
+            }
+            timer.invalidate()
+        }
     }
 }
 
@@ -212,6 +226,61 @@ struct ContactView: View {
             Label(contact.phone, systemImage: "phone.fill")
                 .modifier(LabelText())
         }
+    }
+}
+
+struct LiveMovementView: View {
+    @ObservedObject var appState : AppState
+    @ObservedObject var polarManager : PolarBleSdkManager = MyData.polarManager
+    
+    var body: some View {
+        VStack {
+            ScrollView(.vertical) {
+                Text(String(polarManager.battery))
+                VStack(spacing: 4) {
+                    Group {
+                        
+                        Text("HR: \(polarManager.l_hr), \(polarManager.l_hr_rrs), \(polarManager.l_hr_rrsms)")
+                        if polarManager.ecgEnabled {
+                            Text("ECG: \(polarManager.l_ecg)")
+                        } else {
+                            Text("ECG: na")
+                        }
+                        if polarManager.accEnabled {
+                            Text("ACC: x=\(polarManager.l_acc_x), y=\(polarManager.l_acc_y), z=\(polarManager.l_acc_z)")
+                        } else {
+                            Text("ACC: na")
+                        }
+                    }
+                }
+            }.frame(maxWidth: .infinity)
+        }
+        .onAppear {
+            if !polarManager.ecgEnabled {
+                polarManager.ecgToggle()
+            }
+            if !polarManager.accEnabled {
+                polarManager.accToggle()
+            }
+            polarManager.isLive = true
+            
+            MyData.polarManager = polarManager
+            
+        }
+        .onDisappear {
+            if polarManager.ecgEnabled {
+                polarManager.ecgToggle()
+            }
+            if polarManager.accEnabled {
+                polarManager.accToggle()
+            }
+            polarManager.isLive = false
+            
+            MyData.polarManager = polarManager
+        }
+        .frame(width: UIScreen.screenWidth - 20, height: 100)
+        .modifier(VPadding(pad: 10))
+        .background(MyColours.b1)
     }
 }
 
