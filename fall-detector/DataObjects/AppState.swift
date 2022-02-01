@@ -98,9 +98,9 @@ struct Person: Hashable {
 }
 
 class AppState: ObservableObject {
-    @Published var inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected, fallDetection: true)
+    @Published var inappState: InAppState
     
-    init(inappState: InAppState) {
+    init(inappState: InAppState = InAppState(page: .entry, tab: 0, connection: .disconnected, fallDetection: true)) {
         self.inappState = inappState
     }
 }

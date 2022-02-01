@@ -138,19 +138,19 @@ struct ConnectionView: View {
                 .modifier(DefaultText(size: 22))
                 .multilineTextAlignment(.center)
             
-            if self.appState.inappState.connection == .searching {
+            if self.appState.inappState.connection == .searching && self.polarManager.deviceConnectionState != .connected(MyData.polarDeviceID) {
                 ProgressView()
                     .padding(.bottom, 10)
             } else {
                 Button(action: {
-                    if appState.inappState.connection == .connected {
-                        appState.inappState.connection = .disconnected
+                    if self.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) {
+                        self.appState.inappState.connection = .disconnected
                         polarManager.disconnectFromDevice()
-                    } else if appState.inappState.connection == .disconnected || appState.inappState.connection == .retry {
+                    } else if self.polarManager.deviceConnectionState == .disconnected { //appState.inappState.connection == .disconnected || appState.inappState.connection == .retry {
                         connect()
                     }
                 }) {
-                    SubButton(title: self.appState.inappState.connection == .connected ? "Disconnect" : self.appState.inappState.connection == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
+                    SubButton(title: self.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) ? "Disconnect" : self.polarManager.deviceConnectionState == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
                 }
                 .buttonStyle(ClassicButtonStyle(useGradient: true))
             }
@@ -169,12 +169,12 @@ struct ConnectionView: View {
         Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
             time += 2
             
-            if self.polarManager.deviceConnectionState == .connected {
+            if self.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) {
                 self.appState.inappState.connection = .connected
             } else if time == 10 {
                 self.appState.inappState.connection = .retry
+                timer.invalidate()
             }
-            timer.invalidate()
         }
     }
 }
@@ -236,7 +236,20 @@ struct LiveMovementView: View {
     var body: some View {
         VStack {
             ScrollView(.vertical) {
-                Text(String(polarManager.battery))
+                
+                HStack(alignment: .top, spacing: 5*UIScreen.screenWidth/12) {
+                    HStack(spacing: 2) {
+                        Text(self.polarManager.deviceId)
+                            .modifier(DefaultText(size: 18))
+                    }
+                    
+                    HStack(spacing: 2) {
+                        Image(systemName: "battery.\(String(self.polarManager.battery))")
+                        Text("\(self.polarManager.battery)%")
+                            .modifier(DefaultText(size: 18))
+                    }
+                }
+                
                 VStack(spacing: 4) {
                     Group {
                         

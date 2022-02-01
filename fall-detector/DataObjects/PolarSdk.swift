@@ -19,7 +19,7 @@ class PolarBleSdkManager : ObservableObject {
     private var searchDisposable: Disposable?
     private var ecgDisposable: Disposable?
     private var accDisposable: Disposable?
-    private var deviceId = MyData.polarDeviceID
+    public var deviceId = MyData.polarDeviceID
     
     @Published private(set) var bluetoothPowerOn: Bool
     @Published private(set) var broadcastEnabled: Bool = false
@@ -80,9 +80,12 @@ class PolarBleSdkManager : ObservableObject {
         
         api.polarFilter(true)
         api.observer = self
+        api.deviceFeaturesObserver = self
         api.powerStateObserver = self
         api.deviceInfoObserver = self
+        api.sdkModeFeatureObserver = self
         api.deviceHrObserver = self
+        api.logger = self
     }
     
     func broadcastToggle() {
@@ -183,7 +186,7 @@ class PolarBleSdkManager : ObservableObject {
                             if self.isLive {
                                 self.l_ecg = µv
                             }
-                            NSLog("    µV: \(µv)")
+                            //NSLog("    µV: \(µv)")
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
@@ -223,7 +226,7 @@ class PolarBleSdkManager : ObservableObject {
                                 self.l_acc_y = item.y
                                 self.l_acc_z = item.z
                             }
-                            NSLog("    x: \(item.x) y: \(item.y) z: \(item.z)")
+                            //NSLog("    x: \(item.x) y: \(item.y) z: \(item.z)")
                         }
                     case .error(let err):
                         NSLog("ACC stream failed: \(err)")
@@ -307,12 +310,36 @@ extension PolarBleSdkManager : PolarBleApiObserver {
 // MARK: - PolarBleApiDeviceInfoObserver
 extension PolarBleSdkManager : PolarBleApiDeviceInfoObserver {
     func batteryLevelReceived(_ identifier: String, batteryLevel: UInt) {
+        NSLog("battery level updated: \(batteryLevel)")
         self.battery = batteryLevel
-        //NSLog("battery level updated: \(batteryLevel)")
     }
     
     func disInformationReceived(_ identifier: String, uuid: CBUUID, value: String) {
-        //NSLog("dis info: \(uuid.uuidString) value: \(value)")
+        NSLog("dis info: \(uuid.uuidString) value: \(value)")
+    }
+}
+
+// MARK: - PolarBleApiSdkModeFeatureObserver
+extension PolarBleSdkManager : PolarBleApiDeviceFeaturesObserver {
+    func hrFeatureReady(_ identifier: String) {
+        NSLog("HR ready")
+    }
+    
+    func ftpFeatureReady(_ identifier: String) {
+        NSLog("FTP ready")
+    }
+    
+    func streamingFeaturesReady(_ identifier: String, streamingFeatures: Set<DeviceStreamingFeature>) {
+        for feature in streamingFeatures {
+            NSLog("Feature \(feature) is ready.")
+        }
+    }
+}
+
+// MARK: - PolarBleApiSdkModeFeatureObserver
+extension PolarBleSdkManager : PolarBleApiSdkModeFeatureObserver {
+    func sdkModeFeatureAvailable(_ identifier: String) {
+        NSLog("SDK mode feature available. Device \(identifier)")
     }
 }
 
@@ -336,10 +363,17 @@ extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
     }
 }
 
+// MARK: - PolarBleApiLogger
+extension PolarBleSdkManager : PolarBleApiLogger {
+    func message(_ str: String) {
+        //NSLog("Polar SDK log:  \(str)")
+    }
+}
+
 extension PolarBleSdkManager {
     enum ConnectionState: Equatable {
         case disconnected
-        case connecting
-        case connected
+        case connecting(String)
+        case connected(String)
     }
 }

@@ -4,5 +4,7 @@
 <dict>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth is required to connect to the Polar H10 heart rate sensor to retrieve data for fall detection</string>
 </dict>
 </plist>
