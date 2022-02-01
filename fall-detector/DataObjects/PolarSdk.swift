@@ -20,6 +20,8 @@ class PolarBleSdkManager : ObservableObject {
     private var ecgDisposable: Disposable?
     private var accDisposable: Disposable?
     public var deviceId = MyData.polarDeviceID
+    private var maxEcgCount = 100
+    private var maxAccCount = 100
     
     @Published private(set) var bluetoothPowerOn: Bool
     @Published private(set) var broadcastEnabled: Bool = false
@@ -37,14 +39,6 @@ class PolarBleSdkManager : ObservableObject {
     @Published var hr: [Double] = []
     @Published var contact : [Bool] = []
     
-    @Published var l_ecg: Int32 = 0
-    @Published var l_acc_x: Int32 = 0
-    @Published var l_acc_y: Int32 = 0
-    @Published var l_acc_z: Int32 = 0
-    @Published var l_hr: UInt8 = 0
-    @Published var l_hr_rrsms : Int = 0
-    @Published var l_hr_rrs : Int = 0
-    
     @Published var battery : UInt = 0
     
     
@@ -57,19 +51,6 @@ class PolarBleSdkManager : ObservableObject {
                 self.acc_y = []
                 self.acc_z = []
                 self.contact = []
-            }
-        }
-    }
-    @Published var isLive: Bool = false {
-        didSet {
-            if isLive {
-                self.l_ecg = 0
-                self.l_hr = 0
-                self.l_acc_x = 0
-                self.l_acc_y = 0
-                self.l_acc_z = 0
-                self.l_hr_rrs = 0
-                self.l_hr_rrsms = 0
             }
         }
     }
@@ -179,14 +160,11 @@ class PolarBleSdkManager : ObservableObject {
                 .subscribe{ e in
                     switch e {
                     case .next(let data):
-                        for µv in data.samples {
-                            if self.isRecording {
-                                self.ecg.append(Double(µv))
+                        if self.isRecording {
+                            if self.ecg.count >= self.maxEcgCount {
+                                self.ecg.replaceSubrange(0...self.ecg.count-self.maxEcgCount, with: [])
                             }
-                            if self.isLive {
-                                self.l_ecg = µv
-                            }
-                            //NSLog("    µV: \(µv)")
+                            self.ecg.append(contentsOf: data.samples.map { Double($0) })
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
@@ -215,19 +193,17 @@ class PolarBleSdkManager : ObservableObject {
                 .observe(on: MainScheduler.instance).subscribe{ e in
                     switch e {
                     case .next(let data):
-                        for item in data.samples {
-                            if self.isRecording {
-                                self.acc_x.append(Double(item.x))
-                                self.acc_y.append(Double(item.y))
-                                self.acc_z.append(Double(item.z))
+                        /*if self.isRecording {
+                            if self.acc_x.count >= self.maxAccCount {
+                                self.acc_x.replaceSubrange(0...self.acc_x.count-self.maxAccCount, with: [])
+                                self.acc_y.replaceSubrange(0...self.acc_y.count-self.maxAccCount, with: [])
+                                self.acc_z.replaceSubrange(0...self.acc_z.count-self.maxAccCount, with: [])
                             }
-                            if self.isLive {
-                                self.l_acc_x = item.x
-                                self.l_acc_y = item.y
-                                self.l_acc_z = item.z
-                            }
-                            //NSLog("    x: \(item.x) y: \(item.y) z: \(item.z)")
-                        }
+                            self.acc_x.append(contentsOf: data.samples.map { Double($0.x) })
+                            self.acc_y.append(contentsOf: data.samples.map { Double($0.y) })
+                            self.acc_z.append(contentsOf: data.samples.map { Double($0.z) })
+                        }*/
+                        let _ = "nice"
                     case .error(let err):
                         NSLog("ACC stream failed: \(err)")
                         self.accEnabled = false
@@ -349,15 +325,6 @@ extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
         if self.isRecording {
             self.hr.append(Double(data.hr))
             self.contact.append(data.contact)
-        }
-        if self.isLive {
-            self.l_hr = data.hr
-            if data.rrs.count > 0 {
-                self.l_hr_rrs = data.rrs.count == 1 ? data.rrs[0] : data.rrs[1]
-            }
-            if data.rrsMs.count > 0 {
-                self.l_hr_rrsms = data.rrsMs.count == 1 ? data.rrsMs[0] : data.rrsMs[1]
-            }
         }
         //NSLog("(\(identifier)) HR value: \(data.hr) rrsMs: \(data.rrsMs) rrs: \(data.rrs) contact: \(data.contact) contact supported: \(data.contactSupported)")
     }

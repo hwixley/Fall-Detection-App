@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import Charts
+import Shapes
 
 
 //MARK: Input fields
@@ -237,7 +239,6 @@ struct LiveMovementView: View {
     var body: some View {
         VStack {
             ScrollView(.vertical) {
-                
                 HStack(alignment: .top, spacing: 5*UIScreen.screenWidth/12) {
                     HStack(spacing: 2) {
                         Text(self.polarManager.deviceId)
@@ -250,22 +251,22 @@ struct LiveMovementView: View {
                             .modifier(DefaultText(size: 18))
                     }
                 }
+
+                Spacer()
                 
-                VStack(spacing: 4) {
-                    Group {
-                        
-                        Text("HR: \(polarManager.l_hr), \(polarManager.l_hr_rrs), \(polarManager.l_hr_rrsms)")
-                        if polarManager.ecgEnabled {
-                            Text("ECG: \(polarManager.l_ecg)")
-                        } else {
-                            Text("ECG: na")
-                        }
-                        if polarManager.accEnabled {
-                            Text("ACC: x=\(polarManager.l_acc_x), y=\(polarManager.l_acc_y), z=\(polarManager.l_acc_z)")
-                        } else {
-                            Text("ACC: na")
-                        }
-                    }
+                
+                if !self.polarManager.ecg.isEmpty {
+                    let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
+                    let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
+                    let _ = print(data)
+                    Chart(data: data)
+                        .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
+                        .frame(width: UIScreen.screenWidth - 20, height: 40)
+                } else {
+                    Text("Loading ECG data...")
+                        .modifier(DefaultText(size: 21))
+                    ProgressView()
+                        .padding(.bottom, 10)
                 }
             }.frame(maxWidth: .infinity)
         }
@@ -276,7 +277,7 @@ struct LiveMovementView: View {
             if !self.polarManager.accEnabled {
                 self.polarManager.accToggle()
             }
-            self.polarManager.isLive = true
+            self.polarManager.isRecording = true
             
             MyData.polarManager = polarManager
             
@@ -288,7 +289,6 @@ struct LiveMovementView: View {
             if self.polarManager.accEnabled {
                 self.polarManager.accToggle()
             }
-            self.polarManager.isLive = false
             
             MyData.polarManager = polarManager
         }

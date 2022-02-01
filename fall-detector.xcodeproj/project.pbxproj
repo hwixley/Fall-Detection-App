@@ -27,6 +27,7 @@
 		D0BCE4C327A1C1110052CC9B /* Register1View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C227A1C1110052CC9B /* Register1View.swift */; };
 		D0BCE4C527A1C1230052CC9B /* Register2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C427A1C1220052CC9B /* Register2View.swift */; };
 		D0BCE4C727A2A0950052CC9B /* PolarSdk.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C627A2A0950052CC9B /* PolarSdk.swift */; };
+		D0BCE4D227A9A23F0052CC9B /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = D0BCE4D127A9A23F0052CC9B /* Charts */; };
 		D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CD92780B43D00C9D1ED /* CustomViews.swift */; };
 		D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */; };
 		D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */; };
@@ -82,6 +83,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EDCF7D984D4E70346EC6EC72 /* Pods_fall_detector.framework in Frameworks */,
+				D0BCE4D227A9A23F0052CC9B /* Charts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +228,9 @@
 			dependencies = (
 			);
 			name = "fall-detector";
+			packageProductDependencies = (
+				D0BCE4D127A9A23F0052CC9B /* Charts */,
+			);
 			productName = "fall-detector";
 			productReference = D05879BC277F381100427BAB /* fall-detector.app */;
 			productType = "com.apple.product-type.application";
@@ -254,6 +259,9 @@
 				Base,
 			);
 			mainGroup = D05879B3277F381100427BAB;
+			packageReferences = (
+				D0BCE4D027A9A23F0052CC9B /* XCRemoteSwiftPackageReference "swiftui-charts" */,
+			);
 			productRefGroup = D05879BD277F381100427BAB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -555,6 +563,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D0BCE4D027A9A23F0052CC9B /* XCRemoteSwiftPackageReference "swiftui-charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/spacenation/swiftui-charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D0BCE4D127A9A23F0052CC9B /* Charts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0BCE4D027A9A23F0052CC9B /* XCRemoteSwiftPackageReference "swiftui-charts" */;
+			productName = Charts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D05879B4277F381100427BAB /* Project object */;
 }
