@@ -9,6 +9,10 @@ import Foundation
 
 struct MyData {
     static var user: User? = nil
+    
+    static var polarManager = PolarBleSdkManager()
+    static var polarDeviceID = "9F8BF424"
+    
     static let currYear = Int(Calendar.current.component(.year, from: Date()))
     static let years: [Int] = Array(currYear-100...currYear-1).reversed()
 }
