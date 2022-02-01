@@ -126,7 +126,8 @@ struct ConnectionView: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            let image = (self.appState.inappState.connection == .connected) ? "antenna.radiowaves.left.and.right" : (self.appState.inappState.connection == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
+            let image = (self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId)) ? "antenna.radiowaves.left.and.right" : (self.polarManager.deviceConnectionState == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
+            let statusMessage = (self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId)) ? "Connected" : (self.polarManager.deviceConnectionState == .disconnected) ? "Disconnected" : self.appState.inappState.connection == .searching ? "Searching for your device..." : "We could not find your device. Please make sure it is turned on and try again."
             
             Text("Connection Status:")
                 .modifier(DefaultText(size: 25))
@@ -134,16 +135,16 @@ struct ConnectionView: View {
             
             Divider()
             
-            Label(self.appState.inappState.connection.rawValue, systemImage: image)
+            Label(statusMessage, systemImage: image)
                 .modifier(DefaultText(size: 22))
                 .multilineTextAlignment(.center)
             
-            if self.appState.inappState.connection == .searching && self.polarManager.deviceConnectionState != .connected(MyData.polarDeviceID) {
+            if self.appState.inappState.connection == .searching && self.polarManager.deviceConnectionState != .connected(self.polarManager.deviceId) {
                 ProgressView()
                     .padding(.bottom, 10)
             } else {
                 Button(action: {
-                    if self.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) {
+                    if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) {
                         self.appState.inappState.connection = .disconnected
                         polarManager.disconnectFromDevice()
                     } else if self.polarManager.deviceConnectionState == .disconnected { //appState.inappState.connection == .disconnected || appState.inappState.connection == .retry {
@@ -269,25 +270,25 @@ struct LiveMovementView: View {
             }.frame(maxWidth: .infinity)
         }
         .onAppear {
-            if !polarManager.ecgEnabled {
-                polarManager.ecgToggle()
+            if !self.polarManager.ecgEnabled {
+                self.polarManager.ecgToggle()
             }
-            if !polarManager.accEnabled {
-                polarManager.accToggle()
+            if !self.polarManager.accEnabled {
+                self.polarManager.accToggle()
             }
-            polarManager.isLive = true
+            self.polarManager.isLive = true
             
             MyData.polarManager = polarManager
             
         }
         .onDisappear {
-            if polarManager.ecgEnabled {
-                polarManager.ecgToggle()
+            if self.polarManager.ecgEnabled {
+                self.polarManager.ecgToggle()
             }
-            if polarManager.accEnabled {
-                polarManager.accToggle()
+            if self.polarManager.accEnabled {
+                self.polarManager.accToggle()
             }
-            polarManager.isLive = false
+            self.polarManager.isLive = false
             
             MyData.polarManager = polarManager
         }
