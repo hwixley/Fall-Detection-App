@@ -19,8 +19,8 @@
 #include <map>
 
 #include "Firestore/core/src/core/database_info.h"
+#include "Firestore/core/src/model/document.h"
 #include "Firestore/core/src/model/document_key.h"
-#include "Firestore/core/src/model/maybe_document.h"
 #include "Firestore/core/src/model/mutation.h"
 #include "Firestore/core/src/model/snapshot_version.h"
 #include "Firestore/core/src/nanopb/byte_string.h"
@@ -40,23 +40,19 @@ namespace remote {
 
 using core::DatabaseInfo;
 using local::TargetData;
+using model::Document;
 using model::DocumentKey;
-using model::MaybeDocument;
 using model::Mutation;
 using model::MutationResult;
 using model::SnapshotVersion;
 using model::TargetId;
 using nanopb::ByteString;
-using nanopb::ByteStringWriter;
 using nanopb::MakeArray;
-using nanopb::MakeByteString;
 using nanopb::Message;
 using nanopb::Reader;
 using remote::ByteBufferReader;
 using remote::Serializer;
-using util::Status;
 using util::StatusOr;
-using util::StringFormat;
 
 // WatchStreamSerializer
 
@@ -108,14 +104,15 @@ WatchStreamSerializer::ParseResponse(Reader* reader) const {
 
 std::unique_ptr<WatchChange> WatchStreamSerializer::DecodeWatchChange(
     nanopb::Reader* reader,
-    const google_firestore_v1_ListenResponse& response) const {
-  return serializer_.DecodeWatchChange(reader, response);
+    google_firestore_v1_ListenResponse& response) const {
+  return serializer_.DecodeWatchChange(reader->context(), response);
 }
 
 SnapshotVersion WatchStreamSerializer::DecodeSnapshotVersion(
     nanopb::Reader* reader,
     const google_firestore_v1_ListenResponse& response) const {
-  return serializer_.DecodeVersionFromListenResponse(reader, response);
+  return serializer_.DecodeVersionFromListenResponse(reader->context(),
+                                                     response);
 }
 
 // WriteStreamSerializer
@@ -169,25 +166,24 @@ Message<google_firestore_v1_WriteResponse> WriteStreamSerializer::ParseResponse(
 SnapshotVersion WriteStreamSerializer::DecodeCommitVersion(
     nanopb::Reader* reader,
     const google_firestore_v1_WriteResponse& proto) const {
-  return serializer_.DecodeVersion(reader, proto.commit_time);
+  return serializer_.DecodeVersion(reader->context(), proto.commit_time);
 }
 
 std::vector<MutationResult> WriteStreamSerializer::DecodeMutationResults(
-    nanopb::Reader* reader,
-    const google_firestore_v1_WriteResponse& proto) const {
+    nanopb::Reader* reader, google_firestore_v1_WriteResponse& proto) const {
   SnapshotVersion commit_version = DecodeCommitVersion(reader, proto);
   if (!reader->ok()) {
     return {};
   }
 
-  const google_firestore_v1_WriteResult* writes = proto.write_results;
+  google_firestore_v1_WriteResult* writes = proto.write_results;
   pb_size_t count = proto.write_results_count;
   std::vector<MutationResult> results;
   results.reserve(count);
 
   for (pb_size_t i = 0; i != count; ++i) {
-    results.push_back(
-        serializer_.DecodeMutationResult(reader, writes[i], commit_version));
+    results.push_back(serializer_.DecodeMutationResult(
+        reader->context(), writes[i], commit_version));
   }
 
   return results;
@@ -238,11 +234,11 @@ DatastoreSerializer::EncodeLookupRequest(
   return result;
 }
 
-StatusOr<std::vector<model::MaybeDocument>>
+StatusOr<std::vector<model::Document>>
 DatastoreSerializer::MergeLookupResponses(
     const std::vector<grpc::ByteBuffer>& responses) const {
   // Sort by key.
-  std::map<DocumentKey, MaybeDocument> results;
+  std::map<DocumentKey, Document> results;
 
   for (const auto& response : responses) {
     ByteBufferReader reader{response};
@@ -250,21 +246,21 @@ DatastoreSerializer::MergeLookupResponses(
         Message<google_firestore_v1_BatchGetDocumentsResponse>::TryParse(
             &reader);
 
-    MaybeDocument doc = serializer_.DecodeMaybeDocument(&reader, *message);
+    Document doc = serializer_.DecodeMaybeDocument(reader.context(), *message);
     if (!reader.ok()) {
       return reader.status();
     }
 
-    results[doc.key()] = std::move(doc);
+    results[doc->key()] = std::move(doc);
   }
 
-  std::vector<MaybeDocument> docs;
+  std::vector<Document> docs;
   docs.reserve(results.size());
   for (const auto& kv : results) {
     docs.push_back(kv.second);
   }
 
-  StatusOr<std::vector<model::MaybeDocument>> result{std::move(docs)};
+  StatusOr<std::vector<Document>> result{std::move(docs)};
   return result;
 }
 

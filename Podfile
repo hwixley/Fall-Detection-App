@@ -6,8 +6,10 @@ target 'fall-detector' do
   use_frameworks!
 
   # Pods for fall-detector
-  pod 'Firebase/Auth', '7.2-M1'
-  pod 'Firebase/Firestore', '7.2-M1'
+  pod 'Firebase/Auth' #, '7.2-M1'
+  pod 'Firebase/Firestore' #, '7.2-M1'
+  pod 'Firebase/MLModelDownloader'
+  pod 'TensorFlowLite'
   pod 'PolarBleSdk'
 
 end

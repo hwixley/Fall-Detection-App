@@ -166,8 +166,7 @@ static NSString *const kFIRAuthErrorMessageNetworkError =
  */
 static NSString *const kFIRAuthErrorMessageKeychainError =
     @"An error occurred when accessing the "
-     "keychain. The @c NSLocalizedFailureReasonErrorKey field in the @c NSError.userInfo "
-     "dictionary "
+     "keychain. The NSLocalizedFailureReasonErrorKey field in the NSError.userInfo dictionary "
      "will contain more information about the error encountered";
 
 /** @var kFIRAuthErrorMessageMissingClientIdentifier
@@ -286,7 +285,7 @@ static NSString *const kFIRAuthErrorMessageMissingAndroidPackageName =
  */
 static NSString *const kFIRAuthErrorMessageUnauthorizedDomain =
     @"The domain of the continue URL "
-     "is not whitelisted. Please whitelist the domain in the Firebase console.";
+     "is not allowlisted. Please allowlist the domain in the Firebase console.";
 
 /** @var kFIRAuthErrorMessageInvalidContinueURI
     @brief Message for @c FIRAuthErrorCodeInvalidContinueURI error code.
@@ -1012,6 +1011,19 @@ static NSString *const FIRAuthErrorCodeString(FIRAuthErrorCode code) {
     };
   }
   return [self errorWithCode:FIRAuthInternalErrorCodeUnexpectedErrorResponse userInfo:userInfo];
+}
+
++ (NSError *)unexpectedErrorResponseWithDeserializedResponse:(id)deserializedResponse
+                                             underlyingError:(NSError *)underlyingError {
+  NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+  if (deserializedResponse) {
+    userInfo[FIRAuthErrorUserInfoDeserializedResponseKey] = deserializedResponse;
+  }
+  if (underlyingError) {
+    userInfo[NSUnderlyingErrorKey] = underlyingError;
+  }
+  return [self errorWithCode:FIRAuthInternalErrorCodeUnexpectedErrorResponse
+                    userInfo:[userInfo copy]];
 }
 
 + (NSError *)malformedJWTErrorWithToken:(NSString *)token

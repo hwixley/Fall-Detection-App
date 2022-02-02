@@ -1,0 +1,6 @@
+framework module FirebaseMLModelDownloader {
+  umbrella header "FirebaseMLModelDownloader-umbrella.h"
+
+  export *
+  module * { export * }
+}

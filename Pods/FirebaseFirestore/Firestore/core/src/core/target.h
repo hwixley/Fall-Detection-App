@@ -28,9 +28,13 @@
 #include "Firestore/core/src/core/order_by.h"
 #include "Firestore/core/src/immutable/append_only_list.h"
 #include "Firestore/core/src/model/resource_path.h"
+#include "Firestore/core/src/remote/serializer.h"
 
 namespace firebase {
 namespace firestore {
+namespace bundle {
+class BundleSerializer;
+}
 namespace core {
 
 using CollectionGroupId = std::shared_ptr<const std::string>;
@@ -77,11 +81,11 @@ class Target {
     return limit_;
   }
 
-  const std::shared_ptr<Bound>& start_at() const {
+  const absl::optional<Bound>& start_at() const {
     return start_at_;
   }
 
-  const std::shared_ptr<Bound>& end_at() const {
+  const absl::optional<Bound>& end_at() const {
     return end_at_;
   }
 
@@ -98,17 +102,17 @@ class Target {
    * Initializes a Target with a path and additional query constraints.
    * Path must currently be empty if this is a collection group query.
    *
-   * NOTE: This is made private and onlyy accessible by `Query`. You should
-   * always construct Target from `Query.toTarget` because Query provides
-   * an implicit `orderBy` property.
+   * NOTE: This is made private and only accessible by `Query` and `Serializer`.
+   * You should always construct Target from `Query.toTarget` because Query
+   * provides an implicit `orderBy` property.
    */
   Target(model::ResourcePath path,
          CollectionGroupId collection_group,
          FilterList filters,
          OrderByList order_bys,
          int32_t limit,
-         std::shared_ptr<Bound> start_at,
-         std::shared_ptr<Bound> end_at)
+         absl::optional<Bound> start_at,
+         absl::optional<Bound> end_at)
       : path_(std::move(path)),
         collection_group_(std::move(collection_group)),
         filters_(std::move(filters)),
@@ -118,14 +122,16 @@ class Target {
         end_at_(std::move(end_at)) {
   }
   friend class Query;
+  friend class remote::Serializer;
+  friend class bundle::BundleSerializer;
 
   model::ResourcePath path_;
   std::shared_ptr<const std::string> collection_group_;
   FilterList filters_;
   OrderByList order_bys_;
   int32_t limit_ = kNoLimit;
-  std::shared_ptr<Bound> start_at_;
-  std::shared_ptr<Bound> end_at_;
+  absl::optional<Bound> start_at_;
+  absl::optional<Bound> end_at_;
 
   mutable std::string canonical_id_;
 };

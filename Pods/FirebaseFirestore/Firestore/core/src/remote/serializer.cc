@@ -36,14 +36,13 @@
 #include "Firestore/core/src/core/query.h"
 #include "Firestore/core/src/local/target_data.h"
 #include "Firestore/core/src/model/delete_mutation.h"
-#include "Firestore/core/src/model/document.h"
 #include "Firestore/core/src/model/field_path.h"
-#include "Firestore/core/src/model/field_value.h"
-#include "Firestore/core/src/model/no_document.h"
+#include "Firestore/core/src/model/mutable_document.h"
 #include "Firestore/core/src/model/patch_mutation.h"
 #include "Firestore/core/src/model/resource_path.h"
+#include "Firestore/core/src/model/server_timestamp_util.h"
 #include "Firestore/core/src/model/set_mutation.h"
-#include "Firestore/core/src/model/transform_mutation.h"
+#include "Firestore/core/src/model/value_util.h"
 #include "Firestore/core/src/model/verify_mutation.h"
 #include "Firestore/core/src/nanopb/byte_string.h"
 #include "Firestore/core/src/nanopb/nanopb_util.h"
@@ -55,6 +54,7 @@
 #include "Firestore/core/src/util/statusor.h"
 #include "Firestore/core/src/util/string_format.h"
 #include "absl/algorithm/container.h"
+#include "absl/types/span.h"
 
 namespace firebase {
 namespace firestore {
@@ -66,7 +66,6 @@ using core::Direction;
 using core::FieldFilter;
 using core::Filter;
 using core::FilterList;
-using core::LimitType;
 using core::OrderBy;
 using core::OrderByList;
 using core::Query;
@@ -75,18 +74,20 @@ using local::QueryPurpose;
 using local::TargetData;
 using model::ArrayTransform;
 using model::DatabaseId;
+using model::DeepClone;
 using model::DeleteMutation;
-using model::Document;
 using model::DocumentKey;
-using model::DocumentState;
+using model::EncodeServerTimestamp;
 using model::FieldMask;
 using model::FieldPath;
 using model::FieldTransform;
-using model::FieldValue;
-using model::MaybeDocument;
+using model::IsNaNValue;
+using model::IsNullValue;
+using model::MutableDocument;
 using model::Mutation;
 using model::MutationResult;
-using model::NoDocument;
+using model::NaNValue;
+using model::NullValue;
 using model::NumericIncrementTransform;
 using model::ObjectValue;
 using model::PatchMutation;
@@ -96,17 +97,22 @@ using model::ServerTimestampTransform;
 using model::SetMutation;
 using model::SnapshotVersion;
 using model::TargetId;
-using model::TransformMutation;
 using model::TransformOperation;
 using model::VerifyMutation;
 using nanopb::ByteString;
 using nanopb::CheckedSize;
 using nanopb::MakeArray;
+using nanopb::MakeMessage;
+using nanopb::MakeSharedMessage;
 using nanopb::MakeStringView;
-using nanopb::Reader;
+using nanopb::Message;
+using nanopb::ReleaseFieldOwnership;
 using nanopb::SafeReadBoolean;
+using nanopb::SetRepeatedField;
+using nanopb::SharedMessage;
 using nanopb::Writer;
 using remote::WatchChange;
+using util::ReadContext;
 using util::Status;
 using util::StatusOr;
 using util::StringFormat;
@@ -146,10 +152,10 @@ bool IsValidResourceName(const ResourcePath& path) {
  * path.
  */
 ResourcePath ExtractLocalPathFromResourceName(
-    Reader* reader, const ResourcePath& resource_name) {
+    ReadContext* context, const ResourcePath& resource_name) {
   if (resource_name.size() <= 4 || resource_name[4] != "documents") {
-    reader->Fail(StringFormat("Tried to deserialize invalid key %s",
-                              resource_name.CanonicalString()));
+    context->Fail(StringFormat("Tried to deserialize invalid key %s",
+                               resource_name.CanonicalString()));
     return ResourcePath{};
   }
   return resource_name.PopFirst(5);
@@ -158,7 +164,8 @@ ResourcePath ExtractLocalPathFromResourceName(
 Filter InvalidFilter() {
   // The exact value doesn't matter. Note that there's no way to create the base
   // class `Filter`, so it has to be one of the derived classes.
-  return FieldFilter::Create({}, {}, {});
+  return FieldFilter::Create({}, {},
+                             MakeSharedMessage(google_firestore_v1_Value{}));
 }
 
 FieldPath InvalidFieldPath() {
@@ -175,251 +182,25 @@ pb_bytes_array_t* Serializer::EncodeDatabaseName() const {
   return EncodeString(DatabaseName(database_id_).CanonicalString());
 }
 
-google_firestore_v1_Value Serializer::EncodeFieldValue(
-    const FieldValue& field_value) const {
-  switch (field_value.type()) {
-    case FieldValue::Type::Null:
-      return EncodeNull();
-
-    case FieldValue::Type::Boolean:
-      return EncodeBoolean(field_value.boolean_value());
-
-    case FieldValue::Type::Integer:
-      return EncodeInteger(field_value.integer_value());
-
-    case FieldValue::Type::Double:
-      return EncodeDouble(field_value.double_value());
-
-    case FieldValue::Type::Timestamp:
-      return EncodeTimestampValue(field_value.timestamp_value());
-
-    case FieldValue::Type::String:
-      return EncodeStringValue(field_value.string_value());
-
-    case FieldValue::Type::Blob:
-      return EncodeBlob(field_value.blob_value());
-
-    case FieldValue::Type::Reference:
-      return EncodeReference(field_value.reference_value());
-
-    case FieldValue::Type::GeoPoint:
-      return EncodeGeoPoint(field_value.geo_point_value());
-
-    case FieldValue::Type::Array: {
-      google_firestore_v1_Value result{};
-      result.which_value_type = google_firestore_v1_Value_array_value_tag;
-      result.array_value = EncodeArray(field_value.array_value());
-      return result;
-    }
-
-    case FieldValue::Type::Object: {
-      google_firestore_v1_Value result{};
-      result.which_value_type = google_firestore_v1_Value_map_value_tag;
-      result.map_value = EncodeMapValue(ObjectValue(field_value));
-      return result;
-    }
-
-    case FieldValue::Type::ServerTimestamp:
-      HARD_FAIL("Unhandled type %s on %s", field_value.type(),
-                field_value.ToString());
-  }
-  UNREACHABLE();
-}
-
-google_firestore_v1_Value Serializer::EncodeNull() const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_null_value_tag;
-  result.null_value = google_protobuf_NullValue_NULL_VALUE;
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeBoolean(bool value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_boolean_value_tag;
-  result.boolean_value = value;
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeInteger(int64_t value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_integer_value_tag;
-  result.integer_value = value;
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeDouble(double value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_double_value_tag;
-  result.double_value = value;
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeTimestampValue(
-    Timestamp value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_timestamp_value_tag;
-  result.timestamp_value = EncodeTimestamp(value);
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeStringValue(
-    const std::string& value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_string_value_tag;
-  result.string_value = EncodeString(value);
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeBlob(
-    const nanopb::ByteString& value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_bytes_value_tag;
-  // Copy the blob so that pb_release can do the right thing.
-  result.bytes_value = nanopb::CopyBytesArray(value.get());
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeReference(
-    const FieldValue::Reference& value) const {
-  HARD_ASSERT(database_id_ == value.database_id(),
-              "Database %s cannot encode reference from %s",
-              database_id_.ToString(), value.database_id().ToString());
-
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_reference_value_tag;
-  result.reference_value =
-      EncodeResourceName(value.database_id(), value.key().path());
-
-  return result;
-}
-
-google_firestore_v1_Value Serializer::EncodeGeoPoint(
-    const GeoPoint& value) const {
-  google_firestore_v1_Value result{};
-  result.which_value_type = google_firestore_v1_Value_geo_point_value_tag;
-
-  google_type_LatLng geo_point{};
-  geo_point.latitude = value.latitude();
-  geo_point.longitude = value.longitude();
-  result.geo_point_value = geo_point;
-
-  return result;
-}
-
-FieldValue::Map::value_type Serializer::DecodeFieldsEntry(
-    Reader* reader,
-    const google_firestore_v1_Document_FieldsEntry& fields) const {
-  std::string key = DecodeString(fields.key);
-  FieldValue value = DecodeFieldValue(reader, fields.value);
-
-  if (key.empty()) {
-    reader->Fail(
-        "Invalid message: Empty key while decoding a Map field value.");
-    return {};
-  }
-
-  return FieldValue::Map::value_type{std::move(key), std::move(value)};
-}
-
-ObjectValue Serializer::DecodeFields(
-    Reader* reader,
-    size_t count,
-    const google_firestore_v1_Document_FieldsEntry* fields) const {
-  FieldValue::Map result;
-  for (size_t i = 0; i < count; i++) {
-    FieldValue::Map::value_type kv = DecodeFieldsEntry(reader, fields[i]);
-    result = result.insert(std::move(kv.first), std::move(kv.second));
-  }
-
-  return ObjectValue::FromMap(result);
-}
-
-FieldValue::Map Serializer::DecodeMapValue(
-    Reader* reader, const google_firestore_v1_MapValue& map_value) const {
-  FieldValue::Map result;
-
-  for (size_t i = 0; i < map_value.fields_count; i++) {
-    std::string key = DecodeString(map_value.fields[i].key);
-    FieldValue value = DecodeFieldValue(reader, map_value.fields[i].value);
-
-    result = result.insert(key, value);
-  }
-
-  return result;
-}
-
-FieldValue Serializer::DecodeFieldValue(
-    Reader* reader, const google_firestore_v1_Value& msg) const {
-  switch (msg.which_value_type) {
-    case google_firestore_v1_Value_null_value_tag:
-      if (msg.null_value != google_protobuf_NullValue_NULL_VALUE) {
-        reader->Fail("Input proto bytes cannot be parsed (invalid null value)");
-      }
-      return FieldValue::Null();
-
-    case google_firestore_v1_Value_boolean_value_tag: {
-      return FieldValue::FromBoolean(SafeReadBoolean(msg.boolean_value));
-    }
-
-    case google_firestore_v1_Value_integer_value_tag:
-      return FieldValue::FromInteger(msg.integer_value);
-
-    case google_firestore_v1_Value_double_value_tag:
-      return FieldValue::FromDouble(msg.double_value);
-
-    case google_firestore_v1_Value_timestamp_value_tag: {
-      return FieldValue::FromTimestamp(
-          DecodeTimestamp(reader, msg.timestamp_value));
-    }
-
-    case google_firestore_v1_Value_string_value_tag:
-      return FieldValue::FromString(DecodeString(msg.string_value));
-
-    case google_firestore_v1_Value_bytes_value_tag:
-      return FieldValue::FromBlob(ByteString(msg.bytes_value));
-
-    case google_firestore_v1_Value_reference_value_tag:
-      return DecodeReference(reader, msg.reference_value);
-
-    case google_firestore_v1_Value_geo_point_value_tag:
-      return FieldValue::FromGeoPoint(
-          DecodeGeoPoint(reader, msg.geo_point_value));
-
-    case google_firestore_v1_Value_array_value_tag:
-      return FieldValue::FromArray(DecodeArray(reader, msg.array_value));
-
-    case google_firestore_v1_Value_map_value_tag: {
-      return FieldValue::FromMap(DecodeMapValue(reader, msg.map_value));
-    }
-
-    default:
-      reader->Fail(StringFormat("Invalid type while decoding FieldValue: %s",
-                                msg.which_value_type));
-      return FieldValue::Null();
-  }
-
-  UNREACHABLE();
-}
-
 pb_bytes_array_t* Serializer::EncodeKey(const DocumentKey& key) const {
   return EncodeResourceName(database_id_, key.path());
 }
 
 void Serializer::ValidateDocumentKeyPath(
-    Reader* reader, const ResourcePath& resource_name) const {
+    ReadContext* context, const ResourcePath& resource_name) const {
   if (resource_name.size() < 5) {
-    reader->Fail(
+    context->Fail(
         StringFormat("Attempted to decode invalid key: '%s'. Should have at "
                      "least 5 segments.",
                      resource_name.CanonicalString()));
   } else if (resource_name[1] != database_id_.project_id()) {
-    reader->Fail(
+    context->Fail(
         StringFormat("Tried to deserialize key from different project. "
                      "Expected: '%s'. Found: '%s'. (Full key: '%s')",
                      database_id_.project_id(), resource_name[1],
                      resource_name.CanonicalString()));
   } else if (resource_name[3] != database_id_.database_id()) {
-    reader->Fail(
+    context->Fail(
         StringFormat("Tried to deserialize key from different database. "
                      "Expected: '%s'. Found: '%s'. (Full key: '%s')",
                      database_id_.database_id(), resource_name[3],
@@ -427,26 +208,27 @@ void Serializer::ValidateDocumentKeyPath(
   }
 }
 
-DocumentKey Serializer::DecodeKey(Reader* reader,
+DocumentKey Serializer::DecodeKey(ReadContext* context,
                                   const pb_bytes_array_t* name) const {
-  ResourcePath resource_name = DecodeResourceName(reader, MakeStringView(name));
-  ValidateDocumentKeyPath(reader, resource_name);
+  ResourcePath resource_name =
+      DecodeResourceName(context, MakeStringView(name));
+  ValidateDocumentKeyPath(context, resource_name);
 
-  return DecodeKey(reader, resource_name);
+  return DecodeKey(context, resource_name);
 }
 
-DocumentKey Serializer::DecodeKey(Reader* reader,
+DocumentKey Serializer::DecodeKey(ReadContext* context,
                                   const ResourcePath& resource_name) const {
   ResourcePath local_path =
-      ExtractLocalPathFromResourceName(reader, resource_name);
+      ExtractLocalPathFromResourceName(context, resource_name);
 
   if (!DocumentKey::IsDocumentKey(local_path)) {
-    reader->Fail(StringFormat("Invalid document key path: %s",
-                              local_path.CanonicalString()));
+    context->Fail(StringFormat("Invalid document key path: %s",
+                               local_path.CanonicalString()));
   }
 
   // Avoid assertion failures in DocumentKey if local_path is invalid.
-  if (!reader->status().ok()) return DocumentKey{};
+  if (!context->status().ok()) return DocumentKey{};
   return DocumentKey{std::move(local_path)};
 }
 
@@ -454,9 +236,9 @@ pb_bytes_array_t* Serializer::EncodeQueryPath(const ResourcePath& path) const {
   return EncodeResourceName(database_id_, path);
 }
 
-ResourcePath Serializer::DecodeQueryPath(Reader* reader,
+ResourcePath Serializer::DecodeQueryPath(ReadContext* context,
                                          absl::string_view name) const {
-  ResourcePath resource = DecodeResourceName(reader, name);
+  ResourcePath resource = DecodeResourceName(context, name);
   if (resource.size() == 4) {
     // In v1beta1 queries for collections at the root did not have a trailing
     // "/documents". In v1 all resource paths contain "/documents". Preserve the
@@ -464,7 +246,7 @@ ResourcePath Serializer::DecodeQueryPath(Reader* reader,
     // in the local target cache.
     return ResourcePath::Empty();
   } else {
-    return ExtractLocalPathFromResourceName(reader, resource);
+    return ExtractLocalPathFromResourceName(context, resource);
   }
 }
 
@@ -476,27 +258,14 @@ pb_bytes_array_t* Serializer::EncodeResourceName(
                                       .CanonicalString());
 }
 
-ResourcePath Serializer::DecodeResourceName(Reader* reader,
+ResourcePath Serializer::DecodeResourceName(ReadContext* context,
                                             absl::string_view encoded) const {
-  ResourcePath resource = ResourcePath::FromStringView(encoded);
+  auto resource = ResourcePath::FromStringView(encoded);
   if (!IsValidResourceName(resource)) {
-    reader->Fail(StringFormat("Tried to deserialize an invalid key %s",
-                              resource.CanonicalString()));
+    context->Fail(StringFormat("Tried to deserialize an invalid key: %s",
+                               resource.CanonicalString()));
   }
   return resource;
-}
-
-DatabaseId Serializer::DecodeDatabaseId(
-    Reader* reader, const ResourcePath& resource_name) const {
-  if (resource_name.size() < 4) {
-    reader->Fail(StringFormat("Tried to deserialize invalid key %s",
-                              resource_name.CanonicalString()));
-    return DatabaseId{};
-  }
-
-  const std::string& project_id = resource_name[1];
-  const std::string& database_id = resource_name[3];
-  return DatabaseId{project_id, database_id};
 }
 
 google_firestore_v1_Document Serializer::EncodeDocument(
@@ -506,15 +275,17 @@ google_firestore_v1_Document Serializer::EncodeDocument(
   result.name = EncodeKey(key);
 
   // Encode Document.fields (unless it's empty)
-  pb_size_t count = CheckedSize(object_value.GetInternalValue().size());
-  result.fields_count = count;
-  result.fields = MakeArray<google_firestore_v1_Document_FieldsEntry>(count);
-  int i = 0;
-  for (const auto& kv : object_value.GetInternalValue()) {
-    result.fields[i].key = EncodeString(kv.first);
-    result.fields[i].value = EncodeFieldValue(kv.second);
-    i++;
-  }
+  const google_firestore_v1_MapValue& map_value = object_value.Get().map_value;
+  SetRepeatedField(
+      &result.fields, &result.fields_count,
+      absl::Span<google_firestore_v1_MapValue_FieldsEntry>(
+          map_value.fields, map_value.fields_count),
+      [](const google_firestore_v1_MapValue_FieldsEntry& entry) {
+        // TODO(mrschmidt): Figure out how to remove this copy
+        return google_firestore_v1_Document_FieldsEntry{
+            nanopb::MakeBytesArray(entry.key->bytes, entry.key->size),
+            *DeepClone(entry.value).release()};
+      });
 
   // Skip Document.create_time and Document.update_time, since they're
   // output-only fields.
@@ -522,60 +293,58 @@ google_firestore_v1_Document Serializer::EncodeDocument(
   return result;
 }
 
-MaybeDocument Serializer::DecodeMaybeDocument(
-    Reader* reader,
-    const google_firestore_v1_BatchGetDocumentsResponse& response) const {
+MutableDocument Serializer::DecodeMaybeDocument(
+    ReadContext* context,
+    google_firestore_v1_BatchGetDocumentsResponse& response) const {
   switch (response.which_result) {
     case google_firestore_v1_BatchGetDocumentsResponse_found_tag:
-      return DecodeFoundDocument(reader, response);
+      return DecodeFoundDocument(context, response);
     case google_firestore_v1_BatchGetDocumentsResponse_missing_tag:
-      return DecodeMissingDocument(reader, response);
+      return DecodeMissingDocument(context, response);
     default:
-      reader->Fail(
+      context->Fail(
           StringFormat("Unknown result case: %s", response.which_result));
-      return {};
+      return MutableDocument::InvalidDocument({});
   }
 
   UNREACHABLE();
 }
 
-Document Serializer::DecodeFoundDocument(
-    Reader* reader,
-    const google_firestore_v1_BatchGetDocumentsResponse& response) const {
+MutableDocument Serializer::DecodeFoundDocument(
+    ReadContext* context,
+    google_firestore_v1_BatchGetDocumentsResponse& response) const {
   HARD_ASSERT(response.which_result ==
                   google_firestore_v1_BatchGetDocumentsResponse_found_tag,
               "Tried to deserialize a found document from a missing document.");
 
-  DocumentKey key = DecodeKey(reader, response.found.name);
-  ObjectValue value =
-      DecodeFields(reader, response.found.fields_count, response.found.fields);
-  SnapshotVersion version = DecodeVersion(reader, response.found.update_time);
+  DocumentKey key = DecodeKey(context, response.found.name);
+  ObjectValue value = ObjectValue::FromFieldsEntry(response.found.fields,
+                                                   response.found.fields_count);
+  SnapshotVersion version = DecodeVersion(context, response.found.update_time);
 
   if (version == SnapshotVersion::None()) {
-    reader->Fail("Got a document response with no snapshot version");
+    context->Fail("Got a document response with no snapshot version");
   }
 
-  return Document(std::move(value), std::move(key), version,
-                  DocumentState::kSynced);
+  return MutableDocument::FoundDocument(std::move(key), version,
+                                        std::move(value));
 }
 
-NoDocument Serializer::DecodeMissingDocument(
-    Reader* reader,
+MutableDocument Serializer::DecodeMissingDocument(
+    ReadContext* context,
     const google_firestore_v1_BatchGetDocumentsResponse& response) const {
   HARD_ASSERT(response.which_result ==
                   google_firestore_v1_BatchGetDocumentsResponse_missing_tag,
               "Tried to deserialize a missing document from a found document.");
 
-  DocumentKey key = DecodeKey(reader, response.missing);
-  SnapshotVersion version = DecodeVersion(reader, response.read_time);
+  DocumentKey key = DecodeKey(context, response.missing);
+  SnapshotVersion version = DecodeVersion(context, response.read_time);
 
   if (version == SnapshotVersion::None()) {
-    reader->Fail("Got a no document response with no snapshot version");
-    return {};
+    context->Fail("Got a no document response with no snapshot version");
   }
 
-  return NoDocument(std::move(key), version,
-                    /*has_committed_mutations=*/false);
+  return MutableDocument::NoDocument(std::move(key), version);
 }
 
 google_firestore_v1_Write Serializer::EncodeMutation(
@@ -587,6 +356,11 @@ google_firestore_v1_Write Serializer::EncodeMutation(
     result.has_current_document = true;
     result.current_document = EncodePrecondition(mutation.precondition());
   }
+
+  SetRepeatedField(&result.update_transforms, &result.update_transforms_count,
+                   mutation.field_transforms(), [&](const FieldTransform& t) {
+                     return EncodeFieldTransform(t);
+                   });
 
   switch (mutation.type()) {
     case Mutation::Type::Set: {
@@ -610,33 +384,6 @@ google_firestore_v1_Write Serializer::EncodeMutation(
       return result;
     }
 
-    case Mutation::Type::Transform: {
-      result.which_operation = google_firestore_v1_Write_transform_tag;
-      auto transform = static_cast<const TransformMutation&>(mutation);
-      result.transform.document = EncodeKey(transform.key());
-
-      pb_size_t count = CheckedSize(transform.field_transforms().size());
-      result.transform.field_transforms_count = count;
-      result.transform.field_transforms =
-          MakeArray<google_firestore_v1_DocumentTransform_FieldTransform>(
-              count);
-      int i = 0;
-      for (const FieldTransform& field_transform :
-           transform.field_transforms()) {
-        result.transform.field_transforms[i] =
-            EncodeFieldTransform(field_transform);
-        i++;
-      }
-
-      // NOTE: We set a precondition of exists: true as a safety-check, since we
-      // always combine TransformMutations with a SetMutation or PatchMutation
-      // which (if successful) should end up with an existing document.
-      result.has_current_document = true;
-      result.current_document = EncodePrecondition(Precondition::Exists(true));
-
-      return result;
-    }
-
     case Mutation::Type::Delete: {
       result.which_operation = google_firestore_v1_Write_delete_tag;
       result.delete_ = EncodeKey(mutation.key());
@@ -653,55 +400,48 @@ google_firestore_v1_Write Serializer::EncodeMutation(
   UNREACHABLE();
 }
 
-Mutation Serializer::DecodeMutation(
-    nanopb::Reader* reader, const google_firestore_v1_Write& mutation) const {
+Mutation Serializer::DecodeMutation(ReadContext* context,
+                                    google_firestore_v1_Write& mutation) const {
   auto precondition = Precondition::None();
   if (mutation.has_current_document) {
-    precondition = DecodePrecondition(reader, mutation.current_document);
+    precondition = DecodePrecondition(context, mutation.current_document);
+  }
+
+  std::vector<FieldTransform> field_transforms;
+  for (size_t i = 0; i < mutation.update_transforms_count; i++) {
+    field_transforms.push_back(
+        DecodeFieldTransform(context, mutation.update_transforms[i]));
   }
 
   switch (mutation.which_operation) {
     case google_firestore_v1_Write_update_tag: {
-      DocumentKey key = DecodeKey(reader, mutation.update.name);
-      ObjectValue value = DecodeFields(reader, mutation.update.fields_count,
-                                       mutation.update.fields);
+      DocumentKey key = DecodeKey(context, mutation.update.name);
+      ObjectValue value = ObjectValue::FromFieldsEntry(
+          mutation.update.fields, mutation.update.fields_count);
       if (mutation.has_update_mask) {
-        FieldMask mask = DecodeFieldMask(reader, mutation.update_mask);
+        FieldMask mask = DecodeFieldMask(context, mutation.update_mask);
         return PatchMutation(std::move(key), std::move(value), std::move(mask),
-                             std::move(precondition));
+                             std::move(precondition),
+                             std::move(field_transforms));
       } else {
         return SetMutation(std::move(key), std::move(value),
-                           std::move(precondition));
+                           std::move(precondition),
+                           std::move(field_transforms));
       }
     }
 
     case google_firestore_v1_Write_delete_tag:
-      return DeleteMutation(DecodeKey(reader, mutation.delete_),
+      return DeleteMutation(DecodeKey(context, mutation.delete_),
                             std::move(precondition));
 
-    case google_firestore_v1_Write_transform_tag: {
-      std::vector<FieldTransform> field_transforms;
-      for (size_t i = 0; i < mutation.transform.field_transforms_count; i++) {
-        field_transforms.push_back(DecodeFieldTransform(
-            reader, mutation.transform.field_transforms[i]));
-      }
-
-      HARD_ASSERT(precondition.type() == Precondition::Type::Exists &&
-                      precondition.exists(),
-                  "Transforms only support precondition \"exists == true\"");
-
-      return TransformMutation(DecodeKey(reader, mutation.transform.document),
-                               field_transforms);
-    }
-
     case google_firestore_v1_Write_verify_tag: {
-      return VerifyMutation(DecodeKey(reader, mutation.verify),
+      return VerifyMutation(DecodeKey(context, mutation.verify),
                             std::move(precondition));
     }
 
     default:
-      reader->Fail(StringFormat("Unknown mutation operation: %s",
-                                mutation.which_operation));
+      context->Fail(StringFormat("Unknown mutation operation: %s",
+                                 mutation.which_operation));
       return {};
   }
 
@@ -734,7 +474,7 @@ google_firestore_v1_Precondition Serializer::EncodePrecondition(
 
 /* static */
 Precondition Serializer::DecodePrecondition(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_Precondition& precondition) {
   switch (precondition.which_condition_type) {
     // 0 => type unset. nanopb doesn't provide a constant for this, so we use a
@@ -754,11 +494,11 @@ Precondition Serializer::DecodePrecondition(
     }
     case google_firestore_v1_Precondition_update_time_tag:
       return Precondition::UpdateTime(
-          DecodeVersion(reader, precondition.update_time));
+          DecodeVersion(context, precondition.update_time));
   }
 
-  reader->Fail(StringFormat("Unknown Precondition type: %s",
-                            precondition.which_condition_type));
+  context->Fail(StringFormat("Unknown Precondition type: %s",
+                             precondition.which_condition_type));
   return Precondition::None();
 }
 
@@ -766,26 +506,18 @@ Precondition Serializer::DecodePrecondition(
 google_firestore_v1_DocumentMask Serializer::EncodeFieldMask(
     const FieldMask& mask) {
   google_firestore_v1_DocumentMask result{};
-
-  pb_size_t count = CheckedSize(mask.size());
-  result.field_paths_count = count;
-  result.field_paths = MakeArray<pb_bytes_array_t*>(count);
-
-  int i = 0;
-  for (const FieldPath& path : mask) {
-    result.field_paths[i] = EncodeFieldPath(path);
-    i++;
-  }
-
+  SetRepeatedField(
+      &result.field_paths, &result.field_paths_count, mask,
+      [&](const FieldPath& path) { return EncodeFieldPath(path); });
   return result;
 }
 
 /* static */
 FieldMask Serializer::DecodeFieldMask(
-    nanopb::Reader* reader, const google_firestore_v1_DocumentMask& mask) {
+    ReadContext* context, const google_firestore_v1_DocumentMask& mask) {
   std::set<FieldPath> fields;
   for (size_t i = 0; i < mask.field_paths_count; i++) {
-    fields.insert(DecodeFieldPath(reader, mask.field_paths[i]));
+    fields.insert(DecodeFieldPath(context, mask.field_paths[i]));
   }
   return FieldMask(std::move(fields));
 }
@@ -808,15 +540,21 @@ Serializer::EncodeFieldTransform(const FieldTransform& field_transform) const {
     case Type::ArrayUnion:
       proto.which_transform_type =
           google_firestore_v1_DocumentTransform_FieldTransform_append_missing_elements_tag;  // NOLINT
-      proto.append_missing_elements = EncodeArray(
-          ArrayTransform(field_transform.transformation()).elements());
+      // TODO(mrschmidt): Figure out how to remove this copy
+      proto.append_missing_elements =
+          *DeepClone(
+               ArrayTransform(field_transform.transformation()).elements())
+               .release();
       return proto;
 
     case Type::ArrayRemove:
       proto.which_transform_type =
           google_firestore_v1_DocumentTransform_FieldTransform_remove_all_from_array_tag;  // NOLINT
-      proto.remove_all_from_array = EncodeArray(
-          ArrayTransform(field_transform.transformation()).elements());
+      // TODO(mrschmidt): Figure out how to remove this copy
+      proto.remove_all_from_array =
+          *DeepClone(
+               ArrayTransform(field_transform.transformation()).elements())
+               .release();
       return proto;
 
     case Type::Increment: {
@@ -824,7 +562,7 @@ Serializer::EncodeFieldTransform(const FieldTransform& field_transform) const {
           google_firestore_v1_DocumentTransform_FieldTransform_increment_tag;
       const auto& increment = static_cast<const NumericIncrementTransform&>(
           field_transform.transformation());
-      proto.increment = EncodeFieldValue(increment.operand());
+      proto.increment = increment.operand();
       return proto;
     }
   }
@@ -833,9 +571,9 @@ Serializer::EncodeFieldTransform(const FieldTransform& field_transform) const {
 }
 
 FieldTransform Serializer::DecodeFieldTransform(
-    nanopb::Reader* reader,
-    const google_firestore_v1_DocumentTransform_FieldTransform& proto) const {
-  FieldPath field = DecodeFieldPath(reader, proto.field_path);
+    ReadContext* context,
+    google_firestore_v1_DocumentTransform_FieldTransform& proto) const {
+  FieldPath field = DecodeFieldPath(context, proto.field_path);
 
   switch (proto.which_transform_type) {
     case google_firestore_v1_DocumentTransform_FieldTransform_set_to_server_value_tag: {  // NOLINT
@@ -848,26 +586,31 @@ FieldTransform Serializer::DecodeFieldTransform(
     }
 
     case google_firestore_v1_DocumentTransform_FieldTransform_append_missing_elements_tag: {  // NOLINT
-      std::vector<FieldValue> elements =
-          DecodeArray(reader, proto.append_missing_elements);
-      return FieldTransform(std::move(field),
-                            ArrayTransform(TransformOperation::Type::ArrayUnion,
-                                           std::move(elements)));
+      FieldTransform field_transform(
+          std::move(field),
+          ArrayTransform(TransformOperation::Type::ArrayUnion,
+                         MakeMessage(proto.append_missing_elements)));
+      // Release field ownership to prevent double-freeing. The values are now
+      // owned by the FieldTransform.
+      proto.append_missing_elements = {};
+      return field_transform;
     }
 
     case google_firestore_v1_DocumentTransform_FieldTransform_remove_all_from_array_tag: {  // NOLINT
-      std::vector<FieldValue> elements =
-          DecodeArray(reader, proto.remove_all_from_array);
-      return FieldTransform(
+      FieldTransform field_transform(
           std::move(field),
           ArrayTransform(TransformOperation::Type::ArrayRemove,
-                         std::move(elements)));
+                         MakeMessage(proto.remove_all_from_array)));
+      // Release field ownership to prevent double-freeing. The values are now
+      // owned by the FieldTransform.
+      proto.append_missing_elements = {};
+      return field_transform;
     }
 
     case google_firestore_v1_DocumentTransform_FieldTransform_increment_tag: {
-      FieldValue operand = DecodeFieldValue(reader, proto.increment);
-      return FieldTransform(std::move(field),
-                            NumericIncrementTransform(std::move(operand)));
+      return FieldTransform(
+          std::move(field),
+          NumericIncrementTransform(MakeMessage(proto.increment)));
     }
   }
 
@@ -909,16 +652,17 @@ google_firestore_v1_Target_DocumentsTarget Serializer::EncodeDocumentsTarget(
 }
 
 Target Serializer::DecodeDocumentsTarget(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_Target_DocumentsTarget& proto) const {
   if (proto.documents_count != 1) {
-    reader->Fail(
+    context->Fail(
         StringFormat("DocumentsTarget contained other than 1 document %s",
                      proto.documents_count));
     return {};
   }
 
-  ResourcePath path = DecodeQueryPath(reader, DecodeString(proto.documents[0]));
+  ResourcePath path =
+      DecodeQueryPath(context, DecodeString(proto.documents[0]));
   return Query(std::move(path)).ToTarget();
 }
 
@@ -982,25 +726,17 @@ google_firestore_v1_Target_QueryTarget Serializer::EncodeQueryTarget(
   return result;
 }
 
-Target Serializer::DecodeQueryTarget(
-    nanopb::Reader* reader,
-    const google_firestore_v1_Target_QueryTarget& proto) const {
-  // The QueryTarget oneof only has a single valid value.
-  if (proto.which_query_type !=
-      google_firestore_v1_Target_QueryTarget_structured_query_tag) {
-    reader->Fail(
-        StringFormat("Unknown query_type: %s", proto.which_query_type));
-    return {};
-  }
-
-  ResourcePath path = DecodeQueryPath(reader, DecodeString(proto.parent));
-  const google_firestore_v1_StructuredQuery& query = proto.structured_query;
+Target Serializer::DecodeStructuredQuery(
+    ReadContext* context,
+    pb_bytes_array_t* parent,
+    google_firestore_v1_StructuredQuery& query) const {
+  ResourcePath path = DecodeQueryPath(context, DecodeString(parent));
 
   CollectionGroupId collection_group;
   size_t from_count = query.from_count;
   if (from_count > 0) {
     if (from_count != 1) {
-      reader->Fail(
+      context->Fail(
           "StructuredQuery.from with more than one collection is not "
           "supported.");
       return {};
@@ -1018,12 +754,12 @@ Target Serializer::DecodeQueryTarget(
 
   FilterList filter_by;
   if (query.where.which_filter_type != 0) {
-    filter_by = DecodeFilters(reader, query.where);
+    filter_by = DecodeFilters(context, query.where);
   }
 
   OrderByList order_by;
   if (query.order_by_count > 0) {
-    order_by = DecodeOrderBys(reader, query.order_by, query.order_by_count);
+    order_by = DecodeOrderBys(context, query.order_by, query.order_by_count);
   }
 
   int32_t limit = Target::kNoLimit;
@@ -1031,20 +767,32 @@ Target Serializer::DecodeQueryTarget(
     limit = query.limit.value;
   }
 
-  std::shared_ptr<Bound> start_at;
+  absl::optional<Bound> start_at;
   if (query.start_at.values_count > 0) {
-    start_at = DecodeBound(reader, query.start_at);
+    start_at = DecodeBound(query.start_at);
   }
 
-  std::shared_ptr<Bound> end_at;
+  absl::optional<Bound> end_at;
   if (query.end_at.values_count > 0) {
-    end_at = DecodeBound(reader, query.end_at);
+    end_at = DecodeBound(query.end_at);
   }
 
-  return Query(std::move(path), std::move(collection_group),
-               std::move(filter_by), std::move(order_by), limit,
-               LimitType::First, std::move(start_at), std::move(end_at))
-      .ToTarget();
+  return Target(std::move(path), std::move(collection_group),
+                std::move(filter_by), std::move(order_by), limit,
+                std::move(start_at), std::move(end_at));
+}
+
+Target Serializer::DecodeQueryTarget(
+    ReadContext* context, google_firestore_v1_Target_QueryTarget& query) const {
+  // The QueryTarget oneof only has a single valid value.
+  if (query.which_query_type !=
+      google_firestore_v1_Target_QueryTarget_structured_query_tag) {
+    context->Fail(
+        StringFormat("Unknown query_type: %s", query.which_query_type));
+    return {};
+  }
+
+  return DecodeStructuredQuery(context, query.parent, query.structured_query);
 }
 
 google_firestore_v1_StructuredQuery_Filter Serializer::EncodeFilters(
@@ -1068,40 +816,31 @@ google_firestore_v1_StructuredQuery_Filter Serializer::EncodeFilters(
   composite.op =
       google_firestore_v1_StructuredQuery_CompositeFilter_Operator_AND;
 
-  auto count = CheckedSize(filters_count);
-  composite.filters_count = count;
-  composite.filters =
-      MakeArray<google_firestore_v1_StructuredQuery_Filter>(count);
-  pb_size_t i = 0;
-  for (const auto& filter : filters) {
-    if (filter.IsAFieldFilter()) {
-      HARD_ASSERT(i < count, "Index out of bounds");
-      composite.filters[i] = EncodeSingularFilter(FieldFilter{filter});
-      ++i;
-    }
-  }
+  SetRepeatedField(
+      &composite.filters, &composite.filters_count, filters,
+      [&](const Filter& f) { return EncodeSingularFilter(FieldFilter{f}); });
 
   return result;
 }
 
 FilterList Serializer::DecodeFilters(
-    nanopb::Reader* reader,
-    const google_firestore_v1_StructuredQuery_Filter& proto) const {
+    ReadContext* context,
+    google_firestore_v1_StructuredQuery_Filter& proto) const {
   FilterList result;
 
   switch (proto.which_filter_type) {
     case google_firestore_v1_StructuredQuery_Filter_composite_filter_tag:
-      return DecodeCompositeFilter(reader, proto.composite_filter);
+      return DecodeCompositeFilter(context, proto.composite_filter);
 
     case google_firestore_v1_StructuredQuery_Filter_unary_filter_tag:
-      return result.push_back(DecodeUnaryFilter(reader, proto.unary_filter));
+      return result.push_back(DecodeUnaryFilter(context, proto.unary_filter));
 
     case google_firestore_v1_StructuredQuery_Filter_field_filter_tag:
-      return result.push_back(DecodeFieldFilter(reader, proto.field_filter));
+      return result.push_back(DecodeFieldFilter(context, proto.field_filter));
 
     default:
-      reader->Fail(StringFormat("Unrecognized Filter.which_filter_type %s",
-                                proto.which_filter_type));
+      context->Fail(StringFormat("Unrecognized Filter.which_filter_type %s",
+                                 proto.which_filter_type));
       return result;
   }
 }
@@ -1112,7 +851,7 @@ google_firestore_v1_StructuredQuery_Filter Serializer::EncodeSingularFilter(
 
   bool is_unary = (filter.op() == Filter::Operator::Equal ||
                    filter.op() == Filter::Operator::NotEqual) &&
-                  (filter.value().is_nan() || filter.value().is_null());
+                  (IsNaNValue(filter.value()) || IsNullValue(filter.value()));
   if (is_unary) {
     result.which_filter_type =
         google_firestore_v1_StructuredQuery_Filter_unary_filter_tag;
@@ -1121,13 +860,13 @@ google_firestore_v1_StructuredQuery_Filter Serializer::EncodeSingularFilter(
     result.unary_filter.field.field_path = EncodeFieldPath(filter.field());
 
     bool is_equality = filter.op() == Filter::Operator::Equal;
-    if (filter.value().is_nan()) {
+    if (IsNaNValue(filter.value())) {
       result.unary_filter.op =
           is_equality
               ? google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NAN
               : google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NOT_NAN;  // NOLINT
 
-    } else if (filter.value().is_null()) {
+    } else if (IsNullValue(filter.value())) {
       result.unary_filter.op =
           is_equality
               ? google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NULL
@@ -1145,61 +884,61 @@ google_firestore_v1_StructuredQuery_Filter Serializer::EncodeSingularFilter(
 
   result.field_filter.field.field_path = EncodeFieldPath(filter.field());
   result.field_filter.op = EncodeFieldFilterOperator(filter.op());
-  result.field_filter.value = EncodeFieldValue(filter.value());
+  // TODO(mrschmidt): Figure out how to remove this copy
+  result.field_filter.value = *DeepClone(filter.value()).release();
 
   return result;
 }
 
 Filter Serializer::DecodeFieldFilter(
-    nanopb::Reader* reader,
-    const google_firestore_v1_StructuredQuery_FieldFilter& field_filter) const {
-  FieldPath field_path = DecodeFieldPath(reader, field_filter.field.field_path);
-  Filter::Operator op = DecodeFieldFilterOperator(reader, field_filter.op);
-  FieldValue value = DecodeFieldValue(reader, field_filter.value);
-
-  return FieldFilter::Create(std::move(field_path), op, std::move(value));
+    ReadContext* context,
+    google_firestore_v1_StructuredQuery_FieldFilter& field_filter) const {
+  FieldPath field_path =
+      DecodeFieldPath(context, field_filter.field.field_path);
+  Filter::Operator op = DecodeFieldFilterOperator(context, field_filter.op);
+  Filter result = FieldFilter::Create(std::move(field_path), op,
+                                      MakeSharedMessage(field_filter.value));
+  field_filter.value = {};  // Release field ownership
+  return result;
 }
 
 Filter Serializer::DecodeUnaryFilter(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_StructuredQuery_UnaryFilter& unary) const {
   HARD_ASSERT(unary.which_operand_type ==
                   google_firestore_v1_StructuredQuery_UnaryFilter_field_tag,
               "Unexpected UnaryFilter.which_operand_type: %s",
               unary.which_operand_type);
 
-  FieldPath field = DecodeFieldPath(reader, unary.field.field_path);
+  FieldPath field = DecodeFieldPath(context, unary.field.field_path);
 
   switch (unary.op) {
     case google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NULL:
-      return FieldFilter::Create(std::move(field), Filter::Operator::Equal,
-                                 FieldValue::Null());
+      return FieldFilter::Create(field, Filter::Operator::Equal, NullValue());
 
     case google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NAN:
-      return FieldFilter::Create(std::move(field), Filter::Operator::Equal,
-                                 FieldValue::Nan());
+      return FieldFilter::Create(field, Filter::Operator::Equal, NaNValue());
 
     case google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NOT_NULL:
-      return FieldFilter::Create(std::move(field), Filter::Operator::NotEqual,
-                                 FieldValue::Null());
+      return FieldFilter::Create(field, Filter::Operator::NotEqual,
+                                 NullValue());
 
     case google_firestore_v1_StructuredQuery_UnaryFilter_Operator_IS_NOT_NAN:
-      return FieldFilter::Create(std::move(field), Filter::Operator::NotEqual,
-                                 FieldValue::Nan());
+      return FieldFilter::Create(field, Filter::Operator::NotEqual, NaNValue());
 
     default:
-      reader->Fail(StringFormat("Unrecognized UnaryFilter.op %s", unary.op));
+      context->Fail(StringFormat("Unrecognized UnaryFilter.op %s", unary.op));
       return InvalidFilter();
   }
 }
 
 FilterList Serializer::DecodeCompositeFilter(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_StructuredQuery_CompositeFilter& composite)
     const {
   if (composite.op !=
       google_firestore_v1_StructuredQuery_CompositeFilter_Operator_AND) {
-    reader->Fail(StringFormat(
+    context->Fail(StringFormat(
         "Only AND-type composite filters are supported, got %s", composite.op));
     return FilterList{};
   }
@@ -1211,22 +950,22 @@ FilterList Serializer::DecodeCompositeFilter(
     auto& filter = composite.filters[i];
     switch (filter.which_filter_type) {
       case google_firestore_v1_StructuredQuery_Filter_composite_filter_tag:
-        reader->Fail("Nested composite filters are not supported");
+        context->Fail("Nested composite filters are not supported");
         return FilterList{};
 
       case google_firestore_v1_StructuredQuery_Filter_unary_filter_tag:
         result =
-            result.push_back(DecodeUnaryFilter(reader, filter.unary_filter));
+            result.push_back(DecodeUnaryFilter(context, filter.unary_filter));
         break;
 
       case google_firestore_v1_StructuredQuery_Filter_field_filter_tag:
         result =
-            result.push_back(DecodeFieldFilter(reader, filter.field_filter));
+            result.push_back(DecodeFieldFilter(context, filter.field_filter));
         break;
 
       default:
-        reader->Fail(StringFormat("Unrecognized Filter.which_filter_type %s",
-                                  filter.which_filter_type));
+        context->Fail(StringFormat("Unrecognized Filter.which_filter_type %s",
+                                   filter.which_filter_type));
         return FilterList{};
     }
   }
@@ -1273,7 +1012,7 @@ Serializer::EncodeFieldFilterOperator(Filter::Operator op) const {
 }
 
 Filter::Operator Serializer::DecodeFieldFilterOperator(
-    nanopb::Reader* reader,
+    ReadContext* context,
     google_firestore_v1_StructuredQuery_FieldFilter_Operator op) const {
   switch (op) {
     case google_firestore_v1_StructuredQuery_FieldFilter_Operator_LESS_THAN:
@@ -1307,7 +1046,7 @@ Filter::Operator Serializer::DecodeFieldFilterOperator(
       return Filter::Operator::NotIn;
 
     default:
-      reader->Fail(StringFormat("Unhandled FieldFilter.op: %s", op));
+      context->Fail(StringFormat("Unhandled FieldFilter.op: %s", op));
       return Filter::Operator{};
   }
 }
@@ -1334,23 +1073,23 @@ google_firestore_v1_StructuredQuery_Order* Serializer::EncodeOrderBys(
 }
 
 OrderByList Serializer::DecodeOrderBys(
-    nanopb::Reader* reader,
+    ReadContext* context,
     google_firestore_v1_StructuredQuery_Order* order_bys,
     pb_size_t size) const {
   OrderByList result;
   result = result.reserve(size);
 
   for (pb_size_t i = 0; i != size; ++i) {
-    result = result.push_back(DecodeOrderBy(reader, order_bys[i]));
+    result = result.push_back(DecodeOrderBy(context, order_bys[i]));
   }
 
   return result;
 }
 
 OrderBy Serializer::DecodeOrderBy(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_StructuredQuery_Order& order_by) const {
-  auto field_path = DecodeFieldPath(reader, order_by.field.field_path);
+  auto field_path = DecodeFieldPath(context, order_by.field.field_path);
 
   Direction direction;
   switch (order_by.direction) {
@@ -1363,7 +1102,7 @@ OrderBy Serializer::DecodeOrderBy(
       break;
 
     default:
-      reader->Fail(StringFormat(
+      context->Fail(StringFormat(
           "Unrecognized google_firestore_v1_StructuredQuery_Direction %s",
           order_by.direction));
       return OrderBy{};
@@ -1375,31 +1114,25 @@ OrderBy Serializer::DecodeOrderBy(
 google_firestore_v1_Cursor Serializer::EncodeBound(const Bound& bound) const {
   google_firestore_v1_Cursor result{};
   result.before = bound.before();
-
-  auto count = CheckedSize(bound.position().size());
-  result.values_count = count;
-  result.values = MakeArray<google_firestore_v1_Value>(count);
-
-  int i = 0;
-  for (const FieldValue& field_value : bound.position()) {
-    result.values[i] = EncodeFieldValue(field_value);
-    ++i;
-  }
-
+  SetRepeatedField(
+      &result.values, &result.values_count,
+      absl::Span<google_firestore_v1_Value>(bound.position()->values,
+                                            bound.position()->values_count),
+      [](const google_firestore_v1_Value& value) {
+        return *DeepClone(value).release();
+      });
   return result;
 }
 
-std::shared_ptr<Bound> Serializer::DecodeBound(
-    nanopb::Reader* reader, const google_firestore_v1_Cursor& cursor) const {
-  std::vector<FieldValue> index_components;
-  index_components.reserve(cursor.values_count);
-
-  for (pb_size_t i = 0; i != cursor.values_count; ++i) {
-    FieldValue value = DecodeFieldValue(reader, cursor.values[i]);
-    index_components.push_back(std::move(value));
-  }
-
-  return std::make_shared<Bound>(std::move(index_components), cursor.before);
+Bound Serializer::DecodeBound(google_firestore_v1_Cursor& cursor) const {
+  SharedMessage<google_firestore_v1_ArrayValue> index_components{{}};
+  SetRepeatedField(&index_components->values, &index_components->values_count,
+                   absl::Span<google_firestore_v1_Value>(cursor.values,
+                                                         cursor.values_count));
+  // Prevent double-freeing of the cursors's fields. The fields are now owned by
+  // the bound.
+  ReleaseFieldOwnership(cursor.values, cursor.values_count);
+  return Bound::FromValue(std::move(index_components), cursor.before);
 }
 
 /* static */
@@ -1408,12 +1141,12 @@ pb_bytes_array_t* Serializer::EncodeFieldPath(const FieldPath& field_path) {
 }
 
 /* static */
-FieldPath Serializer::DecodeFieldPath(nanopb::Reader* reader,
+FieldPath Serializer::DecodeFieldPath(ReadContext* context,
                                       const pb_bytes_array_t* field_path) {
   absl::string_view str = MakeStringView(field_path);
   StatusOr<FieldPath> decoded_path = FieldPath::FromServerFormatView(str);
   if (!decoded_path.ok()) {
-    reader->set_status(decoded_path.status());
+    context->set_status(decoded_path.status());
     return InvalidFieldPath();
   }
   return decoded_path.ConsumeValueOrDie();
@@ -1433,128 +1166,43 @@ google_protobuf_Timestamp Serializer::EncodeTimestamp(
 }
 
 SnapshotVersion Serializer::DecodeVersion(
-    nanopb::Reader* reader, const google_protobuf_Timestamp& proto) {
-  return SnapshotVersion{DecodeTimestamp(reader, proto)};
+    ReadContext* context, const google_protobuf_Timestamp& proto) {
+  return SnapshotVersion{DecodeTimestamp(context, proto)};
 }
 
 Timestamp Serializer::DecodeTimestamp(
-    nanopb::Reader* reader, const google_protobuf_Timestamp& timestamp_proto) {
-  // The Timestamp ctor will assert if we provide values outside the valid
-  // range. However, since we're decoding, a single corrupt byte could cause
-  // this to occur, so we'll verify the ranges before passing them in since we'd
-  // rather not abort in these situations.
-  if (timestamp_proto.seconds < TimestampInternal::Min().seconds()) {
-    reader->Fail(
-        "Invalid message: timestamp beyond the earliest supported date");
-  } else if (TimestampInternal::Max().seconds() < timestamp_proto.seconds) {
-    reader->Fail("Invalid message: timestamp beyond the latest supported date");
-  } else if (timestamp_proto.nanos < 0 || timestamp_proto.nanos > 999999999) {
-    reader->Fail(
-        "Invalid message: timestamp nanos must be between 0 and 999999999");
+    ReadContext* context, const google_protobuf_Timestamp& timestamp_proto) {
+  auto decoded = TimestampInternal::FromUntrustedSecondsAndNanos(
+      timestamp_proto.seconds, timestamp_proto.nanos);
+
+  if (!decoded.ok()) {
+    context->Fail(
+        "Failed to decode into valid protobuf Timestamp with error '%s'",
+        decoded.status().error_message());
+    return {};
   }
-
-  if (!reader->status().ok()) return Timestamp();
-  return Timestamp{timestamp_proto.seconds, timestamp_proto.nanos};
-}
-
-FieldValue Serializer::DecodeReference(
-    Reader* reader, const pb_bytes_array_t* resource_name_raw) const {
-  ResourcePath resource_name =
-      DecodeResourceName(reader, MakeStringView(resource_name_raw));
-  ValidateDocumentKeyPath(reader, resource_name);
-  DatabaseId database_id = DecodeDatabaseId(reader, resource_name);
-  DocumentKey key = DecodeKey(reader, resource_name);
-
-  return FieldValue::FromReference(std::move(database_id), std::move(key));
-}
-
-/* static */
-GeoPoint Serializer::DecodeGeoPoint(nanopb::Reader* reader,
-                                    const google_type_LatLng& latlng_proto) {
-  // The GeoPoint ctor will assert if we provide values outside the valid range.
-  // However, since we're decoding, a single corrupt byte could cause this to
-  // occur, so we'll verify the ranges before passing them in since we'd rather
-  // not abort in these situations.
-  double latitude = latlng_proto.latitude;
-  double longitude = latlng_proto.longitude;
-  if (std::isnan(latitude) || latitude < -90 || 90 < latitude) {
-    reader->Fail("Invalid message: Latitude must be in the range of [-90, 90]");
-  } else if (std::isnan(longitude) || longitude < -180 || 180 < longitude) {
-    reader->Fail(
-        "Invalid message: Latitude must be in the range of [-180, 180]");
-  }
-
-  if (!reader->status().ok()) return GeoPoint();
-  return GeoPoint(latitude, longitude);
-}
-
-google_firestore_v1_ArrayValue Serializer::EncodeArray(
-    const std::vector<FieldValue>& array_value) const {
-  google_firestore_v1_ArrayValue result{};
-
-  pb_size_t count = CheckedSize(array_value.size());
-  result.values_count = count;
-  result.values = MakeArray<google_firestore_v1_Value>(count);
-
-  size_t i = 0;
-  for (const FieldValue& fv : array_value) {
-    result.values[i++] = EncodeFieldValue(fv);
-  }
-
-  return result;
-}
-
-std::vector<FieldValue> Serializer::DecodeArray(
-    nanopb::Reader* reader,
-    const google_firestore_v1_ArrayValue& array_proto) const {
-  std::vector<FieldValue> result;
-  result.reserve(array_proto.values_count);
-
-  for (size_t i = 0; i < array_proto.values_count; i++) {
-    result.push_back(DecodeFieldValue(reader, array_proto.values[i]));
-  }
-
-  return result;
-}
-
-google_firestore_v1_MapValue Serializer::EncodeMapValue(
-    const ObjectValue& object_value) const {
-  google_firestore_v1_MapValue result{};
-
-  pb_size_t count = CheckedSize(object_value.GetInternalValue().size());
-
-  result.fields_count = count;
-  result.fields = MakeArray<google_firestore_v1_MapValue_FieldsEntry>(count);
-
-  int i = 0;
-  for (const auto& kv : object_value.GetInternalValue()) {
-    result.fields[i].key = EncodeString(kv.first);
-    result.fields[i].value = EncodeFieldValue(kv.second);
-    i++;
-  }
-
-  return result;
+  return decoded.ConsumeValueOrDie();
 }
 
 MutationResult Serializer::DecodeMutationResult(
-    nanopb::Reader* reader,
-    const google_firestore_v1_WriteResult& write_result,
+    ReadContext* context,
+    google_firestore_v1_WriteResult& write_result,
     const SnapshotVersion& commit_version) const {
   // NOTE: Deletes don't have an update_time, use commit_version instead.
   SnapshotVersion version =
       write_result.has_update_time
-          ? DecodeVersion(reader, write_result.update_time)
+          ? DecodeVersion(context, write_result.update_time)
           : commit_version;
 
-  absl::optional<std::vector<FieldValue>> transform_results;
-  if (write_result.transform_results_count > 0) {
-    transform_results = std::vector<FieldValue>{};
-    for (pb_size_t i = 0; i < write_result.transform_results_count; i++) {
-      transform_results->push_back(
-          DecodeFieldValue(reader, write_result.transform_results[i]));
-    }
-  }
-
+  Message<google_firestore_v1_ArrayValue> transform_results;
+  SetRepeatedField(&transform_results->values, &transform_results->values_count,
+                   absl::Span<google_firestore_v1_Value>(
+                       write_result.transform_results,
+                       write_result.transform_results_count));
+  // Prevent double-freeing of the transform result. The fields are now owned by
+  // the mutation result.
+  ReleaseFieldOwnership(write_result.transform_results,
+                        write_result.transform_results_count);
   return MutationResult(version, std::move(transform_results));
 }
 
@@ -1585,36 +1233,36 @@ std::string Serializer::EncodeLabel(QueryPurpose purpose) const {
 }
 
 std::unique_ptr<WatchChange> Serializer::DecodeWatchChange(
-    nanopb::Reader* reader,
-    const google_firestore_v1_ListenResponse& watch_change) const {
+    ReadContext* context,
+    google_firestore_v1_ListenResponse& watch_change) const {
   switch (watch_change.which_response_type) {
     case google_firestore_v1_ListenResponse_target_change_tag:
-      return DecodeTargetChange(reader, watch_change.target_change);
+      return DecodeTargetChange(context, watch_change.target_change);
 
     case google_firestore_v1_ListenResponse_document_change_tag:
-      return DecodeDocumentChange(reader, watch_change.document_change);
+      return DecodeDocumentChange(context, watch_change.document_change);
 
     case google_firestore_v1_ListenResponse_document_delete_tag:
-      return DecodeDocumentDelete(reader, watch_change.document_delete);
+      return DecodeDocumentDelete(context, watch_change.document_delete);
 
     case google_firestore_v1_ListenResponse_document_remove_tag:
-      return DecodeDocumentRemove(reader, watch_change.document_remove);
+      return DecodeDocumentRemove(context, watch_change.document_remove);
 
     case google_firestore_v1_ListenResponse_filter_tag:
-      return DecodeExistenceFilterWatchChange(reader, watch_change.filter);
+      return DecodeExistenceFilterWatchChange(context, watch_change.filter);
   }
 
   // Occasionally Watch will send response_type == 0 (which isn't a valid tag in
   // the enumeration). This has only been observed in tests running against the
   // emulator on Forge. Failing here causes the stream to restart with no ill
   // effects.
-  reader->Fail(StringFormat("Unknown WatchChange.response_type: %s",
-                            watch_change.which_response_type));
+  context->Fail(StringFormat("Unknown WatchChange.response_type: %s",
+                             watch_change.which_response_type));
   return {};
 }
 
 SnapshotVersion Serializer::DecodeVersionFromListenResponse(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_ListenResponse& listen_response) const {
   // We have only reached a consistent snapshot for the entire stream if there
   // is a read_time set and it applies to all targets (i.e. the list of targets
@@ -1627,14 +1275,14 @@ SnapshotVersion Serializer::DecodeVersionFromListenResponse(
     return SnapshotVersion::None();
   }
 
-  return DecodeVersion(reader, listen_response.target_change.read_time);
+  return DecodeVersion(context, listen_response.target_change.read_time);
 }
 
 std::unique_ptr<WatchChange> Serializer::DecodeTargetChange(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_TargetChange& change) const {
   WatchTargetChangeState state =
-      DecodeTargetChangeState(reader, change.target_change_type);
+      DecodeTargetChangeState(context, change.target_change_type);
   std::vector<TargetId> target_ids(change.target_ids,
                                    change.target_ids + change.target_ids_count);
   ByteString resume_token(change.resume_token);
@@ -1650,7 +1298,7 @@ std::unique_ptr<WatchChange> Serializer::DecodeTargetChange(
 }
 
 WatchTargetChangeState Serializer::DecodeTargetChangeState(
-    nanopb::Reader*,
+    ReadContext*,
     const google_firestore_v1_TargetChange_TargetChangeType state) {
   switch (state) {
     case google_firestore_v1_TargetChange_TargetChangeType_NO_CHANGE:
@@ -1668,15 +1316,14 @@ WatchTargetChangeState Serializer::DecodeTargetChangeState(
 }
 
 std::unique_ptr<WatchChange> Serializer::DecodeDocumentChange(
-    nanopb::Reader* reader,
-    const google_firestore_v1_DocumentChange& change) const {
-  ObjectValue value = DecodeFields(reader, change.document.fields_count,
-                                   change.document.fields);
-  DocumentKey key = DecodeKey(reader, change.document.name);
+    ReadContext* context, google_firestore_v1_DocumentChange& change) const {
+  ObjectValue value = ObjectValue::FromFieldsEntry(
+      change.document.fields, change.document.fields_count);
+  DocumentKey key = DecodeKey(context, change.document.name);
 
   HARD_ASSERT(change.document.has_update_time,
               "Got a document change with no snapshot version");
-  SnapshotVersion version = DecodeVersion(reader, change.document.update_time);
+  SnapshotVersion version = DecodeVersion(context, change.document.update_time);
 
   // TODO(b/142956770): other platforms memoize `change.document` inside the
   // `Document`. This currently cannot be implemented efficiently because it
@@ -1684,7 +1331,8 @@ std::unique_ptr<WatchChange> Serializer::DecodeDocumentChange(
   // would defeat the purpose). Note, however, that even without this
   // optimization C++ implementation is on par with the preceding Objective-C
   // implementation.
-  Document document(std::move(value), key, version, DocumentState::kSynced);
+  MutableDocument document =
+      MutableDocument::FoundDocument(key, version, std::move(value));
 
   std::vector<TargetId> updated_target_ids(
       change.target_ids, change.target_ids + change.target_ids_count);
@@ -1698,15 +1346,15 @@ std::unique_ptr<WatchChange> Serializer::DecodeDocumentChange(
 }
 
 std::unique_ptr<WatchChange> Serializer::DecodeDocumentDelete(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_DocumentDelete& change) const {
-  DocumentKey key = DecodeKey(reader, change.document);
+  DocumentKey key = DecodeKey(context, change.document);
   // Note that version might be unset in which case we use
   // SnapshotVersion::None().
   SnapshotVersion version = change.has_read_time
-                                ? DecodeVersion(reader, change.read_time)
+                                ? DecodeVersion(context, change.read_time)
                                 : SnapshotVersion::None();
-  NoDocument document(key, version, /* has_committed_mutations= */ false);
+  MutableDocument document = MutableDocument::NoDocument(key, version);
 
   std::vector<TargetId> removed_target_ids(
       change.removed_target_ids,
@@ -1718,9 +1366,9 @@ std::unique_ptr<WatchChange> Serializer::DecodeDocumentDelete(
 }
 
 std::unique_ptr<WatchChange> Serializer::DecodeDocumentRemove(
-    nanopb::Reader* reader,
+    ReadContext* context,
     const google_firestore_v1_DocumentRemove& change) const {
-  DocumentKey key = DecodeKey(reader, change.document);
+  DocumentKey key = DecodeKey(context, change.document);
   std::vector<TargetId> removed_target_ids(
       change.removed_target_ids,
       change.removed_target_ids + change.removed_target_ids_count);
@@ -1731,10 +1379,21 @@ std::unique_ptr<WatchChange> Serializer::DecodeDocumentRemove(
 }
 
 std::unique_ptr<WatchChange> Serializer::DecodeExistenceFilterWatchChange(
-    nanopb::Reader*, const google_firestore_v1_ExistenceFilter& filter) const {
+    ReadContext*, const google_firestore_v1_ExistenceFilter& filter) const {
   ExistenceFilter existence_filter{filter.count};
   return absl::make_unique<ExistenceFilterWatchChange>(existence_filter,
                                                        filter.target_id);
+}
+
+bool Serializer::IsLocalResourceName(const ResourcePath& path) const {
+  return IsValidResourceName(path) && path[1] == database_id_.project_id() &&
+         path[3] == database_id_.database_id();
+}
+
+bool Serializer::IsLocalDocumentKey(absl::string_view path) const {
+  auto resource = ResourcePath::FromStringView(path);
+  return IsLocalResourceName(resource) &&
+         DocumentKey::IsDocumentKey(resource.PopFirst(5));
 }
 
 }  // namespace remote

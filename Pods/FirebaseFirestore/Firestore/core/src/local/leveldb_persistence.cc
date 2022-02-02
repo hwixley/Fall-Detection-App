@@ -19,8 +19,8 @@
 #include <limits>
 #include <utility>
 
-#include "Firestore/core/src/auth/user.h"
 #include "Firestore/core/src/core/database_info.h"
+#include "Firestore/core/src/credentials/user.h"
 #include "Firestore/core/src/local/leveldb_key.h"
 #include "Firestore/core/src/local/leveldb_lru_reference_delegate.h"
 #include "Firestore/core/src/local/leveldb_migrations.h"
@@ -42,7 +42,7 @@ namespace firestore {
 namespace local {
 namespace {
 
-using auth::User;
+using credentials::User;
 using leveldb::DB;
 using model::ListenSequenceNumber;
 using util::Filesystem;
@@ -89,7 +89,7 @@ StatusOr<std::unique_ptr<LevelDbPersistence>> LevelDbPersistence::Create(
   if (!created.ok()) return created.status();
 
   std::unique_ptr<DB> db = std::move(created).ValueOrDie();
-  LevelDbMigrations::RunMigrations(db.get());
+  LevelDbMigrations::RunMigrations(db.get(), serializer);
 
   LevelDbTransaction transaction(db.get(), "Start LevelDB");
   std::set<std::string> users = CollectUserSet(&transaction);
@@ -117,6 +117,7 @@ LevelDbPersistence::LevelDbPersistence(std::unique_ptr<leveldb::DB> db,
   index_manager_ = absl::make_unique<LevelDbIndexManager>(this);
   reference_delegate_ =
       absl::make_unique<LevelDbLruReferenceDelegate>(this, lru_params);
+  bundle_cache_ = absl::make_unique<LevelDbBundleCache>(this, &serializer_);
 
   // TODO(gsoltis): set up a leveldb transaction for these operations.
   target_cache_->Start();
@@ -196,7 +197,9 @@ StatusOr<int64_t> LevelDbPersistence::CalculateByteSize() {
     int64_t file_size = maybe_size.ValueOrDie();
     count += file_size;
 
-    if (count < old_count || count > std::numeric_limits<int64_t>::max()) {
+    auto max_signed_value =
+        static_cast<uint64_t>(std::numeric_limits<int64_t>::max());
+    if (count < old_count || count > max_signed_value) {
       return Status(Error::kErrorOutOfRange,
                     "Failed to size LevelDB: count overflowed");
     }
@@ -223,7 +226,7 @@ void LevelDbPersistence::Shutdown() {
 }
 
 LevelDbMutationQueue* LevelDbPersistence::GetMutationQueueForUser(
-    const auth::User& user) {
+    const credentials::User& user) {
   users_.insert(user.uid());
   current_mutation_queue_ =
       absl::make_unique<LevelDbMutationQueue>(user, this, &serializer_);
@@ -244,6 +247,10 @@ LevelDbIndexManager* LevelDbPersistence::index_manager() {
 
 LevelDbLruReferenceDelegate* LevelDbPersistence::reference_delegate() {
   return reference_delegate_.get();
+}
+
+LevelDbBundleCache* LevelDbPersistence::bundle_cache() {
+  return bundle_cache_.get();
 }
 
 void LevelDbPersistence::RunInternal(absl::string_view label,

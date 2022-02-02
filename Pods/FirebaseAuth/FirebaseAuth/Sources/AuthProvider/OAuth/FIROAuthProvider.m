@@ -72,6 +72,12 @@ static NSString *const kCustomUrlSchemePrefix = @"app-";
       @brief The callback URL scheme used for headful-lite sign-in.
    */
   NSString *_callbackScheme;
+
+  /** @var _usingClientIDScheme
+      @brief True if the reverse client ID is registered as a custom URL scheme, and false
+     otherwise.
+   */
+  BOOL _usingClientIDScheme;
 }
 
 + (FIROAuthCredential *)credentialWithProviderID:(NSString *)providerID
@@ -216,9 +222,16 @@ static NSString *const kCustomUrlSchemePrefix = @"app-";
     _auth = auth;
     _providerID = providerID;
     if (_auth.app.options.clientID) {
-      _callbackScheme = [[[_auth.app.options.clientID componentsSeparatedByString:@"."]
-                             reverseObjectEnumerator].allObjects componentsJoinedByString:@"."];
-    } else {
+      NSString *reverseClientIDScheme =
+          [[[_auth.app.options.clientID componentsSeparatedByString:@"."]
+               reverseObjectEnumerator].allObjects componentsJoinedByString:@"."];
+      if ([FIRAuthWebUtils isCallbackSchemeRegisteredForCustomURLScheme:reverseClientIDScheme]) {
+        _callbackScheme = reverseClientIDScheme;
+        _usingClientIDScheme = YES;
+      }
+    }
+
+    if (!_usingClientIDScheme) {
       _callbackScheme = [kCustomUrlSchemePrefix
           stringByAppendingString:[_auth.app.options.googleAppID
                                       stringByReplacingOccurrencesOfString:@":"
@@ -295,6 +308,7 @@ static NSString *const kCustomUrlSchemePrefix = @"app-";
                                      NSString *appID = strongSelf->_auth.app.options.googleAppID;
                                      NSString *apiKey =
                                          strongSelf->_auth.requestConfiguration.APIKey;
+                                     NSString *tenantID = strongSelf->_auth.tenantID;
                                      NSMutableDictionary *urlArguments = [@{
                                        @"apiKey" : apiKey,
                                        @"authType" : kAuthTypeSignInWithRedirect,
@@ -304,10 +318,13 @@ static NSString *const kCustomUrlSchemePrefix = @"app-";
                                        @"eventId" : eventID,
                                        @"providerId" : strongSelf->_providerID,
                                      } mutableCopy];
-                                     if (clientID) {
+                                     if (strongSelf->_usingClientIDScheme) {
                                        urlArguments[@"clientId"] = clientID;
                                      } else {
                                        urlArguments[@"appId"] = appID;
+                                     }
+                                     if (tenantID) {
+                                       urlArguments[@"tid"] = tenantID;
                                      }
                                      if (strongSelf.scopes.count) {
                                        urlArguments[@"scopes"] =

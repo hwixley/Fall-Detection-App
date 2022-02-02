@@ -25,14 +25,15 @@
 
 namespace firebase {
 namespace firestore {
-namespace auth {
+namespace credentials {
 
 class User;
 
-}  // namespace auth
+}  // namespace credentials
 
 namespace local {
 
+class BundleCache;
 class IndexManager;
 class MutationQueue;
 class ReferenceDelegate;
@@ -92,10 +93,16 @@ class Persistence {
    * extent possible (e.g. in the case of UID switching from sally=>jack=>sally,
    * sally's mutation queue will be preserved).
    */
-  virtual MutationQueue* GetMutationQueueForUser(const auth::User& user) = 0;
+  virtual MutationQueue* GetMutationQueueForUser(
+      const credentials::User& user) = 0;
 
   /** Returns a TargetCache representing the persisted cache of queries. */
   virtual TargetCache* target_cache() = 0;
+
+  /**
+   * Returns a BundleCache representing the persisted cache of loaded bundles.
+   */
+  virtual BundleCache* bundle_cache() = 0;
 
   /**
    * Returns a RemoteDocumentCache representing the persisted cache of remote
