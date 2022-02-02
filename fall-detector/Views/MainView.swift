@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var polarManager: PolarBleSdkManager
     
     init() {
         UITabBar.appearance().backgroundColor = UIColor(MyColours.b2)
@@ -18,6 +19,7 @@ struct MainView: View {
         TabView(selection: $appState.inappState.tab) {
             HomeView()
                 .environmentObject(appState)
+                .environmentObject(polarManager)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                         .scaleEffect(self.appState.inappState.tab == 0 ? 1.05 : 1)
@@ -26,6 +28,7 @@ struct MainView: View {
             
             StatsView()
                 .environmentObject(appState)
+                .environmentObject(polarManager)
                 .tabItem {
                     Label("Stats", systemImage: "chart.xyaxis.line")
                         .scaleEffect(self.appState.inappState.tab == 1 ? 1.05 : 1)

@@ -11,6 +11,7 @@ import Firebase
 @main
 struct fall_detectorApp: App {
     @ObservedObject var appState = AppState()
+    @ObservedObject var polarManager = PolarBleSdkManager()
     
     init() {
         FirebaseApp.configure()
@@ -45,6 +46,7 @@ struct fall_detectorApp: App {
             case .main:
                 MainView()
                     .environmentObject(appState)
+                    .environmentObject(polarManager)
             case .account:
                 mnAccountView()
                     .environmentObject(appState)

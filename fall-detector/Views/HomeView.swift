@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var polarManager: PolarBleSdkManager
     
     var body: some View {
         NavigationView {
@@ -16,14 +17,15 @@ struct HomeView: View {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 
                 VStack {
-                    ConnectionView(appState: self.appState)
+                    ConnectionView(appState: self.appState, polarManager: self.polarManager)
                         .cornerRadius(20)
                     
-                    if self.appState.inappState.connection == .connected {
+                    let _ = print(self.polarManager.ecg)
+                    if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) {
                         DetectorView(appState: self.appState)
                             .cornerRadius(20)
                         
-                        LiveMovementView(appState: self.appState)
+                        LiveMovementView(appState: self.appState, polarManager: self.polarManager)
                             .cornerRadius(20)
                     }
                 }

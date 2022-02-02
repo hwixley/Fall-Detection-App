@@ -8,7 +8,7 @@ target 'fall-detector' do
   # Pods for fall-detector
   pod 'Firebase/Auth', '7.2-M1'
   pod 'Firebase/Firestore', '7.2-M1'
-  pod 'PolarBleSdk', '~> 3.2'
+  pod 'PolarBleSdk'
 
 end
 

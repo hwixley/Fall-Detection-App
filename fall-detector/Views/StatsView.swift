@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StatsView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var polarManager: PolarBleSdkManager
     
     var body: some View {
         NavigationView {

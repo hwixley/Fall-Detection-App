@@ -308,7 +308,7 @@ PODS:
 DEPENDENCIES:
   - Firebase/Auth (= 7.2-M1)
   - Firebase/Firestore (= 7.2-M1)
-  - PolarBleSdk (~> 3.2)
+  - PolarBleSdk
 
 SPEC REPOS:
   trunk:
@@ -349,6 +349,6 @@ SPEC CHECKSUMS:
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
 
-PODFILE CHECKSUM: 02578e13758919e90dc86f9d226b99e1a6313931
+PODFILE CHECKSUM: d10466f1c934a188aa5d25e926eea580c7b947ed
 
 COCOAPODS: 1.11.2

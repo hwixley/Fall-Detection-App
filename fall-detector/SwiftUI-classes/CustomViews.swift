@@ -124,7 +124,7 @@ struct SubButton : View {
 
 struct ConnectionView: View {
     @ObservedObject var appState: AppState
-    @ObservedObject var polarManager : PolarBleSdkManager = MyData.polarManager
+    @ObservedObject var polarManager : PolarBleSdkManager
     
     var body: some View {
         VStack(spacing: 15) {
@@ -234,7 +234,7 @@ struct ContactView: View {
 
 struct LiveMovementView: View {
     @ObservedObject var appState : AppState
-    @ObservedObject var polarManager : PolarBleSdkManager = MyData.polarManager
+    @ObservedObject var polarManager : PolarBleSdkManager
     
     var body: some View {
         VStack {
@@ -278,9 +278,6 @@ struct LiveMovementView: View {
                 self.polarManager.accToggle()
             }
             self.polarManager.isRecording = true
-            
-            MyData.polarManager = polarManager
-            
         }
         .onDisappear {
             if self.polarManager.ecgEnabled {
@@ -289,8 +286,6 @@ struct LiveMovementView: View {
             if self.polarManager.accEnabled {
                 self.polarManager.accToggle()
             }
-            
-            MyData.polarManager = polarManager
         }
         .frame(width: UIScreen.screenWidth - 20, height: 100)
         .modifier(VPadding(pad: 10))
