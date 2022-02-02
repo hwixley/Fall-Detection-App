@@ -20,7 +20,6 @@ struct HomeView: View {
                     ConnectionView(appState: self.appState, polarManager: self.polarManager)
                         .cornerRadius(20)
                     
-                    let _ = print(self.polarManager.ecg)
                     if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) {
                         DetectorView(appState: self.appState)
                             .cornerRadius(20)

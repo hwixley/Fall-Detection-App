@@ -22,6 +22,8 @@ class PolarBleSdkManager : ObservableObject {
     public var deviceId = MyData.polarDeviceID
     private var maxEcgCount = 100
     private var maxAccCount = 100
+    public var ecgStreamFail: Bool?
+    public var accStreamFail: Bool?
     
     @Published private(set) var bluetoothPowerOn: Bool
     @Published private(set) var broadcastEnabled: Bool = false
@@ -169,6 +171,7 @@ class PolarBleSdkManager : ObservableObject {
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
                         self.ecgEnabled = false
+                        self.ecgStreamFail = true
                     case .completed:
                         NSLog("ECG stream completed")
                         self.ecgEnabled = false
@@ -207,6 +210,7 @@ class PolarBleSdkManager : ObservableObject {
                     case .error(let err):
                         NSLog("ACC stream failed: \(err)")
                         self.accEnabled = false
+                        self.accStreamFail = true
                     case .completed:
                         NSLog("ACC stream completed")
                         self.accEnabled = false

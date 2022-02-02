@@ -238,37 +238,50 @@ struct LiveMovementView: View {
     
     var body: some View {
         VStack {
-            ScrollView(.vertical) {
-                HStack(alignment: .top, spacing: 5*UIScreen.screenWidth/12) {
-                    HStack(spacing: 2) {
-                        Text(self.polarManager.deviceId)
-                            .modifier(DefaultText(size: 18))
-                    }
-                    
-                    HStack(spacing: 2) {
-                        Image(systemName: "battery.\(String(self.polarManager.battery))")
-                        Text("\(self.polarManager.battery)%")
-                            .modifier(DefaultText(size: 18))
-                    }
+            HStack(alignment: .top, spacing: 5*UIScreen.screenWidth/12) {
+                Text(self.polarManager.deviceId)
+                    .modifier(DefaultText(size: 18))
+                
+                HStack(spacing: 2) {
+                    Image(systemName: "battery.\(String(self.polarManager.battery))")
+                    Text("\(self.polarManager.battery)%")
+                        .modifier(DefaultText(size: 18))
                 }
+            }
 
+            Spacer()
+            
+            
+            if !self.polarManager.ecg.isEmpty {
+                let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
+                let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
+                Chart(data: data)
+                    .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
+                    .frame(width: UIScreen.screenWidth - 20, height: 70)
+                
                 Spacer()
                 
+            } else if self.polarManager.ecgStreamFail ?? false {
+                Text("ECG data stream failed :(")
+                    .modifier(DefaultText(size: 21))
                 
-                if !self.polarManager.ecg.isEmpty {
-                    let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
-                    let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
-                    let _ = print(data)
-                    Chart(data: data)
-                        .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
-                        .frame(width: UIScreen.screenWidth - 20, height: 40)
-                } else {
-                    Text("Loading ECG data...")
-                        .modifier(DefaultText(size: 21))
-                    ProgressView()
-                        .padding(.bottom, 10)
+                Spacer()
+                
+                Button(action: {
+                    self.polarManager.ecgStreamFail = nil
+                    self.polarManager.ecgToggle()
+                }) {
+                    SubButton(title: "Try again", width: UIScreen.screenWidth - 40)
                 }
-            }.frame(maxWidth: .infinity)
+                .buttonStyle(ClassicButtonStyle(useGradient: true))
+                
+            } else {
+                Text("Retrieving ECG data...")
+                    .modifier(DefaultText(size: 21))
+                ProgressView()
+                    .padding(.bottom, 10)
+                Spacer()
+            }
         }
         .onAppear {
             if !self.polarManager.ecgEnabled {
@@ -287,9 +300,10 @@ struct LiveMovementView: View {
                 self.polarManager.accToggle()
             }
         }
-        .frame(width: UIScreen.screenWidth - 20, height: 100)
+        .frame(width: UIScreen.screenWidth - 20)
         .modifier(VPadding(pad: 10))
         .background(MyColours.b1)
+        .frame(maxWidth: .infinity)
     }
 }
 
