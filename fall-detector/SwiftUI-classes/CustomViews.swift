@@ -255,6 +255,11 @@ struct LiveMovementView: View {
             if !self.polarManager.ecg.isEmpty {
                 let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
                 let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
+                
+                if self.polarManager.l_hr != 0 {
+                    Text("\(self.polarManager.l_hr) BPM")
+                }
+                
                 Chart(data: data)
                     .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
                     .frame(width: UIScreen.screenWidth - 20, height: 70)

@@ -40,6 +40,7 @@ class PolarBleSdkManager : ObservableObject {
     @Published var acc_z: [Double] = []
     @Published var hr: [Double] = []
     @Published var contact : [Bool] = []
+    @Published var l_hr: Double = 0
     
     @Published var battery : UInt = 0
     
@@ -327,6 +328,7 @@ extension PolarBleSdkManager : PolarBleApiSdkModeFeatureObserver {
 extension PolarBleSdkManager : PolarBleApiDeviceHrObserver {
     func hrValueReceived(_ identifier: String, data: PolarHrData) {
         if self.isRecording {
+            self.l_hr = Double(data.hr)
             self.hr.append(Double(data.hr))
             self.contact.append(data.contact)
         }
