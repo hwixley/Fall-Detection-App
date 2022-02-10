@@ -19,6 +19,8 @@ class PolarBleSdkManager : ObservableObject {
     private var searchDisposable: Disposable?
     private var ecgDisposable: Disposable?
     private var accDisposable: Disposable?
+    private var ppgDisposable: Disposable?
+    private var ppiDisposable: Disposable?
     public var deviceId = MyData.polarDeviceID
     private var maxEcgCount = 100
     private var maxAccCount = 100
@@ -30,6 +32,10 @@ class PolarBleSdkManager : ObservableObject {
     @Published private(set) var searchEnabled: Bool = false
     @Published private(set) var ecgEnabled: Bool = false
     @Published private(set) var accEnabled: Bool = false
+    @Published private(set) var gyroEnabled: Bool = false
+    @Published private(set) var magnetometerEnabled: Bool = false
+    @Published private(set) var ppgEnabled: Bool = false
+    @Published private(set) var ppiEnabled: Bool = false
     @Published private(set) var sdkModeEnabled: Bool = false
     @Published private(set) var deviceConnectionState: ConnectionState = ConnectionState.disconnected
     
@@ -163,6 +169,7 @@ class PolarBleSdkManager : ObservableObject {
                 .subscribe{ e in
                     switch e {
                     case .next(let data):
+                        self.ecgStreamFail = false
                         if self.isRecording {
                             if self.ecg.count >= self.maxEcgCount {
                                 self.ecg.replaceSubrange(0...self.ecg.count-self.maxEcgCount, with: [])
@@ -225,6 +232,65 @@ class PolarBleSdkManager : ObservableObject {
         }
     }
     
+    func ppgToggle() {
+        if ppgDisposable == nil, case .connected(let deviceId) = deviceConnectionState {
+            ppgEnabled = true
+            ppgDisposable = api.requestStreamSettings(deviceId, feature: DeviceStreamingFeature.ppg)
+                .asObservable()
+                .flatMap({ (settings) -> Observable<PolarOhrData> in
+                    return self.api.startOhrStreaming(self.deviceId, settings: settings.maxSettings())
+                })
+                .observe(on: MainScheduler.instance)
+                .subscribe{ e in
+                    switch e {
+                    case .next(let data):
+                        if(data.type == OhrDataType.ppg3_ambient1) {
+                            for item in data.samples {
+                                //NSLog("    ppg0: \(item[0]) ppg1: \(item[1]) ppg2: \(item[2]) ambient: \(item[3])")
+                            }
+                        }
+                    case .error(let err):
+                        NSLog("PPG stream failed: \(err)")
+                        self.ppgEnabled = false
+                    case .completed:
+                        NSLog("PPG stream completed")
+                        self.ppgEnabled = false
+                    }
+                }
+        } else {
+            ppgEnabled = false
+            ppgDisposable?.dispose()
+            ppgDisposable = nil
+        }
+    }
+    
+    func ppiToggle() {
+        if ppiDisposable == nil, case .connected(let deviceId) = deviceConnectionState {
+            ppiEnabled = true
+            ppiDisposable = api.startOhrPPIStreaming(deviceId)
+                .observe(on: MainScheduler.instance)
+                .subscribe{ e in
+                    switch e {
+                    case .next(let data):
+                        _ = 0
+                        /*for item in data.samples {
+                            //NSLog("    PPI: \(item.ppInMs) sample.blockerBit: \(item.blockerBit)  errorEstimate: \(item.ppErrorEstimate)")
+                        }*/
+                    case .error(let err):
+                        NSLog("PPI stream failed: \(err)")
+                        self.ppiEnabled = false
+                    case .completed:
+                        NSLog("PPI stream completed")
+                        self.ppiEnabled = false
+                    }
+                }
+        } else {
+            ppiEnabled = false
+            ppiDisposable?.dispose()
+            ppiDisposable = nil
+        }
+    }
+   
     func sdkModeEnable() {
         if case .connected(let deviceId) = deviceConnectionState {
             _ = api.enableSDKMode(deviceId)
@@ -252,6 +318,68 @@ class PolarBleSdkManager : ObservableObject {
                         self.sdkModeEnabled = false
                     case .error(let err):
                         NSLog("SDK mode disable failed: \(err)")
+                    }
+                }
+        }
+    }
+    
+    func startH10Recording() {
+        if case .connected(let deviceId) = deviceConnectionState {
+            _ = api.startRecording(deviceId, exerciseId: "TEST_APP_ID", interval: .interval_1s, sampleType: .rr)
+                .observe(on: MainScheduler.instance)
+                .subscribe{ e in
+                    switch e {
+                    case .completed:
+                        NSLog("recording started")
+                    case .error(let err):
+                        NSLog("recording start fail: \(err)")
+                    }
+                }
+        }
+    }
+    
+    func stopH10Recording() {
+        if case .connected(let deviceId) = deviceConnectionState {
+            _ = api.stopRecording(deviceId)
+                .observe(on: MainScheduler.instance)
+                .subscribe{ e in
+                    switch e {
+                    case .completed:
+                        NSLog("recording stopped")
+                    case .error(let err):
+                        NSLog("recording stop fail: \(err)")
+                    }
+                }
+        }
+    }
+    
+    func getH10RecordingStatus() {
+        if case .connected(let deviceId) = deviceConnectionState {
+            _ = api.requestRecordingStatus(deviceId)
+                .observe(on: MainScheduler.instance)
+                .subscribe{ e in
+                    switch e {
+                    case .failure(let err):
+                        NSLog("recording status request failed: \(err)")
+                    case .success(let pair):
+                        NSLog("recording on: \(pair.ongoing) id: \(pair.entryId)")
+                    }
+                }
+        }
+    }
+    
+    func setTime() {
+        if case .connected(let deviceId) = deviceConnectionState {
+            let time = Date()
+            let timeZone = TimeZone.current
+            _ = api.setLocalTime(deviceId, time: time, zone: timeZone)
+                .observe(on: MainScheduler.instance)
+                .subscribe{ e in
+                    switch e {
+                    case .completed:
+                        NSLog("time set to device completed")
+                    case .error(let err):
+                        NSLog("time set failed: \(err)")
                     }
                 }
         }
@@ -312,6 +440,11 @@ extension PolarBleSdkManager : PolarBleApiDeviceFeaturesObserver {
     
     func streamingFeaturesReady(_ identifier: String, streamingFeatures: Set<DeviceStreamingFeature>) {
         for feature in streamingFeatures {
+            if feature == DeviceStreamingFeature.ecg {
+                ecgToggle()
+            } else if feature == DeviceStreamingFeature.acc {
+                accToggle()
+            }
             NSLog("Feature \(feature) is ready.")
         }
     }

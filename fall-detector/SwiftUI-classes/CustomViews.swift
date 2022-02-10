@@ -256,13 +256,17 @@ struct LiveMovementView: View {
                 let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
                 let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
                 
-                if self.polarManager.l_hr != 0 {
-                    Text("\(self.polarManager.l_hr) BPM")
-                }
-                
                 Chart(data: data)
                     .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
-                    .frame(width: UIScreen.screenWidth - 20, height: 70)
+                    .frame(width: UIScreen.screenWidth - 20, height: 60)
+                
+                Spacer()
+                
+                if self.polarManager.l_hr != 0 {
+                    let _ = print(self.polarManager.l_hr)
+                    Text("\(Int(self.polarManager.l_hr)) BPM")
+                        .modifier(DefaultText(size: 21))
+                }
                 
                 Spacer()
                 
@@ -273,8 +277,13 @@ struct LiveMovementView: View {
                 Spacer()
                 
                 Button(action: {
+                    if !self.polarManager.ecgEnabled {
+                        self.polarManager.ecgToggle()
+                    }
+                    if !self.polarManager.accEnabled {
+                        self.polarManager.accToggle()
+                    }
                     self.polarManager.ecgStreamFail = nil
-                    self.polarManager.ecgToggle()
                 }) {
                     SubButton(title: "Try again", width: UIScreen.screenWidth - 40)
                 }
@@ -288,23 +297,9 @@ struct LiveMovementView: View {
                 Spacer()
             }
         }
-        .onAppear {
-            if !self.polarManager.ecgEnabled {
-                self.polarManager.ecgToggle()
-            }
-            if !self.polarManager.accEnabled {
-                self.polarManager.accToggle()
-            }
+        .onAppear(perform: {
             self.polarManager.isRecording = true
-        }
-        .onDisappear {
-            if self.polarManager.ecgEnabled {
-                self.polarManager.ecgToggle()
-            }
-            if self.polarManager.accEnabled {
-                self.polarManager.accToggle()
-            }
-        }
+        })
         .frame(width: UIScreen.screenWidth - 20)
         .modifier(VPadding(pad: 10))
         .background(MyColours.b1)

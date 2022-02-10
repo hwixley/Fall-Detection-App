@@ -456,7 +456,7 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Firestore
   - Firebase/MLModelDownloader
-  - PolarBleSdk
+  - PolarBleSdk (~> 3.2)
   - TensorFlowLite
 
 SPEC REPOS:
@@ -506,6 +506,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: c3c12645230d9b09c72267e0de89468c5543bd86
   TensorFlowLite: 8b9dc4eb32eac0f8cb660c66bca7604da56dcc5a
 
-PODFILE CHECKSUM: 770b6153c969c6e04ac3db86f4badfd694a9c046
+PODFILE CHECKSUM: ceb52da55104cfbad1da7eb47b21066059d5910b
 
 COCOAPODS: 1.11.2
