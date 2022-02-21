@@ -181,8 +181,6 @@ class PolarBleSdkManager : ObservableObject {
                                 self.ecg.replaceSubrange(0...self.ecg.count-self.maxEcgCount, with: [])
                             }
                             self.ecg.append(contentsOf: data.samples.map { Double($0) })
-                            //print(self.ecgIdx)
-                            //print(self.intervals[self.ecgIdx])
                             if size - self.intervals[self.ecgIdx].p_ecg.count >= data.samples.count {
                                 self.intervals[self.ecgIdx].p_ecg.append(contentsOf: data.samples.map({ Double($0) }))
                                 
@@ -217,9 +215,6 @@ class PolarBleSdkManager : ObservableObject {
                                     leftSamples = leftSamples - size
                                 }
                             }
-                            //print(self.ecgIdx)
-                            print(self.intervals)//[self.ecgIdx])
-                            print()
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
