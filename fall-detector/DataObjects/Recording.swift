@@ -59,7 +59,7 @@ struct DataInterval {
     func getVector() -> [Double] {
         if isValid() {
             //let mrgDbl = [acc_x!, acc_y!, acc_z!, gyr_x!, gyr_y!, gyr_z!, gra_x!, gra_y!, gra_z!, mag_x!, mag_y!, mag_z!, att_roll!, att_pitch!, att_yaw!, delta_heading!]
-            return p_ecg + p_acc_x + p_acc_y + p_acc_z// + mrgDbl
+            return p_ecg + p_acc_x + p_acc_y + p_acc_z // + mrgDbl
         } else {
             return []
         }

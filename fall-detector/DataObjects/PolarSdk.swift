@@ -43,7 +43,7 @@ class PolarBleSdkManager : ObservableObject {
     @Published private(set) var deviceConnectionState: ConnectionState = ConnectionState.disconnected
     
     //MARK: Data variables
-    @Published var intervals: [DataInterval] = [DataInterval(]
+    @Published var intervals: [DataInterval] = [DataInterval(idx: 0)]
     @Published var ecg: [Double] = []
     @Published var acc_x: [Double] = []
     @Published var acc_y: [Double] = []
@@ -175,12 +175,51 @@ class PolarBleSdkManager : ObservableObject {
                     case .next(let data):
                         self.ecgStreamFail = false
                         if self.isRecording {
-                            
+                            let size = 13
                             
                             if self.ecg.count >= self.maxEcgCount {
                                 self.ecg.replaceSubrange(0...self.ecg.count-self.maxEcgCount, with: [])
                             }
                             self.ecg.append(contentsOf: data.samples.map { Double($0) })
+                            //print(self.ecgIdx)
+                            //print(self.intervals[self.ecgIdx])
+                            if size - self.intervals[self.ecgIdx].p_ecg.count >= data.samples.count {
+                                self.intervals[self.ecgIdx].p_ecg.append(contentsOf: data.samples.map({ Double($0) }))
+                                
+                            } else if self.intervals[self.ecgIdx].p_ecg.count < size {
+                                let numSamples = size - self.intervals[self.ecgIdx].p_ecg.count
+                                self.intervals[self.ecgIdx].p_ecg.append(contentsOf: data.samples.prefix(numSamples).map({ Double($0) }))
+                                
+                                var leftSamples = data.samples.count - numSamples
+                                var leftData = data.samples
+                                while leftSamples > 0 {
+                                    leftData = leftData.suffix(leftSamples)
+                                    self.ecgIdx += 1
+                                    if self.intervals.count <= self.ecgIdx {
+                                        self.intervals.append(DataInterval(idx: self.ecgIdx))
+                                    }
+                                    self.intervals[self.ecgIdx].p_ecg.append(contentsOf: leftData.prefix(size).map({ Double($0) }))
+                                    leftSamples = leftSamples - size
+                                }
+                                
+                            } else {
+                                var leftSamples = data.samples.count
+                                var leftData = data.samples
+                                while leftSamples > 0 {
+                                    self.ecgIdx += 1
+                                    if self.intervals.count <= self.ecgIdx {
+                                        self.intervals.append(DataInterval(idx: self.ecgIdx))
+                                    }
+                                    self.intervals[self.ecgIdx].p_ecg.append(contentsOf: leftData.prefix(size).map({ Double($0) }))
+                                    if leftData.count-size > 0 {
+                                        leftData = leftData.suffix(leftData.count-size)
+                                    }
+                                    leftSamples = leftSamples - size
+                                }
+                            }
+                            //print(self.ecgIdx)
+                            print(self.intervals)//[self.ecgIdx])
+                            print()
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
