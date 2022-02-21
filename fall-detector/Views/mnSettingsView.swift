@@ -9,13 +9,23 @@ import SwiftUI
 
 struct mnSettingsView: View {
     @EnvironmentObject var appState: AppState
+
     
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
-                VStack(spacing:40) {
-
+                VStack {
+                    Form {
+                        Section("Fall Detection Model") {
+                            CustLabel(title: "Type of Model:", value: "CNN")
+                            CustLabel(title: "Features Used:", value: "All")
+                            CustLabel(title: "Metric:", value: "high TPR")
+                        }
+                        Button("send text") {
+                            sendMessage(contact: Person(id: "", name: "Harry", phone: "+4407484111141", isOnFirebase: true))
+                        }
+                    }
                 }
                 .modifier(NavigationBarStyle(title: "Settings", page: .main, hideBackButton: false, appState: appState))
             }
@@ -30,3 +40,4 @@ struct mnSettingsView_Previews: PreviewProvider {
         mnSettingsView()
     }
 }
+

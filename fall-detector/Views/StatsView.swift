@@ -16,6 +16,7 @@ struct StatsView: View {
             ZStack(alignment: .top) {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 VStack(spacing:40) {
+                    
 
                 }
                 .modifier(NavigationBarStyle(title: "Stats", page: .entry, hideBackButton: true, appState: appState))

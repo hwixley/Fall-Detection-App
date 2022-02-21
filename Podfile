@@ -11,6 +11,7 @@ target 'fall-detector' do
   pod 'Firebase/MLModelDownloader'
   pod 'TensorFlowLite'
   pod 'PolarBleSdk', '~> 3.2'
+  pod 'Alamofire'
 
 end
 

@@ -28,6 +28,7 @@
 		D0BCE4C527A1C1230052CC9B /* Register2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C427A1C1220052CC9B /* Register2View.swift */; };
 		D0BCE4C727A2A0950052CC9B /* PolarSdk.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4C627A2A0950052CC9B /* PolarSdk.swift */; };
 		D0BCE4D227A9A23F0052CC9B /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = D0BCE4D127A9A23F0052CC9B /* Charts */; };
+		D0C0B3B927C3DEEB000FFAD7 /* MessageFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C0B3B827C3DEEB000FFAD7 /* MessageFunctions.swift */; };
 		D0C66CDA2780B43D00C9D1ED /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CD92780B43D00C9D1ED /* CustomViews.swift */; };
 		D0C66CDC2780BB4B00C9D1ED /* CustomViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */; };
 		D0C66CDE2780CEC500C9D1ED /* CustomStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */; };
@@ -66,6 +67,8 @@
 		D0BCE4C227A1C1110052CC9B /* Register1View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register1View.swift; sourceTree = "<group>"; };
 		D0BCE4C427A1C1220052CC9B /* Register2View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register2View.swift; sourceTree = "<group>"; };
 		D0BCE4C627A2A0950052CC9B /* PolarSdk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolarSdk.swift; sourceTree = "<group>"; };
+		D0C0B3B827C3DEEB000FFAD7 /* MessageFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFunctions.swift; sourceTree = "<group>"; };
+		D0C0B3BA27C3E60A000FFAD7 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		D0C66CD92780B43D00C9D1ED /* CustomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		D0C66CDB2780BB4B00C9D1ED /* CustomViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewModifiers.swift; sourceTree = "<group>"; };
 		D0C66CDD2780CEC500C9D1ED /* CustomStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStyles.swift; sourceTree = "<group>"; };
@@ -140,6 +143,7 @@
 				D05879BF277F381100427BAB /* fall_detectorApp.swift */,
 				D05879C3277F381500427BAB /* Assets.xcassets */,
 				D05879C5277F381500427BAB /* Preview Content */,
+				D0C0B3BA27C3E60A000FFAD7 /* Config.xcconfig */,
 			);
 			path = "fall-detector";
 			sourceTree = "<group>";
@@ -188,6 +192,7 @@
 			children = (
 				D0BCE4BC279C180F0052CC9B /* TextHandling.swift */,
 				D0BCE4BE279C19B30052CC9B /* FirebaseHandling.swift */,
+				D0C0B3B827C3DEEB000FFAD7 /* MessageFunctions.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -343,6 +348,7 @@
 				D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */,
 				D0BCE4C527A1C1230052CC9B /* Register2View.swift in Sources */,
 				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
+				D0C0B3B927C3DEEB000FFAD7 /* MessageFunctions.swift in Sources */,
 				D0F7AAE6279AB3B700611182 /* AppState.swift in Sources */,
 				D00E76602786F8AD006263CB /* mnSettingsView.swift in Sources */,
 				D0C66CE22781C8F600C9D1ED /* HomeView.swift in Sources */,
@@ -365,6 +371,7 @@
 /* Begin XCBuildConfiguration section */
 		D05879C8277F381500427BAB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0C0B3BA27C3E60A000FFAD7 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -426,6 +433,7 @@
 		};
 		D05879C9277F381500427BAB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0C0B3BA27C3E60A000FFAD7 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

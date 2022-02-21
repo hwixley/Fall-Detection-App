@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Charts
 import Shapes
+import MessageUI
 
 
 //MARK: Input fields
@@ -263,7 +264,6 @@ struct LiveMovementView: View {
                 Spacer()
                 
                 if self.polarManager.l_hr != 0 {
-                    let _ = print(self.polarManager.l_hr)
                     Text("\(Int(self.polarManager.l_hr)) BPM")
                         .modifier(DefaultText(size: 21))
                 }
@@ -307,6 +307,21 @@ struct LiveMovementView: View {
     }
 }
 
+struct StatView: View {
+    @ObservedObject var appState : AppState
+    @ObservedObject var polarManager : PolarBleSdkManager
+    
+    var body: some View {
+        VStack {
+            
+        }
+        .frame(width: UIScreen.screenWidth - 20)
+        .modifier(VPadding(pad: 10))
+        .background(MyColours.b1)
+        .frame(maxWidth: .infinity)
+    }
+}
+
 extension View {
     @ViewBuilder func isHidden(_ hidden: Bool, remove: Bool = false) -> some View {
         if hidden && !remove {
@@ -316,3 +331,5 @@ extension View {
         }
     }
 }
+
+
