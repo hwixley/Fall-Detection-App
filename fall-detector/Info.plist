@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is always required so that this location can be sent to emergency contacts if a fall is detected.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location is always required so that this location can be sent to emergency contacts if a fall is detected.</string>
 	<key>TWILIO_AUTH_TOKEN</key>
 	<string>$(TWILIO_AUTH_TOKEN)</string>
 	<key>TWILIO_SID</key>

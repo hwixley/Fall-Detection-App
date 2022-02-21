@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct mnSettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -23,7 +24,13 @@ struct mnSettingsView: View {
                             CustLabel(title: "Metric:", value: "high TPR")
                         }
                         Button("send text") {
-                            sendMessage(contact: Person(id: "", name: "Harry", phone: "+4407484111141", isOnFirebase: true))
+                            sendMessage(contact: Person(id: "", name: "Harry", phone: "+4407484111141", isOnFirebase: true)) { response in
+                                if response {
+                                    print("fukc yea")
+                                } else {
+                                    print("shit no")
+                                }
+                            }
                         }
                     }
                 }
@@ -32,6 +39,11 @@ struct mnSettingsView: View {
             .modifier(BackgroundStack(appState: appState, backPage: .main))
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            let locationManager = CLLocationManager()
+            locationManager.requestAlwaysAuthorization()
+            locationManager.startUpdatingLocation()
+        }
     }
 }
 
