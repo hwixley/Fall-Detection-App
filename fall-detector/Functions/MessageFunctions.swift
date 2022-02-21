@@ -44,6 +44,7 @@ func sendMessage(contact: Person, completion: @escaping ((Bool) -> Void)) {
                             addr += pm.postalCode!
                         }
                         msgBody += "\nWhich corresponds to the following address: \(addr)"
+                        msgBody += "\nPlease get there ASAP their life may depend on it!"
                         
                         let parameters = ["From": "+19107086043", "To": contact.phone, "Body": msgBody]
                             
@@ -62,6 +63,7 @@ func sendMessage(contact: Person, completion: @escaping ((Bool) -> Void)) {
                             }
                         
                     } else {
+                        msgBody += "\nPlease get there ASAP their life may depend on it!"
                         let parameters = ["From": "+19107086043", "To": contact.phone, "Body": msgBody]
                             
                         AF.request(url, method: .post, parameters: parameters)
