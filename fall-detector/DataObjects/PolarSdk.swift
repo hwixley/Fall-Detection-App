@@ -27,6 +27,9 @@ class PolarBleSdkManager : ObservableObject {
     public var ecgStreamFail: Bool?
     public var accStreamFail: Bool?
     
+    private var ecgIdx = 0
+    private var accIdx = 0
+    
     @Published private(set) var bluetoothPowerOn: Bool
     @Published private(set) var broadcastEnabled: Bool = false
     @Published private(set) var searchEnabled: Bool = false
@@ -40,6 +43,7 @@ class PolarBleSdkManager : ObservableObject {
     @Published private(set) var deviceConnectionState: ConnectionState = ConnectionState.disconnected
     
     //MARK: Data variables
+    @Published var intervals: [DataInterval] = [DataInterval(]
     @Published var ecg: [Double] = []
     @Published var acc_x: [Double] = []
     @Published var acc_y: [Double] = []
@@ -171,6 +175,8 @@ class PolarBleSdkManager : ObservableObject {
                     case .next(let data):
                         self.ecgStreamFail = false
                         if self.isRecording {
+                            
+                            
                             if self.ecg.count >= self.maxEcgCount {
                                 self.ecg.replaceSubrange(0...self.ecg.count-self.maxEcgCount, with: [])
                             }
