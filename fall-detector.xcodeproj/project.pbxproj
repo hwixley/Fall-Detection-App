@@ -11,6 +11,7 @@
 		D00E765C2786F897006263CB /* mnAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E765B2786F897006263CB /* mnAboutView.swift */; };
 		D00E765E2786F8A0006263CB /* mnHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E765D2786F8A0006263CB /* mnHelpView.swift */; };
 		D00E76602786F8AD006263CB /* mnSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00E765F2786F8AD006263CB /* mnSettingsView.swift */; };
+		D02EABD027C7F4B6007DF6B4 /* CoreMotionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02EABCF27C7F4B6007DF6B4 /* CoreMotionData.swift */; };
 		D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BCF1A27808552009E81A7 /* RegisterView.swift */; };
 		D04BCF20278090C0009E81A7 /* FormattingConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04BCF1F278090C0009E81A7 /* FormattingConstants.swift */; };
 		D05879C0277F381100427BAB /* fall_detectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879BF277F381100427BAB /* fall_detectorApp.swift */; };
@@ -50,6 +51,7 @@
 		D00E765B2786F897006263CB /* mnAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnAboutView.swift; sourceTree = "<group>"; };
 		D00E765D2786F8A0006263CB /* mnHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnHelpView.swift; sourceTree = "<group>"; };
 		D00E765F2786F8AD006263CB /* mnSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnSettingsView.swift; sourceTree = "<group>"; };
+		D02EABCF27C7F4B6007DF6B4 /* CoreMotionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionData.swift; sourceTree = "<group>"; };
 		D04BCF1A27808552009E81A7 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		D04BCF1F278090C0009E81A7 /* FormattingConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormattingConstants.swift; sourceTree = "<group>"; };
 		D04BCF2127809E1C009E81A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				D0F7AAE5279AB3B700611182 /* AppState.swift */,
 				D0F7AAE7279AB42000611182 /* Recording.swift */,
 				D0BCE4C627A2A0950052CC9B /* PolarSdk.swift */,
+				D02EABCF27C7F4B6007DF6B4 /* CoreMotionData.swift */,
 				D0C0B3BB27C7E28B000FFAD7 /* CustomMLModel.swift */,
 			);
 			path = DataObjects;
@@ -344,6 +347,7 @@
 				D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */,
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
 				D0BCE4C727A2A0950052CC9B /* PolarSdk.swift in Sources */,
+				D02EABD027C7F4B6007DF6B4 /* CoreMotionData.swift in Sources */,
 				D0BCE4BF279C19B30052CC9B /* FirebaseHandling.swift in Sources */,
 				D0BCE4C327A1C1110052CC9B /* Register1View.swift in Sources */,
 				D0BCE4BD279C180F0052CC9B /* TextHandling.swift in Sources */,

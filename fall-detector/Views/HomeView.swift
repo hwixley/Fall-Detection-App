@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var polarManager: PolarBleSdkManager
+    @EnvironmentObject var coremotionData: CoreMotionData
     
     var body: some View {
         NavigationView {
@@ -17,13 +18,13 @@ struct HomeView: View {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 
                 VStack {
+                    DetectorView(appState: self.appState, coremotionData: self.coremotionData)
+                        .cornerRadius(20)
+                    
                     ConnectionView(appState: self.appState, polarManager: self.polarManager)
                         .cornerRadius(20)
                     
                     if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) {
-                        DetectorView(appState: self.appState)
-                            .cornerRadius(20)
-                        
                         LiveMovementView(appState: self.appState, polarManager: self.polarManager)
                             .cornerRadius(20)
                     }

@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var polarManager: PolarBleSdkManager
+    @EnvironmentObject var coremotionData: CoreMotionData
     
     init() {
         UITabBar.appearance().backgroundColor = UIColor(MyColours.b2)
@@ -20,6 +21,7 @@ struct MainView: View {
             HomeView()
                 .environmentObject(appState)
                 .environmentObject(polarManager)
+                .environmentObject(coremotionData)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                         .scaleEffect(self.appState.inappState.tab == 0 ? 1.05 : 1)

@@ -185,6 +185,7 @@ struct ConnectionView: View {
 
 struct DetectorView: View {
     @ObservedObject var appState: AppState
+    @ObservedObject var coremotionData: CoreMotionData
     @State private var showAlert = false
     
     var body: some View {
@@ -195,11 +196,14 @@ struct DetectorView: View {
             .onChange(of: appState.inappState.fallDetection, perform: { value in
                 if !value {
                     self.showAlert = true
+                } else {
+                    self.coremotionData.start()
                 }
             })
             .alert("Are you sure you want to turn off fall detection?", isPresented: $showAlert) {
                 Button("Yes", role: .destructive) {
                     self.appState.inappState.fallDetection = false
+                    self.coremotionData.stop()
                 }
                 .modifier(ClassicButtonText())
                 Button("No, cancel", role: .cancel) {

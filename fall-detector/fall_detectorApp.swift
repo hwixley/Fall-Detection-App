@@ -12,6 +12,7 @@ import Firebase
 struct fall_detectorApp: App {
     @ObservedObject var appState = AppState()
     @ObservedObject var polarManager = PolarBleSdkManager()
+    @ObservedObject var coremotionData = CoreMotionData()
     
     init() {
         FirebaseApp.configure()
@@ -47,6 +48,12 @@ struct fall_detectorApp: App {
                 MainView()
                     .environmentObject(appState)
                     .environmentObject(polarManager)
+                    .environmentObject(coremotionData)
+                    .onAppear {
+                        if self.appState.inappState.fallDetection && !self.coremotionData.started {
+                            self.coremotionData.start()
+                        }
+                    }
             case .account:
                 mnAccountView()
                     .environmentObject(appState)
