@@ -132,7 +132,7 @@ struct ConnectionView: View {
             let image = (self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId)) ? "antenna.radiowaves.left.and.right" : (self.polarManager.deviceConnectionState == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
             let statusMessage = (self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId)) ? "Connected" : (self.polarManager.deviceConnectionState == .disconnected) ? "Disconnected" : self.appState.inappState.connection == .searching ? "Searching for your device..." : "We could not find your device. Please make sure it is turned on and try again."
             
-            Text("Connection Status:")
+            Text("Polar H10 Status:")
                 .modifier(DefaultText(size: 25))
                 .multilineTextAlignment(.center)
             
@@ -241,64 +241,91 @@ struct LiveMovementView: View {
     @ObservedObject var appState : AppState
     @ObservedObject var polarManager : PolarBleSdkManager
     
+    @State var displayStats = true
+    
     var body: some View {
         VStack {
-            HStack(alignment: .top, spacing: 5*UIScreen.screenWidth/12) {
-                Text(self.polarManager.deviceId)
-                    .modifier(DefaultText(size: 18))
-                
-                HStack(spacing: 2) {
-                    Image(systemName: "battery.\(String(self.polarManager.battery))")
-                    Text("\(self.polarManager.battery)%")
-                        .modifier(DefaultText(size: 18))
-                }
-            }
-
-            Spacer()
-            
-            
-            if !self.polarManager.ecg.isEmpty {
-                let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
-                let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
-                
-                Chart(data: data)
-                    .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
-                    .frame(width: UIScreen.screenWidth - 20, height: 60)
-                
-                Spacer()
-                
-                if self.polarManager.l_hr != 0 {
-                    Text("\(Int(self.polarManager.l_hr)) BPM")
-                        .modifier(DefaultText(size: 21))
-                }
-                
-                Spacer()
-                
-            } else if self.polarManager.ecgStreamFail ?? false {
-                Text("ECG data stream failed :(")
-                    .modifier(DefaultText(size: 21))
-                
-                Spacer()
-                
+            if !displayStats {
                 Button(action: {
-                    if !self.polarManager.ecgEnabled {
-                        self.polarManager.ecgToggle()
-                    }
-                    if !self.polarManager.accEnabled {
-                        self.polarManager.accToggle()
-                    }
-                    self.polarManager.ecgStreamFail = nil
+                    self.displayStats = true
                 }) {
-                    SubButton(title: "Try again", width: UIScreen.screenWidth - 40)
+                    SubButton(title: "Display Polar H10 Stats", width: UIScreen.screenWidth - 40, image: "chart.xyaxis.line")
                 }
                 .buttonStyle(ClassicButtonStyle(useGradient: true))
                 
             } else {
-                Text("Retrieving ECG data...")
-                    .modifier(DefaultText(size: 21))
-                ProgressView()
-                    .padding(.bottom, 10)
+                HStack(alignment: .top) {
+                    Button(action: {
+                        self.displayStats = false
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(MyColours.p0)
+                            .padding(.leading, 10)
+                    }
+                    
+                    Spacer()
+                    
+                    Text(self.polarManager.deviceId)
+                        .modifier(DefaultText(size: 18))
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 2) {
+                        Image(systemName: "battery.\(String(self.polarManager.battery))")
+                        Text("\(self.polarManager.battery)%")
+                            .modifier(DefaultText(size: 18))
+                    }
+                    .padding(.trailing, 10)
+                }
+
+                Divider()
+                
                 Spacer()
+                
+                
+                if !self.polarManager.ecg.isEmpty {
+                    let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
+                    let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
+                    
+                    Chart(data: data)
+                        .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
+                        .frame(width: UIScreen.screenWidth - 20, height: 60)
+                    
+                    Spacer()
+                    
+                    if self.polarManager.l_hr != 0 {
+                        Text("\(Int(self.polarManager.l_hr)) BPM")
+                            .modifier(DefaultText(size: 21))
+                    }
+                    
+                    Spacer()
+                    
+                } else if self.polarManager.ecgStreamFail ?? false {
+                    Text("ECG data stream failed :(")
+                        .modifier(DefaultText(size: 21))
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        if !self.polarManager.ecgEnabled {
+                            self.polarManager.ecgToggle()
+                        }
+                        if !self.polarManager.accEnabled {
+                            self.polarManager.accToggle()
+                        }
+                        self.polarManager.ecgStreamFail = nil
+                    }) {
+                        SubButton(title: "Try again", width: UIScreen.screenWidth - 40)
+                    }
+                    .buttonStyle(ClassicButtonStyle(useGradient: true))
+                    
+                } else {
+                    Text("Retrieving ECG data...")
+                        .modifier(DefaultText(size: 21))
+                    ProgressView()
+                        .padding(.bottom, 10)
+                    Spacer()
+                }
             }
         }
         .onAppear(perform: {
