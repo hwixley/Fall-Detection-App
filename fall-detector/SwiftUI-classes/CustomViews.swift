@@ -245,38 +245,34 @@ struct LiveMovementView: View {
     
     var body: some View {
         VStack {
-            if !displayStats {
+            HStack(alignment: .center) {
                 Button(action: {
-                    self.displayStats = true
+                    self.displayStats = !self.displayStats
                 }) {
-                    SubButton(title: "Display Polar H10 Stats", width: UIScreen.screenWidth - 40, image: "chart.xyaxis.line")
+                    Image(systemName: self.displayStats ? "chevron.down" : "chevron.right")
+                        .scaledToFit()
+                        .foregroundColor(MyColours.p0)
+                        .padding(.leading, 10)
                 }
-                .buttonStyle(ClassicButtonStyle(useGradient: true))
                 
-            } else {
-                HStack(alignment: .top) {
-                    Button(action: {
-                        self.displayStats = false
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(MyColours.p0)
-                            .padding(.leading, 10)
-                    }
-                    
-                    Spacer()
-                    
-                    Text(self.polarManager.deviceId)
+                Spacer()
+                
+                Text(self.polarManager.deviceId)
+                    .modifier(DefaultText(size: 18))
+                    .frame(alignment: .center)
+                
+                Spacer()
+                
+                HStack(spacing: 2) {
+                    Image(systemName: "battery.\(String(self.polarManager.battery))")
+                    Text("\(self.polarManager.battery)%")
                         .modifier(DefaultText(size: 18))
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 2) {
-                        Image(systemName: "battery.\(String(self.polarManager.battery))")
-                        Text("\(self.polarManager.battery)%")
-                            .modifier(DefaultText(size: 18))
-                    }
-                    .padding(.trailing, 10)
                 }
+                .padding(.trailing, 10)
+            }
+            .modifier(VPadding(pad: 5))
+            
+            if self.displayStats {
 
                 Divider()
                 
