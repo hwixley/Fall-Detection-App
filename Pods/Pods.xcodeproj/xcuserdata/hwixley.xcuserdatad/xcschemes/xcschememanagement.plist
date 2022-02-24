@@ -125,10 +125,22 @@
 		</dict>
 		<key>TensorFlowLite.xcscheme</key>
 		<dict>
+			<key>orderHint</key>
+			<integer>23</integer>
+		</dict>
+		<key>TensorFlowLiteC.xcscheme</key>
+		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>23</integer>
+		</dict>
+		<key>TensorFlowLiteSwift.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+			<key>orderHint</key>
+			<integer>24</integer>
 		</dict>
 		<key>abseil.xcscheme</key>
 		<dict>
