@@ -14,6 +14,7 @@ struct InAppState {
     var taskSuccess: Bool? = nil
     var connection: Connection = .disconnected
     var fallDetection: Bool = true
+    var notifAuth: Bool = false
 }
 
 enum Page {
@@ -23,6 +24,7 @@ enum Page {
     case register
     case register1
     case register2
+    case register3
     case main
     case account
     case about

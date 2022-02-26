@@ -8,6 +8,31 @@
 import Foundation
 import Alamofire
 import CoreLocation
+import UserNotifications
+
+func sendNotification() {
+    let center = UNUserNotificationCenter.current()
+
+    let content = UNMutableNotificationContent()
+    content.title = "A fall has been detected"
+    content.body = "Your emergency contacts will be notified in 60s unless you cancel the alarm"
+    content.categoryIdentifier = "alarm"
+    //content.userInfo = ["customData": "fizzbuzz"]
+    content.sound = UNNotificationSound.default
+
+    //var dateComponents = DateComponents()
+    //dateComponents.hour = 10
+    //dateComponents.minute = 30
+    //let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+    
+    let stopAlarm = UNNotificationAction(identifier: "stop", title: "Stop Alarm, I am okay", options: [])
+    let category = UNNotificationCategory(identifier: "fall-alarm", actions: [stopAlarm], intentIdentifiers: [], options: [])
+    UNUserNotificationCenter.current().setNotificationCategories([category])
+    
+    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+    center.add(request)
+}
+
 
 func sendMessage(contact: Person, completion: @escaping ((Bool) -> Void)) {
     if MyData.user != nil {

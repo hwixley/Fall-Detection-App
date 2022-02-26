@@ -19,6 +19,7 @@
 		D05879C4277F381500427BAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D05879C3277F381500427BAB /* Assets.xcassets */; };
 		D05879C7277F381500427BAB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D05879C6277F381500427BAB /* Preview Assets.xcassets */; };
 		D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DD277F6B7F00427BAB /* LoginView.swift */; };
+		D066D4BE27CA2B0800F1E5FB /* Register3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D066D4BD27CA2B0800F1E5FB /* Register3View.swift */; };
 		D0BCE4B6279B1C5D0052CC9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */; };
 		D0BCE4B8279B1D8B0052CC9B /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B7279B1D8B0052CC9B /* Podfile */; };
 		D0BCE4BA279C17330052CC9B /* DataConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4B9279C17330052CC9B /* DataConstants.swift */; };
@@ -61,6 +62,7 @@
 		D05879C3277F381500427BAB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D05879C6277F381500427BAB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D05879DD277F6B7F00427BAB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		D066D4BD27CA2B0800F1E5FB /* Register3View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register3View.swift; sourceTree = "<group>"; };
 		D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0BCE4B7279B1D8B0052CC9B /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D0BCE4B9279C17330052CC9B /* DataConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConstants.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				D0BCE4C0279EE1770052CC9B /* liForgotPasswordView.swift */,
 				D0BCE4C227A1C1110052CC9B /* Register1View.swift */,
 				D0BCE4C427A1C1220052CC9B /* Register2View.swift */,
+				D066D4BD27CA2B0800F1E5FB /* Register3View.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 				D0C66CE42781C98800C9D1ED /* StatsView.swift in Sources */,
 				D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */,
 				D05879C2277F381100427BAB /* EntryView.swift in Sources */,
+				D066D4BE27CA2B0800F1E5FB /* Register3View.swift in Sources */,
 				D0BCE4C727A2A0950052CC9B /* PolarSdk.swift in Sources */,
 				D02EABD027C7F4B6007DF6B4 /* CoreMotionData.swift in Sources */,
 				D0BCE4BF279C19B30052CC9B /* FirebaseHandling.swift in Sources */,
