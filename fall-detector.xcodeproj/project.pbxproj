@@ -63,6 +63,7 @@
 		D05879C6277F381500427BAB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D05879DD277F6B7F00427BAB /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D066D4BD27CA2B0800F1E5FB /* Register3View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register3View.swift; sourceTree = "<group>"; };
+		D066D4BF27CA396300F1E5FB /* fall-detector.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "fall-detector.entitlements"; sourceTree = "<group>"; };
 		D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0BCE4B7279B1D8B0052CC9B /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D0BCE4B9279C17330052CC9B /* DataConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConstants.swift; sourceTree = "<group>"; };
@@ -139,6 +140,7 @@
 		D05879BE277F381100427BAB /* fall-detector */ = {
 			isa = PBXGroup;
 			children = (
+				D066D4BF27CA396300F1E5FB /* fall-detector.entitlements */,
 				D0BCE4BB279C17FC0052CC9B /* Functions */,
 				D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */,
 				D0F7AAE4279AB39500611182 /* DataObjects */,
@@ -505,6 +507,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "fall-detector/fall-detector.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fall-detector/Preview Content\"";
@@ -512,6 +515,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "fall-detector/Info.plist";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to connect to the Polar H10 heart rate sensor to retrieve data for fall detection";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -522,7 +528,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "ug4-honours-project.fall-detector";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ug4-honours-project.fall-detector";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -536,6 +542,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "fall-detector/fall-detector.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fall-detector/Preview Content\"";
@@ -543,6 +550,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "fall-detector/Info.plist";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to connect to the Polar H10 heart rate sensor to retrieve data for fall detection";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -553,7 +563,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "ug4-honours-project.fall-detector";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ug4-honours-project.fall-detector";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
