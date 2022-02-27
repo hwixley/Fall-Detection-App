@@ -24,21 +24,6 @@ struct Register3View: View {
             .modifier(BackgroundStack(appState: appState, backPage: .register2))
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear {
-            let center = UNUserNotificationCenter.current()
-            
-            center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-                print("Permission granted: \(granted)")
-                self.appState.inappState.notifAuth = granted
-                // 1. Check if permission granted
-                guard granted else { return }
-                // 2. Attempt registration for remote notifications on the main thread
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-                self.appState.inappState.page = .main
-            }
-        }
     }
 }
 

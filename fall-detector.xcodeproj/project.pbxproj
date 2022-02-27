@@ -21,6 +21,7 @@
 		D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05879DD277F6B7F00427BAB /* LoginView.swift */; };
 		D066D4BE27CA2B0800F1E5FB /* Register3View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D066D4BD27CA2B0800F1E5FB /* Register3View.swift */; };
 		D077DD2A27CBCBD8004A58B2 /* APNFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077DD2927CBCBD8004A58B2 /* APNFunctions.swift */; };
+		D077DD2C27CBD0AD004A58B2 /* CustomAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077DD2B27CBD0AC004A58B2 /* CustomAppDelegate.swift */; };
 		D0BCE4B6279B1C5D0052CC9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */; };
 		D0BCE4B8279B1D8B0052CC9B /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B7279B1D8B0052CC9B /* Podfile */; };
 		D0BCE4BA279C17330052CC9B /* DataConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4B9279C17330052CC9B /* DataConstants.swift */; };
@@ -66,6 +67,7 @@
 		D066D4BD27CA2B0800F1E5FB /* Register3View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register3View.swift; sourceTree = "<group>"; };
 		D066D4BF27CA396300F1E5FB /* fall-detector.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "fall-detector.entitlements"; sourceTree = "<group>"; };
 		D077DD2927CBCBD8004A58B2 /* APNFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNFunctions.swift; sourceTree = "<group>"; };
+		D077DD2B27CBD0AC004A58B2 /* CustomAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAppDelegate.swift; sourceTree = "<group>"; };
 		D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0BCE4B7279B1D8B0052CC9B /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D0BCE4B9279C17330052CC9B /* DataConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConstants.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				D05879C3277F381500427BAB /* Assets.xcassets */,
 				D05879C5277F381500427BAB /* Preview Content */,
 				D0C0B3BA27C3E60A000FFAD7 /* Config.xcconfig */,
+				D077DD2B27CBD0AC004A58B2 /* CustomAppDelegate.swift */,
 			);
 			path = "fall-detector";
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				D0C0B3BC27C7E28B000FFAD7 /* CustomMLModel.swift in Sources */,
 				D00E765C2786F897006263CB /* mnAboutView.swift in Sources */,
 				D04BCF1B27808552009E81A7 /* RegisterView.swift in Sources */,
+				D077DD2C27CBD0AD004A58B2 /* CustomAppDelegate.swift in Sources */,
 				D0BCE4C527A1C1230052CC9B /* Register2View.swift in Sources */,
 				D05879DE277F6B7F00427BAB /* LoginView.swift in Sources */,
 				D0C0B3B927C3DEEB000FFAD7 /* MessageFunctions.swift in Sources */,

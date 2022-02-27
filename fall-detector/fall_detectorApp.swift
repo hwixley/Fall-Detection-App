@@ -11,6 +11,7 @@ import UserNotifications
 
 @main
 struct fall_detectorApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @ObservedObject var appState = AppState()
     @ObservedObject var polarManager = PolarBleSdkManager()
     @ObservedObject var coremotionData = CoreMotionData()

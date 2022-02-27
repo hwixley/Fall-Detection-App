@@ -22,9 +22,6 @@ struct mnAboutView: View {
             .modifier(BackgroundStack(appState: appState, backPage: .main))
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear {
-            sendNotification()
-        }
     }
 }
 
