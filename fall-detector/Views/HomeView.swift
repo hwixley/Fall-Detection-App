@@ -9,8 +9,10 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
-    @EnvironmentObject var polarManager: PolarBleSdkManager
-    @EnvironmentObject var coremotionData: CoreMotionData
+    //@EnvironmentObject var polarManager: PolarBleSdkManager
+    //@EnvironmentObject var coremotionData: CoreMotionData
+    @EnvironmentObject var dataWrangler: DataWrangler
+    @EnvironmentObject var mlModel: CustomMLModel
     
     var body: some View {
         NavigationView {
@@ -18,14 +20,14 @@ struct HomeView: View {
                 MyColours.g0.edgesIgnoringSafeArea(.all)
                 
                 VStack {
-                    DetectorView(appState: self.appState, coremotionData: self.coremotionData)
+                    DetectorView(appState: self.appState, dataWrangler: self.dataWrangler)
                         .cornerRadius(20)
                     
-                    ConnectionView(appState: self.appState, polarManager: self.polarManager)
+                    ConnectionView(appState: self.appState, dataWrangler: self.dataWrangler)
                         .cornerRadius(20)
                     
-                    if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) {
-                        LiveMovementView(appState: self.appState, polarManager: self.polarManager)
+                    if self.dataWrangler.polarManager.deviceConnectionState == .connected(self.dataWrangler.polarManager.deviceId) {
+                        LiveMovementView(appState: self.appState, dataWrangler: self.dataWrangler)
                             .cornerRadius(20)
                     }
                 }

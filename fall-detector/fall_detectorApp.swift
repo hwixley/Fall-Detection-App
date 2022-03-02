@@ -13,8 +13,10 @@ import UserNotifications
 struct fall_detectorApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @ObservedObject var appState = AppState()
-    @ObservedObject var polarManager = PolarBleSdkManager()
-    @ObservedObject var coremotionData = CoreMotionData()
+    //@ObservedObject var polarManager = PolarBleSdkManager()
+    //@ObservedObject var coremotionData = CoreMotionData()
+    @ObservedObject var dataWrangler = DataWrangler()
+    @ObservedObject var mlModel = CustomMLModel()
     
     init() {
         FirebaseApp.configure()
@@ -52,11 +54,11 @@ struct fall_detectorApp: App {
             case .main:
                 MainView()
                     .environmentObject(appState)
-                    .environmentObject(polarManager)
-                    .environmentObject(coremotionData)
+                    .environmentObject(dataWrangler)
+                    .environmentObject(mlModel)
                     .onAppear {
-                        if self.appState.inappState.fallDetection && !self.coremotionData.started {
-                            self.coremotionData.start()
+                        if self.appState.inappState.fallDetection && !self.dataWrangler.started {
+                            self.dataWrangler.start()
                         }
                     }
             case .account:

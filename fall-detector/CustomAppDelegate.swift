@@ -28,6 +28,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return String(format: "%02.2hhx", data)
         }
         let token = tokenParts.joined()
+        self.apn.deviceToken = token
         // 2. Print device token to use for PNs payloads
         print("Device Token: \(token)")
     }

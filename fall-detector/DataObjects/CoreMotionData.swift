@@ -8,10 +8,13 @@
 import Foundation
 import CoreMotion
 
-class CoreMotionData : ObservableObject {
+/*class CoreMotionData : ObservableObject {
     let motionManager = CMMotionManager()
     var started = false
     var timer : Timer? = nil
+    
+    @Published var intervals: [TimeInterval: DataInterval] = [:]
+    var intvlIdx = 0
     
     var acc : [Coord] = []
     var gyr : [Coord] = []
@@ -48,6 +51,7 @@ class CoreMotionData : ObservableObject {
             guard let motionData = data, error == nil else {
                 return
             }
+            let timestamp = NSDate().timeIntervalSince1970
             
             self.acc.append(Coord(x: motionData.userAcceleration.x, y: motionData.userAcceleration.y, z: motionData.userAcceleration.z))
             self.gyr.append(Coord(x: motionData.rotationRate.x, y: motionData.rotationRate.y, z: motionData.rotationRate.z))
@@ -62,18 +66,19 @@ class CoreMotionData : ObservableObject {
                 self.dhe.append(Float32(motionData.heading - self.lastHeading))
                 self.lastHeading = motionData.heading
             }
+            self.intervals[timestamp] = DataInterval(idx: self.intvlIdx, acc: self.acc.last, gyr: self.gyr.last, gra: self.gra.last, mag: self.mag.last, att: self.att.last, dh: self.dhe.last)
         }
     }
-}
+}*/
 
 struct Coord {
-    var x: Float32
-    var y: Float32
-    var z: Float32
+    var x: Double
+    var y: Double
+    var z: Double
     
     init(x: Double, y: Double, z: Double) {
-        self.x = Float32(x)
-        self.y = Float32(y)
-        self.z = Float32(z)
+        self.x = x
+        self.y = y
+        self.z = z
     }
 }

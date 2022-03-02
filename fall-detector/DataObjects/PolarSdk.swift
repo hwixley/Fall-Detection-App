@@ -22,13 +22,13 @@ class PolarBleSdkManager : ObservableObject {
     private var ppgDisposable: Disposable?
     private var ppiDisposable: Disposable?
     public var deviceId = MyData.polarDeviceID
-    private var maxEcgCount = 100
-    private var maxAccCount = 100
+    private var maxEcgCount = 200
+    private var maxAccCount = 200
     public var ecgStreamFail: Bool?
     public var accStreamFail: Bool?
     
-    private var ecgIdx = 0
-    private var accIdx = 0
+    //private var ecgIdx = 0
+    //private var accIdx = 0
     
     @Published private(set) var bluetoothPowerOn: Bool
     @Published private(set) var broadcastEnabled: Bool = false
@@ -43,7 +43,7 @@ class PolarBleSdkManager : ObservableObject {
     @Published private(set) var deviceConnectionState: ConnectionState = ConnectionState.disconnected
     
     //MARK: Data variables
-    @Published var intervals: [DataInterval] = [DataInterval(idx: 0)]
+    //@Published var intervals: [DataInterval] = [DataInterval(idx: 0)]
     @Published var ecg: [Double] = []
     @Published var acc_x: [Double] = []
     @Published var acc_y: [Double] = []
@@ -65,6 +65,16 @@ class PolarBleSdkManager : ObservableObject {
                 self.acc_z = []
                 self.contact = []
             }
+        }
+    }
+    
+    func resetData(resetAcc: Bool = true) {
+        self.ecg = Array(self.ecg.suffix(from: self.ecg.count > 110 ? 110 : self.ecg.endIndex))
+        
+        if resetAcc {
+            self.acc_x = Array(self.acc_x.suffix(from: self.acc_x.count > 200 ? 200 : self.acc_x.endIndex))
+            self.acc_y = Array(self.acc_y.suffix(from: self.acc_y.count > 200 ? 200 : self.acc_y.endIndex))
+            self.acc_z = Array(self.acc_z.suffix(from: self.acc_z.count > 200 ? 200 : self.acc_z.endIndex))
         }
     }
     
@@ -118,6 +128,7 @@ class PolarBleSdkManager : ObservableObject {
         if case .connected(let deviceId) = deviceConnectionState {
             do {
                 try api.disconnectFromDevice(deviceId)
+                self.deviceConnectionState = .disconnected
             } catch let err {
                 NSLog("Failed to disconnect from \(deviceId). Reason \(err)")
             }
@@ -175,13 +186,13 @@ class PolarBleSdkManager : ObservableObject {
                     case .next(let data):
                         self.ecgStreamFail = false
                         if self.isRecording {
-                            let size = 13
+                            //let size = 13
                             
                             if self.ecg.count >= self.maxEcgCount {
                                 self.ecg.replaceSubrange(0...self.ecg.count-self.maxEcgCount, with: [])
                             }
                             self.ecg.append(contentsOf: data.samples.map { Double($0) })
-                            if size - self.intervals[self.ecgIdx].p_ecg.count >= data.samples.count {
+                            /*if size - self.intervals[self.ecgIdx].p_ecg.count >= data.samples.count {
                                 self.intervals[self.ecgIdx].p_ecg.append(contentsOf: data.samples.map({ Double($0) }))
                                 
                             } else if self.intervals[self.ecgIdx].p_ecg.count < size {
@@ -214,7 +225,7 @@ class PolarBleSdkManager : ObservableObject {
                                     }
                                     leftSamples = leftSamples - size
                                 }
-                            }
+                            }*/
                         }
                     case .error(let err):
                         NSLog("ECG stream failed: \(err)")
@@ -244,17 +255,20 @@ class PolarBleSdkManager : ObservableObject {
                 .observe(on: MainScheduler.instance).subscribe{ e in
                     switch e {
                     case .next(let data):
-                        /*if self.isRecording {
+                        if self.isRecording {
                             if self.acc_x.count >= self.maxAccCount {
                                 self.acc_x.replaceSubrange(0...self.acc_x.count-self.maxAccCount, with: [])
-                                self.acc_y.replaceSubrange(0...self.acc_y.count-self.maxAccCount, with: [])
-                                self.acc_z.replaceSubrange(0...self.acc_z.count-self.maxAccCount, with: [])
                             }
+                            if self.acc_y.count >= self.maxAccCount {
+                                self.acc_y.replaceSubrange(0...self.acc_y.count-self.maxAccCount, with: [])
+                            }
+                            if self.acc_z.count >= self.maxAccCount {
+                                self.acc_z.replaceSubrange(0...self.acc_z.count-self.maxAccCount, with: [])
+                             }
                             self.acc_x.append(contentsOf: data.samples.map { Double($0.x) })
                             self.acc_y.append(contentsOf: data.samples.map { Double($0.y) })
                             self.acc_z.append(contentsOf: data.samples.map { Double($0.z) })
-                        }*/
-                        let _ = "nice"
+                        }
                     case .error(let err):
                         NSLog("ACC stream failed: \(err)")
                         self.accEnabled = false

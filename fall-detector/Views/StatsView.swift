@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StatsView: View {
     @EnvironmentObject var appState: AppState
-    @EnvironmentObject var polarManager: PolarBleSdkManager
+    @EnvironmentObject var dataWrangler: DataWrangler
     
     var body: some View {
         NavigationView {

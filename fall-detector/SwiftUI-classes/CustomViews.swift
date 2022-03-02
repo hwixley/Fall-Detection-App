@@ -125,12 +125,12 @@ struct SubButton : View {
 
 struct ConnectionView: View {
     @ObservedObject var appState: AppState
-    @ObservedObject var polarManager : PolarBleSdkManager
+    @ObservedObject var dataWrangler : DataWrangler
     
     var body: some View {
         VStack(spacing: 15) {
-            let image = (self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId)) ? "antenna.radiowaves.left.and.right" : (self.polarManager.deviceConnectionState == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
-            let statusMessage = (self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId)) ? "Connected" : (self.polarManager.deviceConnectionState == .disconnected) ? "Disconnected" : self.appState.inappState.connection == .searching ? "Searching for your device..." : "We could not find your device. Please make sure it is turned on and try again."
+            let image = (self.dataWrangler.polarManager.deviceConnectionState == .connected(self.dataWrangler.polarManager.deviceId)) ? "antenna.radiowaves.left.and.right" : (self.dataWrangler.polarManager.deviceConnectionState == .disconnected) ? "antenna.radiowaves.left.and.right.slash" : self.appState.inappState.connection == .searching ? "magnifyingglass" : "exclamationmark.circle"
+            let statusMessage = (self.dataWrangler.polarManager.deviceConnectionState == .connected(self.dataWrangler.polarManager.deviceId)) ? "Connected" : (self.dataWrangler.polarManager.deviceConnectionState == .disconnected) ? "Disconnected" : self.appState.inappState.connection == .searching ? "Searching for your device..." : "We could not find your device. Please make sure it is turned on and try again."
             
             Text("Polar H10 Status:")
                 .modifier(DefaultText(size: 25))
@@ -142,19 +142,25 @@ struct ConnectionView: View {
                 .modifier(DefaultText(size: 22))
                 .multilineTextAlignment(.center)
             
-            if self.appState.inappState.connection == .searching && self.polarManager.deviceConnectionState != .connected(self.polarManager.deviceId) {
+            if self.appState.inappState.connection == .searching && self.dataWrangler.polarManager.deviceConnectionState != .connected(self.dataWrangler.polarManager.deviceId) {
                 ProgressView()
                     .padding(.bottom, 10)
             } else {
                 Button(action: {
-                    if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) {
+                    if self.dataWrangler.polarManager.deviceConnectionState == .connected(self.dataWrangler.polarManager.deviceId) {
+                        if MyData.fallModel.features == "polar" {
+                            self.dataWrangler.stop()
+                        }
                         self.appState.inappState.connection = .disconnected
-                        polarManager.disconnectFromDevice()
-                    } else if self.polarManager.deviceConnectionState == .disconnected { //appState.inappState.connection == .disconnected || appState.inappState.connection == .retry {
-                        connect()
+                        self.dataWrangler.polarManager.disconnectFromDevice()
+                    } else if self.dataWrangler.polarManager.deviceConnectionState == .disconnected { //appState.inappState.connection == .disconnected || appState.inappState.connection == .retry {
+                        if MyData.fallModel.features == "polar" {
+                            self.dataWrangler.start()
+                        }
+                        self.connect()
                     }
                 }) {
-                    SubButton(title: self.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) ? "Disconnect" : self.polarManager.deviceConnectionState == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
+                    SubButton(title: self.dataWrangler.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) ? "Disconnect" : self.dataWrangler.polarManager.deviceConnectionState == .disconnected ? "Connect" : "Try again", width: UIScreen.screenWidth - 40)
                 }
                 .buttonStyle(ClassicButtonStyle(useGradient: true))
             }
@@ -167,13 +173,13 @@ struct ConnectionView: View {
     func connect() {
         self.appState.inappState.connection = .searching
         
-        polarManager.autoConnect()
+        dataWrangler.polarManager.autoConnect()
         
         var time = 0
         Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
             time += 2
             
-            if self.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) {
+            if self.dataWrangler.polarManager.deviceConnectionState == .connected(MyData.polarDeviceID) {
                 self.appState.inappState.connection = .connected
             } else if time == 10 {
                 self.appState.inappState.connection = .retry
@@ -185,7 +191,7 @@ struct ConnectionView: View {
 
 struct DetectorView: View {
     @ObservedObject var appState: AppState
-    @ObservedObject var coremotionData: CoreMotionData
+    @ObservedObject var dataWrangler: DataWrangler
     @State private var showAlert = false
     
     var body: some View {
@@ -197,13 +203,13 @@ struct DetectorView: View {
                 if !value {
                     self.showAlert = true
                 } else {
-                    self.coremotionData.start()
+                    self.dataWrangler.start()
                 }
             })
             .alert("Are you sure you want to turn off fall detection?", isPresented: $showAlert) {
                 Button("Yes", role: .destructive) {
                     self.appState.inappState.fallDetection = false
-                    self.coremotionData.stop()
+                    self.dataWrangler.stop()
                 }
                 .modifier(ClassicButtonText())
                 Button("No, cancel", role: .cancel) {
@@ -239,7 +245,7 @@ struct ContactView: View {
 
 struct LiveMovementView: View {
     @ObservedObject var appState : AppState
-    @ObservedObject var polarManager : PolarBleSdkManager
+    @ObservedObject var dataWrangler : DataWrangler
     
     @State var displayStats = true
     
@@ -257,15 +263,15 @@ struct LiveMovementView: View {
                 
                 Spacer()
                 
-                Text(self.polarManager.deviceId)
+                Text(self.dataWrangler.polarManager.deviceId)
                     .modifier(DefaultText(size: 18))
                     .frame(alignment: .center)
                 
                 Spacer()
                 
                 HStack(spacing: 2) {
-                    Image(systemName: "battery.\(String(self.polarManager.battery))")
-                    Text("\(self.polarManager.battery)%")
+                    Image(systemName: "battery.\(String(self.dataWrangler.polarManager.battery))")
+                    Text("\(self.dataWrangler.polarManager.battery)%")
                         .modifier(DefaultText(size: 18))
                 }
                 .padding(.trailing, 10)
@@ -279,9 +285,9 @@ struct LiveMovementView: View {
                 Spacer()
                 
                 
-                if !self.polarManager.ecg.isEmpty {
-                    let maxEcg = (self.polarManager.ecg.max() ?? 1) > -1*(self.polarManager.ecg.min() ?? 1) ? (self.polarManager.ecg.max() ?? 1) : (self.polarManager.ecg.min() ?? 1)
-                    let data = self.polarManager.ecg.map { $0 / Double(maxEcg) }
+                if !self.dataWrangler.polarManager.ecg.isEmpty {
+                    let maxEcg = (self.dataWrangler.polarManager.ecg.max() ?? 1) > -1*(self.dataWrangler.polarManager.ecg.min() ?? 1) ? (self.dataWrangler.polarManager.ecg.max() ?? 1) : (self.dataWrangler.polarManager.ecg.min() ?? 1)
+                    let data = self.dataWrangler.polarManager.ecg.map { $0 / Double(maxEcg) }
                     
                     Chart(data: data)
                         .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
@@ -289,27 +295,27 @@ struct LiveMovementView: View {
                     
                     Spacer()
                     
-                    if self.polarManager.l_hr != 0 {
-                        Text("\(Int(self.polarManager.l_hr)) BPM")
+                    if self.dataWrangler.polarManager.l_hr != 0 {
+                        Text("\(Int(self.dataWrangler.polarManager.l_hr)) BPM")
                             .modifier(DefaultText(size: 21))
                     }
                     
                     Spacer()
                     
-                } else if self.polarManager.ecgStreamFail ?? false {
+                } else if self.dataWrangler.polarManager.ecgStreamFail ?? false {
                     Text("ECG data stream failed :(")
                         .modifier(DefaultText(size: 21))
                     
                     Spacer()
                     
                     Button(action: {
-                        if !self.polarManager.ecgEnabled {
-                            self.polarManager.ecgToggle()
+                        if !self.dataWrangler.polarManager.ecgEnabled {
+                            self.dataWrangler.polarManager.ecgToggle()
                         }
-                        if !self.polarManager.accEnabled {
-                            self.polarManager.accToggle()
+                        if !self.dataWrangler.polarManager.accEnabled {
+                            self.dataWrangler.polarManager.accToggle()
                         }
-                        self.polarManager.ecgStreamFail = nil
+                        self.dataWrangler.polarManager.ecgStreamFail = nil
                     }) {
                         SubButton(title: "Try again", width: UIScreen.screenWidth - 40)
                     }
@@ -325,7 +331,7 @@ struct LiveMovementView: View {
             }
         }
         .onAppear(perform: {
-            self.polarManager.isRecording = true
+            self.dataWrangler.polarManager.isRecording = true
         })
         .frame(width: UIScreen.screenWidth - 20)
         .modifier(VPadding(pad: 10))

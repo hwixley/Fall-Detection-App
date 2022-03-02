@@ -56,16 +56,88 @@ struct DataInterval {
     var att_yaw: Double? = nil
     var delta_heading: Double? = nil
     
+    init(idx: Int, p_ecg: [Double]? = nil, p_acc_x: [Double]? = nil, p_acc_y: [Double]? = nil, p_acc_z: [Double]? = nil, acc: Coord? = nil, gyr: Coord? = nil, gra: Coord? = nil, mag: Coord? = nil, att: Coord? = nil, dh: Double? = nil) {
+        self.idx = idx
+        self.p_ecg = p_ecg == nil ? [] : p_ecg!
+        if p_ecg != nil {
+            assert(p_ecg!.count == 13)
+        }
+        if p_acc_x != nil {
+            assert(p_acc_x!.count == 20)
+            self.p_acc_x = p_acc_x!
+        }
+        if p_acc_y != nil {
+            assert(p_acc_y!.count == 20)
+            self.p_acc_y = p_acc_y!
+        }
+        if p_acc_z != nil {
+            assert(p_acc_z!.count == 20)
+            self.p_acc_z = p_acc_z!
+        }
+        self.acc_x = acc == nil ? nil : acc!.x
+        self.acc_y = acc == nil ? nil : acc!.y
+        self.acc_z = acc == nil ? nil : acc!.z
+        self.gyr_x = gyr == nil ? nil : gyr!.x
+        self.gyr_y = gyr == nil ? nil : gyr!.y
+        self.gyr_z = gyr == nil ? nil : gyr!.z
+        self.gra_x = gra == nil ? nil : gra!.x
+        self.gra_y = gra == nil ? nil : gra!.y
+        self.gra_z = gra == nil ? nil : gra!.z
+        self.mag_x = mag == nil ? nil : mag!.x
+        self.mag_y = mag == nil ? nil : mag!.y
+        self.mag_z = mag == nil ? nil : mag!.z
+        self.att_roll = att == nil ? nil : att!.x
+        self.att_pitch = att == nil ? nil : att!.y
+        self.att_yaw = att == nil ? nil : att!.z
+        self.delta_heading = dh == nil ? nil : dh!
+    }
+    
     func getVector() -> [Double] {
-        if isValid() {
-            //let mrgDbl = [acc_x!, acc_y!, acc_z!, gyr_x!, gyr_y!, gyr_z!, gra_x!, gra_y!, gra_z!, mag_x!, mag_y!, mag_z!, att_roll!, att_pitch!, att_yaw!, delta_heading!]
-            return p_ecg + p_acc_x + p_acc_y + p_acc_z // + mrgDbl
+        if MyData.fallModel.features == "all" {
+            if isCMValid() && isPolarValid() {
+                let vec =  p_ecg + p_acc_x + p_acc_y + p_acc_z + [acc_x!, acc_y!, acc_z!, gyr_x!, gyr_y!, gyr_z!, gra_x!, gra_y!, gra_z!, mag_x!, mag_y!, mag_z!, att_roll!, att_pitch!, att_yaw!, delta_heading!]
+                //print(vec)
+                let numerator = zip(vec, Constants.x_min1.prefix(MyData.fallModel.intvl_size)).map(-)
+                //print(numerator)
+                let denominator = zip(Constants.x_max1.prefix(MyData.fallModel.intvl_size), Constants.x_min1.prefix(MyData.fallModel.intvl_size)).map(-)
+                //print(denominator)
+                return zip(numerator, denominator).map(/)
+            } else {
+                return []
+            }
         } else {
-            return []
+            if isPolarValid() {
+                let vec =  p_ecg + p_acc_x + p_acc_y + p_acc_z
+                //print(vec)
+                let numerator = zip(vec, Constants.x_min2.prefix(MyData.fallModel.intvl_size)).map(-)
+                //print(numerator)
+                let denominator = zip(Constants.x_max2.prefix(MyData.fallModel.intvl_size), Constants.x_min2.prefix(MyData.fallModel.intvl_size)).map(-)
+                //print(denominator)
+                return zip(numerator, denominator).map(/)
+            } else {
+                return []
+            }
         }
     }
     
-    func isValid() -> Bool {
-        return p_ecg.count == 13 && p_acc_x.count == 20 && p_acc_y.count == 20 && p_acc_z.count == 20 //&& acc_x != nil && acc_y != nil && acc_z != nil && gyr_x != nil && gyr_y != nil && gyr_z != nil && gra_x != nil && gra_y != nil
+    func isCMValid() -> Bool {
+        return acc_x != nil && acc_y != nil && acc_z != nil && gyr_x != nil && gyr_y != nil && gyr_z != nil && gra_x != nil && gra_y != nil
+    }
+    
+    func isPolarValid() -> Bool {
+        return self.p_ecg.count == 13 && self.p_acc_x.count == 20 && self.p_acc_y.count == 20 && self.p_acc_z.count == 20
+    }
+}
+
+struct Window {
+    let id = NSUUID().uuidString
+    var intervals: [DataInterval]
+                
+    func finalWindow() -> [Double] {
+        var output : [Double] = []
+        for i in self.intervals {
+            output = output + i.getVector()
+        }
+        return output
     }
 }

@@ -11,6 +11,8 @@ import UserNotifications
 class APNHandling {
     let center = UNUserNotificationCenter.current()
     
+    var deviceToken : String = ""
+    
     func requestAuth(completion: @escaping ((Bool) -> Void)) {
         self.center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
             print("Permission granted: \(granted)")
@@ -25,6 +27,7 @@ class APNHandling {
         content.title = "A fall has been detected"
         content.body = "Your emergency contacts will be notified in 60s unless you cancel the alarm"
         content.categoryIdentifier = "sosAlarm"
+        content.interruptionLevel = .critical
         content.sound = UNNotificationSound.default
         
         let stopAlarm = UNNotificationAction(identifier: "stop", title: "Stop Alarm, I am okay", options: [])
