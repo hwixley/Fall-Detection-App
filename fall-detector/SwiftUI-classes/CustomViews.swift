@@ -150,6 +150,8 @@ struct ConnectionView: View {
                     if self.dataWrangler.polarManager.deviceConnectionState == .connected(self.dataWrangler.polarManager.deviceId) {
                         if MyData.fallModel.features == "polar" {
                             self.dataWrangler.stop()
+                        } else if MyData.fallModel.features == "all" {
+                            MyData.fallModel = Models.coremotionNoLag
                         }
                         self.appState.inappState.connection = .disconnected
                         self.dataWrangler.polarManager.disconnectFromDevice()

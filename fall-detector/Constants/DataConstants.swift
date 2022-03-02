@@ -14,5 +14,5 @@ struct MyData {
     
     static let currYear = Int(Calendar.current.component(.year, from: Date()))
     static let years: [Int] = Array(currYear-100...currYear-1).reversed()
-    static let fallModel = ModelVersion()
+    static var fallModel = Models.polarNoLag
 }

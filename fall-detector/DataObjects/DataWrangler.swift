@@ -129,41 +129,18 @@ class DataWrangler: ObservableObject {
                 break
             }
         }
-        //print(output)
-        let user_num = zip([Double(MyData.user!.height), Double(MyData.user!.weight)], Constants.x_min2.suffix(2)).map(-)
-        let user_den = zip(Constants.x_max2.suffix(2), Constants.x_min2.suffix(2)).map(-)
+        let user_num = zip([Double(MyData.user!.height), Double(MyData.user!.weight)], MyData.fallModel.xMin.suffix(2)).map(-)
+        let user_den = zip(MyData.fallModel.xMax.suffix(2), MyData.fallModel.xMin.suffix(2)).map(-)
         let user_stats = zip(user_num, user_den).map(/)
         output = output + user_stats + Array(repeating: 0.0, count: MyData.fallModel.dummy_ftrs)
-        //print(output)
-        //print("output count:")
-        //print(output.count)
-        //let out = output.map { UInt8($0) }
+
         if output.count == MyData.fallModel.num_features*MyData.fallModel.num_features {
             var finalData = Data()
             for i in 0..<MyData.fallModel.num_features {
                 let idx = i*MyData.fallModel.num_features
                 let row = Array(output[idx..<idx+MyData.fallModel.num_features]).map { Float($0) }
-                //let bytes = [Double](repeating: 0, count: 30)
-                //SystemMisc.memoryCopy(bytes, 0, row, 0, 3600)
                 finalData.append(Data(bytes: row, count: MyData.fallModel.num_features*4))
-                /*for el in row {
-                    let elementSize = MemoryLayout.size(ofValue: el)
-                    var bytes = [Double](repeating: 0, count: elementSize)
-                    memcpy(bytes, el, elementSize)
-                    finalData.append(bytes)
-                }*/
-                //memcpy(&amp;bytes, &amp;row, elementSize)
-                /*do {
-                    let rowData = try Data(buffer: UnsafeBufferPointer<Float>(MLMultiArray(row)))
-                    finalData.append(rowData)
-                } catch let error {
-                    print(error.localizedDescription)
-                    return nil
-                }*/
             }
-            //guard var out = try? MLMultiArray(shape: [1,1,30,30], dataType: .float32) else {
-            //   return MLMultiArray()
-            //}
             return finalData
         } else {
             return nil

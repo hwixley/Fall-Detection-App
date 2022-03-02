@@ -97,26 +97,30 @@ struct DataInterval {
             if isCMValid() && isPolarValid() {
                 let vec =  p_ecg + p_acc_x + p_acc_y + p_acc_z + [acc_x!, acc_y!, acc_z!, gyr_x!, gyr_y!, gyr_z!, gra_x!, gra_y!, gra_z!, mag_x!, mag_y!, mag_z!, att_roll!, att_pitch!, att_yaw!, delta_heading!]
                 //print(vec)
-                let numerator = zip(vec, Constants.x_min1.prefix(MyData.fallModel.intvl_size)).map(-)
+                let numerator = zip(vec, MyData.fallModel.xMin.prefix(MyData.fallModel.intvl_size)).map(-)
                 //print(numerator)
-                let denominator = zip(Constants.x_max1.prefix(MyData.fallModel.intvl_size), Constants.x_min1.prefix(MyData.fallModel.intvl_size)).map(-)
+                let denominator = zip(MyData.fallModel.xMax.prefix(MyData.fallModel.intvl_size), MyData.fallModel.xMin.prefix(MyData.fallModel.intvl_size)).map(-)
                 //print(denominator)
                 return zip(numerator, denominator).map(/)
             } else {
                 return []
             }
-        } else {
+        } else if MyData.fallModel.features == "polar" {
             if isPolarValid() {
                 let vec =  p_ecg + p_acc_x + p_acc_y + p_acc_z
                 //print(vec)
-                let numerator = zip(vec, Constants.x_min2.prefix(MyData.fallModel.intvl_size)).map(-)
+                let numerator = zip(vec, MyData.fallModel.xMin.prefix(MyData.fallModel.intvl_size)).map(-)
                 //print(numerator)
-                let denominator = zip(Constants.x_max2.prefix(MyData.fallModel.intvl_size), Constants.x_min2.prefix(MyData.fallModel.intvl_size)).map(-)
+                let denominator = zip(MyData.fallModel.xMax.prefix(MyData.fallModel.intvl_size), MyData.fallModel.xMin.prefix(MyData.fallModel.intvl_size)).map(-)
                 //print(denominator)
                 return zip(numerator, denominator).map(/)
             } else {
                 return []
             }
+        } else if isCMValid() {
+            return []
+        } else {
+            return []
         }
     }
     
