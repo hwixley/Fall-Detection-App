@@ -9,10 +9,9 @@ import Foundation
 import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    let apn = APNHandling()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        apn.requestAuth { granted in
+        MyData.apn.requestAuth { granted in
             if granted {
                 DispatchQueue.main.async {
                     UIApplication.shared.registerForRemoteNotifications()
@@ -28,7 +27,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return String(format: "%02.2hhx", data)
         }
         let token = tokenParts.joined()
-        self.apn.deviceToken = token
+        MyData.apn.deviceToken = token
         // 2. Print device token to use for PNs payloads
         print("Device Token: \(token)")
     }

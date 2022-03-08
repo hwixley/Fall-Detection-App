@@ -19,6 +19,7 @@ class DataWrangler: ObservableObject {
     var started = false
     var timer : Timer? = nil
     var intvlIdx = 0
+    var lastPred = false
     
     var lastHeading = -999.0
     
@@ -80,10 +81,15 @@ class DataWrangler: ObservableObject {
                 let data = self.getData()
                 if data != nil {
                     let pred = self.mlModel.predict(data: data!)
-                    //print("MODEL PREDICTION")
-                    print(pred ?? "nil")
-                    if pred != nil && pred! {
-                        AudioServicesPlayAlertSound(SystemSoundID(1321))
+
+                    if pred != nil {
+                        if pred! {
+                            AudioServicesPlayAlertSound(SystemSoundID(1321))
+                            if !self.lastPred {
+                                
+                            }
+                        }
+                        //self.lastPred = pred!
                     }
                 }
             }

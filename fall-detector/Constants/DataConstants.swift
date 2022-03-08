@@ -15,4 +15,6 @@ struct MyData {
     static let currYear = Int(Calendar.current.component(.year, from: Date()))
     static let years: [Int] = Array(currYear-100...currYear-1).reversed()
     static var fallModel = Models().getModel(arch: "CNN", features: "polar", lag: 0)
+    
+    static let apn = APNHandling()
 }
