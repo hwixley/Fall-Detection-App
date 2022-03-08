@@ -18,12 +18,12 @@ struct StatsView: View {
                 VStack {
                     VStack {
                         VStack {
-                            Text("BIOMETRICS")
-                                .modifier(DefaultText(size: 20))
+                            Text("Biometrics")
+                                .modifier(DefaultText(size: 25))
                             
                             Divider()
                             
-                            CustLabel(title: "Average heart rate", value: " BPM")
+                            CustLabel(title: "Average heart rate", value: "- BPM")
                         }
                         .padding(.all, 10)
                         .background(MyColours.b1)
@@ -32,14 +32,14 @@ struct StatsView: View {
                     
                     VStack {
                         VStack {
-                            Text("FALL DETECTION")
-                                .modifier(DefaultText(size: 20))
+                            Text("Fall Detection")
+                                .modifier(DefaultText(size: 25))
                             
                             Divider()
                             
-                            CustLabel(title: "# Falls detected:", value: "")
-                            CustLabel(title: "TPR:", value: "%")
-                            CustLabel(title: "FPR:", value: "%")
+                            CustLabel(title: "# Falls detected:", value: "-")
+                            CustLabel(title: "TPR:", value: "- %")
+                            CustLabel(title: "FPR:", value: "- %")
                         }
                         .padding(.all, 10)
                         .background(MyColours.b1)
