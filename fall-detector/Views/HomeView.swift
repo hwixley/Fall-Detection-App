@@ -42,7 +42,6 @@ struct HomeView: View {
             let locationManager = CLLocationManager()
             locationManager.requestAlwaysAuthorization()
             locationManager.startUpdatingLocation()
-            MyData.apn.sendNotification()
         }
     }
 }

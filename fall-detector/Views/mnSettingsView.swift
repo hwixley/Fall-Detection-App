@@ -11,9 +11,10 @@ struct mnSettingsView: View {
     @EnvironmentObject var appState: AppState
     
     @State var modelChoice: Int = 0
-    @State var featureChoice = 0 //: Int = 0
-    @State var lagChoice = 0 //: Int = 0
-    @State var arcChoice = 0 //: Int = 0
+    @State var featureChoice = MyData.fallModel.features == "polar" ? 0 : (MyData.fallModel.features == "coremotion" ? 1 : (MyData.fallModel.features == "ecg" ? 2 : (MyData.fallModel.features == "acc" ? 3 : 4)))
+    @State var lagChoice = MyData.fallModel.lag/100
+    @State var arcChoice = MyData.fallModel.architecture == "CNN" ? 0 : 1
+    @State var notifChoice = MyData.notificationsEnabled ? 0 : 1
     
     let featureChoices = [0: "All Polar", 1: "All CoreMotion", 2:"Polar ECG", 3:"Polar Accelerometer", 4:"All"]
     let featureNames = ["polar", "coremotion", "ecg", "acc", "all"]
@@ -23,7 +24,7 @@ struct mnSettingsView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                MyColours.g0.edgesIgnoringSafeArea(.all)
+                MyColours.b1.edgesIgnoringSafeArea(.all)
                 VStack {
                     Form {
                         /*Section("Fall Detection Model") {
@@ -105,6 +106,31 @@ struct mnSettingsView: View {
                                 .tint(MyColours.p0)
                             }
                         }
+                        .modifier(SectionStyle())
+                        
+                        Section("General") {
+                            HStack {
+                                Text("Notifications")
+                                    .modifier(LabelText())
+                                    .frame(width: 120, alignment: .trailing)
+                                
+                                Spacer()
+                                
+                                Spacer()
+                                
+                                Picker("Notifications", selection: $notifChoice) {
+                                    Text("Enabled")
+                                        .modifier(LabelText())
+                                        .tag(0)
+                                    Text("Disabled")
+                                        .modifier(LabelText())
+                                        .tag(1)
+                                }
+                                .frame(height: 30)
+                                .pickerStyle(SegmentedPickerStyle())
+                            }
+                        }
+                        .modifier(SectionStyle())
                     }
                 }
                 .modifier(NavigationBarStyle(title: "Settings", page: .main, hideBackButton: false, appState: appState))

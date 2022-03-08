@@ -27,6 +27,7 @@ struct LoginView: View {
                                 Warning(text: "Sorry we could not seem to find an account with that email and password. Please try again.")
                             }
                         }
+                        .modifier(SectionStyle())
                     }
                     
                     Button(action: {

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MenuView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var dataWrangler: DataWrangler
     @State private var showLogoutAlert = false
     
     var body: some View {
@@ -56,6 +57,7 @@ struct MenuView: View {
                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                     .alert("Are you sure you want to log out?", isPresented: $showLogoutAlert) {
                         Button("Yes", role: .destructive) {
+                            self.dataWrangler.stop()
                             MyData.user = nil
                             self.appState.inappState = InAppState()
                         }

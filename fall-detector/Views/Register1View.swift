@@ -33,6 +33,8 @@ struct Register1View: View {
                                 Warning(text: "You have no emergency contacts! Please add some so we can contact someone if you fall over")
                             }
                         }
+                        .modifier(SectionStyle())
+                        
                         Section("Add new contact") {
                             Textfield(title: "Name", contentType: UITextContentType.name, keyboardType: UIKeyboardType.asciiCapable, labelWidth: 70, output: $newContactName)
                             Textfield(title: "Phone", contentType: UITextContentType.telephoneNumber, keyboardType: UIKeyboardType.numberPad, labelWidth: 70, output: $newContactPhone)
@@ -54,6 +56,7 @@ struct Register1View: View {
                             }
                             .buttonStyle(ClassicButtonStyle(useGradient: false))
                         }
+                        .modifier(SectionStyle())
                     }
                     
                     Button(action: {

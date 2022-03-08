@@ -44,6 +44,7 @@ struct Register2View: View {
                                 Warning(text: "Please fill in all the required fields")
                             }
                         })
+                        .modifier(SectionStyle())
                         .onDisappear {
                             showErr = false
                         }

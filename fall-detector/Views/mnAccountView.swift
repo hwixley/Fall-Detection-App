@@ -41,6 +41,8 @@ struct mnAccountView: View {
                                     CustLabel(title: "Email", value: MyData.user!.email)
                                 }
                             }
+                            .modifier(SectionStyle())
+                            
                             Section("Biometric Data") {
                                 if !isEditing {
                                     CustLabel(title: "Gender:", value: MyData.user!.is_female ? "Female" : "Male")
@@ -79,6 +81,8 @@ struct mnAccountView: View {
                                     Textfield(title: "Weight (kg)", contentType: UITextContentType.oneTimeCode, keyboardType: UIKeyboardType.numberPad, labelWidth: 70, placeholder: String(MyData.user!.weight), output: $weight)
                                 }
                             }
+                            .modifier(SectionStyle())
+                            
                             Section("Emergency Contacts") {
                                 if !isEditing {
                                     if contacts.count > 0 {
@@ -103,6 +107,8 @@ struct mnAccountView: View {
                                     }
                                 }
                             }
+                            .modifier(SectionStyle())
+                            
                             if isEditing {
                                 Section("Add new contact") {
                                     Textfield(title: "Name", contentType: UITextContentType.name, keyboardType: UIKeyboardType.asciiCapable, labelWidth: 70, output: $newContactName)
@@ -125,6 +131,7 @@ struct mnAccountView: View {
                                     }
                                     .buttonStyle(ClassicButtonStyle(useGradient: false))
                                 }
+                                .modifier(SectionStyle())
                             }
                         }
                         

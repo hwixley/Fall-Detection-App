@@ -60,6 +60,7 @@ struct RegisterView: View {
                                 Warning(text: "Please fill in all the required fields")
                             }
                         }
+                        .modifier(SectionStyle())
                     }
                     
                     Button(action: {

@@ -41,6 +41,7 @@ struct MainView: View {
             
             MenuView()
                 .environmentObject(appState)
+                .environmentObject(dataWrangler)
                 .tabItem {
                     
                     Label("Menu", systemImage: "line.3.horizontal")

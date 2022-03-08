@@ -134,3 +134,10 @@ struct LabelText: ViewModifier {
             .frame(maxWidth: .infinity, alignment: .trailing)
     }
 }
+
+struct SectionStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .listRowBackground(MyColours.b2)
+    }
+}

@@ -83,7 +83,7 @@ struct DefaultTextfieldStyle: TextFieldStyle {
             .modifier(HPadding(pad: 10))
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(MyColours.b2)
+                    .fill(MyColours.b3)
             ).padding(.trailing, 10)
     }
 }

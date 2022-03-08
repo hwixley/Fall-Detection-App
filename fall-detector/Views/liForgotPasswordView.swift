@@ -30,6 +30,7 @@ struct liForgotPasswordView: View {
                                     }
                                 }
                             }
+                            .modifier(SectionStyle())
                         }
                     } else {
                         Text("A password reset link has been sent to your email \(email). You must open it to reset your password!")
