@@ -119,9 +119,6 @@ struct mnSettingsView: View {
             locationManager.startUpdatingLocation()
         }
         .onDisappear {
-            print(self.arcChoices[self.arcChoice])
-            print(self.featureChoices[self.featureChoice]!)
-            print(self.lagChoices[self.lagChoice]!)
             MyData.fallModel = Models().getModel(arch: self.arcChoices[self.arcChoice], features: self.featureChoices[self.featureChoice]!, lag: self.lagChoice*100)
         }
     }
