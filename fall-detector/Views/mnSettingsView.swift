@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CoreLocation
 
 struct mnSettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -113,11 +112,6 @@ struct mnSettingsView: View {
             .modifier(BackgroundStack(appState: appState, backPage: .main))
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear {
-            let locationManager = CLLocationManager()
-            locationManager.requestAlwaysAuthorization()
-            locationManager.startUpdatingLocation()
-        }
         .onDisappear {
             MyData.fallModel = Models().getModel(arch: self.arcChoices[self.arcChoice], features: self.featureChoices[self.featureChoice]!, lag: self.lagChoice*100)
         }

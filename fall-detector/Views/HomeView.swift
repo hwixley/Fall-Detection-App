@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
@@ -37,6 +38,11 @@ struct HomeView: View {
             .modifier(NavigationBarStyle(title: "Home", page: .entry, hideBackButton: true, appState: appState))
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            let locationManager = CLLocationManager()
+            locationManager.requestAlwaysAuthorization()
+            locationManager.startUpdatingLocation()
+        }
     }
 }
 

@@ -13,10 +13,13 @@ struct mnHelpView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                MyColours.g0.edgesIgnoringSafeArea(.all)
+                MyColours.b1.edgesIgnoringSafeArea(.all)
                 VStack(spacing:40) {
-
+                    Text("Please talk to Harry Wixley if you need help with anything.\n\nEmail: hwixley1@gmail.com\nPhone: +44 07484111141")
+                        .modifier(DefaultText(size: 20))
                 }
+                .modifier(VPadding(pad: 8))
+                .modifier(HPadding(pad: 6))
                 .modifier(NavigationBarStyle(title: "Help", page: .main, hideBackButton: false, appState: appState))
             }
             .modifier(BackgroundStack(appState: appState, backPage: .main))
