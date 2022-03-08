@@ -52,9 +52,10 @@ struct Register1View: View {
                                     showAddErr = true
                                 }
                             }) {
-                                MainButton(title: "Add Contact", image: "phone.fill.badge.plus", color: MyColours.p0)
+                                MainButton(title: "Add Contact", image: "phone.fill.badge.plus", color: Color.white)
+                                    .frame(width: UIScreen.screenWidth - 65)
                             }
-                            .buttonStyle(ClassicButtonStyle(useGradient: false))
+                            .buttonStyle(ClassicButtonStyle(useGradient: true))
                         }
                         .modifier(SectionStyle())
                     }
