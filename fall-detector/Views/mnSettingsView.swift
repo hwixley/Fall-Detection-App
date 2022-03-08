@@ -12,13 +12,14 @@ struct mnSettingsView: View {
     @EnvironmentObject var appState: AppState
     
     @State var modelChoice: Int = 0
-    @State var featureChoice: Int = 0
-    @State var lagChoice: Int = 0
-    @State var arcChoice: Int = 0
+    @State var featureChoice = 0 //: Int = 0
+    @State var lagChoice = 0 //: Int = 0
+    @State var arcChoice = 0 //: Int = 0
     
-    let featureChoices = ["All Polar", "All CoreMotion", "Polar ECG", "Polar Accelerometer", "All"]
-    let lagChoices = ["0 ms", "100 ms", "200 ms"]
-    let arcChoices = ["FCNN" , "CNN", "LSTM"]
+    let featureChoices = [0: "All Polar", 1: "All CoreMotion", 2:"Polar ECG", 3:"Polar Accelerometer", 4:"All"]
+    let featureNames = ["polar", "coremotion", "ecg", "acc", "all"]
+    let lagChoices = [0: "0 ms", 1: "100 ms", 2: "200 ms"]
+    let arcChoices = ["CNN", "LSTM"]
     
     var body: some View {
         NavigationView {
@@ -72,8 +73,8 @@ struct mnSettingsView: View {
                                     .modifier(SubtitleText())
                                     .frame(width: 70, alignment: .trailing)
                                 Picker(selection: $featureChoice, label: Text("")) {
-                                    ForEach(0..<self.featureChoices.count) { idx1 in
-                                        Text(self.featureChoices[idx1]).tag(idx1)
+                                    ForEach(self.featureChoices.keys.sorted(), id: \.self) { key in
+                                        Text(self.featureChoices[key]!).tag(key)
                                     }
                                 }
                                 .tint(MyColours.p0)
@@ -84,10 +85,8 @@ struct mnSettingsView: View {
                                     .modifier(SubtitleText())
                                     .frame(width: 40, alignment: .trailing)
                                 Picker(selection: $lagChoice, label: Text("")) {
-                                    ForEach(0..<self.lagChoices.count) { idx2 in
-                                        if idx2 < self.lagChoices.count {
-                                            Text(self.lagChoices[idx2]).tag(idx2)
-                                        }
+                                    ForEach(self.lagChoices.keys.sorted(), id: \.self) { key in
+                                        Text(self.lagChoices[key]!).tag(key)
                                     }
                                 }
                                 .tint(MyColours.p0)
@@ -102,7 +101,7 @@ struct mnSettingsView: View {
                                         if idx2 < self.arcChoices.count {
                                             Text(self.arcChoices[idx2]).tag(idx2)
                                         }
-                                    }
+                                     }
                                 }
                                 .tint(MyColours.p0)
                             }
@@ -118,6 +117,12 @@ struct mnSettingsView: View {
             let locationManager = CLLocationManager()
             locationManager.requestAlwaysAuthorization()
             locationManager.startUpdatingLocation()
+        }
+        .onDisappear {
+            print(self.arcChoices[self.arcChoice])
+            print(self.featureChoices[self.featureChoice]!)
+            print(self.lagChoices[self.lagChoice]!)
+            MyData.fallModel = Models().getModel(arch: self.arcChoices[self.arcChoice], features: self.featureChoices[self.featureChoice]!, lag: self.lagChoice*100)
         }
     }
 }

@@ -151,7 +151,7 @@ struct ConnectionView: View {
                         if MyData.fallModel.features == "polar" {
                             self.dataWrangler.stop()
                         } else if MyData.fallModel.features == "all" {
-                            MyData.fallModel = Models.coremotionNoLag
+                            MyData.fallModel = Models().getModel(arch: "CNN", features: "all", lag: 0)
                         }
                         self.appState.inappState.connection = .disconnected
                         self.dataWrangler.polarManager.disconnectFromDevice()
