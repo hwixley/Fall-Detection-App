@@ -14,9 +14,11 @@ struct mnSettingsView: View {
     @State var modelChoice: Int = 0
     @State var featureChoice: Int = 0
     @State var lagChoice: Int = 0
+    @State var arcChoice: Int = 0
     
     let featureChoices = ["All Polar", "All CoreMotion", "Polar ECG", "Polar Accelerometer", "All"]
     let lagChoices = ["0 ms", "100 ms", "200 ms"]
+    let arcChoices = ["FCNN" , "CNN", "LSTM"]
     
     var body: some View {
         NavigationView {
@@ -85,6 +87,20 @@ struct mnSettingsView: View {
                                     ForEach(0..<self.lagChoices.count) { idx2 in
                                         if idx2 < self.lagChoices.count {
                                             Text(self.lagChoices[idx2]).tag(idx2)
+                                        }
+                                    }
+                                }
+                                .tint(MyColours.p0)
+                            }
+                            
+                            HStack(spacing: 10) {
+                                Text("Architecture")
+                                    .modifier(SubtitleText())
+                                    .frame(width: 110, alignment: .trailing)
+                                Picker(selection: $arcChoice, label: Text("")) {
+                                    ForEach(0..<self.arcChoices.count) { idx2 in
+                                        if idx2 < self.arcChoices.count {
+                                            Text(self.arcChoices[idx2]).tag(idx2)
                                         }
                                     }
                                 }
