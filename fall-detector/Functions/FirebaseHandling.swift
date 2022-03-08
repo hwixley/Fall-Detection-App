@@ -62,7 +62,7 @@ func loginUser(email: String, password: String, completion: @escaping ((Bool) ->
                 if err == nil && docSnapshot != nil && docSnapshot!.exists && docSnapshot!.data() != nil {
                     let ddata = docSnapshot!.data()!
                     
-                    MyData.user = User(id: authDataResult!.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, password: password, phone: ddata["phone"] as! String, yob: ddata["yob"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: [])
+                    MyData.user = User(id: authDataResult!.user.uid, name: ddata["name"] as! String, email: ddata["email"] as! String, password: password, phone: ddata["phone"] as! String, yob: ddata["yob"] as! Int, height: ddata["height"] as! Int, weight: ddata["weight"] as! Int, is_female: ddata["is_female"] as! Bool, medical_conditions: ddata["medical_conditions"] as! String, contacts: [], notif: ddata["notif"] as! Bool)
                     
                     getContacts(id: authDataResult!.user.uid, completion: { success in
                         completion(success)
@@ -124,6 +124,8 @@ func updateUser(updatedFields: [AnyHashable : Any], newContacts: [Person], oldCo
                     addContact(uid: MyData.user!.id, contact: c)
                 }
             }
+        } else {
+            print(err!)
         }
     }
 }

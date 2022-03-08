@@ -17,6 +17,4 @@ struct MyData {
     static var fallModel = Models().getModel(arch: "CNN", features: "polar", lag: 0)
     
     static let apn = APNHandling()
-    
-    static var notificationsEnabled = false
 }

@@ -14,7 +14,6 @@ struct InAppState {
     var taskSuccess: Bool? = nil
     var connection: Connection = .disconnected
     var fallDetection: Bool = true
-    var notifAuth: Bool = false
 }
 
 enum Page {
@@ -52,9 +51,10 @@ struct User {
     var is_female: Bool
     var medical_conditions: String
     var contacts: [Person]
+    var notif: Bool
     
     func isEqual(user: User) -> Bool{
-        if id == user.id && name == user.name && email == user.email && password == user.password && phone == user.phone && yob == user.yob && height == user.height && weight == user.weight && is_female == user.is_female && medical_conditions == user.medical_conditions && areContactsEqual(contacts2: user.contacts) {
+        if id == user.id && name == user.name && email == user.email && password == user.password && phone == user.phone && yob == user.yob && height == user.height && weight == user.weight && is_female == user.is_female && medical_conditions == user.medical_conditions && areContactsEqual(contacts2: user.contacts) && notif == user.notif {
             return true
         } else {
             return false

@@ -14,7 +14,7 @@ struct mnSettingsView: View {
     @State var featureChoice = MyData.fallModel.features == "polar" ? 0 : (MyData.fallModel.features == "coremotion" ? 1 : (MyData.fallModel.features == "ecg" ? 2 : (MyData.fallModel.features == "acc" ? 3 : 4)))
     @State var lagChoice = MyData.fallModel.lag/100
     @State var arcChoice = MyData.fallModel.architecture == "CNN" ? 0 : 1
-    @State var notifChoice = MyData.notificationsEnabled ? 0 : 1
+    @State var notifChoice = MyData.user!.notif ? 0 : 1
     
     let featureChoices = [0: "All Polar", 1: "All CoreMotion", 2:"Polar ECG", 3:"Polar Accelerometer", 4:"All"]
     let featureNames = ["polar", "coremotion", "ecg", "acc", "all"]
@@ -140,6 +140,12 @@ struct mnSettingsView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .onDisappear {
             MyData.fallModel = Models().getModel(arch: self.arcChoices[self.arcChoice], features: self.featureChoices[self.featureChoice]!, lag: self.lagChoice*100)
+            //print("hello")
+            if (self.notifChoice == 0 && !MyData.user!.notif) || (self.notifChoice == 1 && MyData.user!.notif) {
+                //print("s")
+                updateUser(updatedFields: ["notif": (self.notifChoice == 0)], newContacts: [], oldContacts: [])
+                MyData.user!.notif = notifChoice == 0
+            }
         }
     }
 }

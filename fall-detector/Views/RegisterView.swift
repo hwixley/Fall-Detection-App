@@ -69,7 +69,7 @@ struct RegisterView: View {
                         if name != "" && height != "" && weight != "" {
                             showErr = false
                             if MyData.user == nil {
-                                MyData.user = User(id: "", name: name, email: "", password: "", phone: "", yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [])
+                                MyData.user = User(id: "", name: name, email: "", password: "", phone: "", yob: MyData.years[yob], height: Int(height)!, weight: Int(weight)!, is_female: is_female == 0 ? false : true, medical_conditions: "", contacts: [], notif: false)
                             } else {
                                 MyData.user!.name = name
                                 MyData.user!.yob = MyData.years[yob]
