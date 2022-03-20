@@ -291,20 +291,29 @@ struct LiveMovementView: View {
                     let maxEcg = (self.dataWrangler.polarManager.ecg.max() ?? 1) > -1*(self.dataWrangler.polarManager.ecg.min() ?? 1) ? (self.dataWrangler.polarManager.ecg.max() ?? 1) : (self.dataWrangler.polarManager.ecg.min() ?? 1)
                     let data = self.dataWrangler.polarManager.ecg.map { $0 / Double(maxEcg) }
                     
+                    Text("ECG Data:")
+                        .modifier(DefaultText(size: 20))
+                    
+                    Spacer()
+                    
                     Chart(data: data)
                         .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
-                        .frame(width: UIScreen.screenWidth - 20, height: 30)
+                        .frame(width: UIScreen.screenWidth - 20, height: 20)
                     
                     Spacer()
                     
                     if self.dataWrangler.polarManager.l_hr != 0 {
                         Text("\(Int(self.dataWrangler.polarManager.l_hr)) BPM")
-                            .modifier(DefaultText(size: 21))
+                            .modifier(DefaultText(size: 16))
                     }
                     
                     Divider()
                     
-                    //print(self.dataWrangler.polarManager.acc_x.max())
+                    Text("Accelerometer Data:")
+                        .modifier(DefaultText(size: 20))
+                    
+                    Spacer()
+                    
                     let accxData = normData(data: self.dataWrangler.polarManager.acc_x)
                     let accyData = normData(data: self.dataWrangler.polarManager.acc_y)
                     let acczData = normData(data: self.dataWrangler.polarManager.acc_z)
@@ -312,15 +321,15 @@ struct LiveMovementView: View {
                     ZStack {
                         Chart(data: accxData)
                             .chartStyle(LineChartStyle(.quadCurve, lineColor: .blue, lineWidth: 1))
-                            .frame(width: UIScreen.screenWidth - 20, height: 30)
+                            .frame(width: UIScreen.screenWidth - 20, height: 20)
                         
                         Chart(data: accyData)
                             .chartStyle(LineChartStyle(.quadCurve, lineColor: .green, lineWidth: 1))
-                            .frame(width: UIScreen.screenWidth - 20, height: 30)
+                            .frame(width: UIScreen.screenWidth - 20, height: 20)
                         
                         Chart(data: acczData)
                             .chartStyle(LineChartStyle(.quadCurve, lineColor: .yellow, lineWidth: 1))
-                            .frame(width: UIScreen.screenWidth - 20, height: 30)
+                            .frame(width: UIScreen.screenWidth - 20, height: 20)
                     }
                     
                     Spacer()
@@ -365,11 +374,8 @@ struct LiveMovementView: View {
     func normData(data: [Double]) -> [Double] {
         let mean = Double(data.reduce(0, +))/Double(data.count)
         let normData = data.map { $0 - mean }
-        //let normData = data
-        //let max = (normData.max() ?? 1) > -1*(normData.min() ?? 1) ? (normData.max() ?? 1) : (normData.min() ?? 1)
-        
-        //print(max)
-        return normData.map { $0 / Double(4000.0 - mean)}
+
+        return normData.map { $0 / Double(3000.0 - mean)}
     }
 }
 
