@@ -293,13 +293,34 @@ struct LiveMovementView: View {
                     
                     Chart(data: data)
                         .chartStyle(LineChartStyle(.quadCurve, lineColor: .red, lineWidth: 1))
-                        .frame(width: UIScreen.screenWidth - 20, height: 60)
+                        .frame(width: UIScreen.screenWidth - 20, height: 30)
                     
                     Spacer()
                     
                     if self.dataWrangler.polarManager.l_hr != 0 {
                         Text("\(Int(self.dataWrangler.polarManager.l_hr)) BPM")
                             .modifier(DefaultText(size: 21))
+                    }
+                    
+                    Divider()
+                    
+                    //print(self.dataWrangler.polarManager.acc_x.max())
+                    let accxData = normData(data: self.dataWrangler.polarManager.acc_x)
+                    let accyData = normData(data: self.dataWrangler.polarManager.acc_y)
+                    let acczData = normData(data: self.dataWrangler.polarManager.acc_z)
+                    
+                    ZStack {
+                        Chart(data: accxData)
+                            .chartStyle(LineChartStyle(.quadCurve, lineColor: .blue, lineWidth: 1))
+                            .frame(width: UIScreen.screenWidth - 20, height: 30)
+                        
+                        Chart(data: accyData)
+                            .chartStyle(LineChartStyle(.quadCurve, lineColor: .green, lineWidth: 1))
+                            .frame(width: UIScreen.screenWidth - 20, height: 30)
+                        
+                        Chart(data: acczData)
+                            .chartStyle(LineChartStyle(.quadCurve, lineColor: .yellow, lineWidth: 1))
+                            .frame(width: UIScreen.screenWidth - 20, height: 30)
                     }
                     
                     Spacer()
@@ -339,6 +360,16 @@ struct LiveMovementView: View {
         .modifier(VPadding(pad: 10))
         .background(MyColours.b1)
         .frame(maxWidth: .infinity)
+    }
+    
+    func normData(data: [Double]) -> [Double] {
+        let mean = Double(data.reduce(0, +))/Double(data.count)
+        let normData = data.map { $0 - mean }
+        //let normData = data
+        //let max = (normData.max() ?? 1) > -1*(normData.min() ?? 1) ? (normData.max() ?? 1) : (normData.min() ?? 1)
+        
+        //print(max)
+        return normData.map { $0 / Double(4000.0 - mean)}
     }
 }
 
