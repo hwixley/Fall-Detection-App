@@ -20,6 +20,7 @@ class DataWrangler: ObservableObject {
     var timer : Timer? = nil
     var intvlIdx = 0
     var lastPred = false
+    var past_predictions : [Bool] = []
     
     var lastHeading = -999.0
     
@@ -106,18 +107,32 @@ class DataWrangler: ObservableObject {
                 if ecg.count == 260 && accx.count == 400 && accy.count == 400 && accz.count == 400 {
                     
                     let data = self.getAllData(ecg: ecg, accx: accx, accy: accy, accz: accz)
-                    //print(data ?? "data is nil")
-                    //if data != nil {
-                    //print("we're in")
-                    //print(data!.)
                     let pred = self.mlModel.predict(data: data)
+                    
                     //print("MODEL PREDICTION")
                     print(pred ?? "nil")
                     
-                    
-                    
-                    if pred != nil && pred! {
-                        AudioServicesPlayAlertSound(SystemSoundID(1321))
+                    if pred != nil {
+                        self.past_predictions.append(pred!)
+                    }
+                    if self.past_predictions.count > 20 {
+                        self.past_predictions.remove(at: 0)
+                        
+                        var fall_count = 0
+                        var non_fall_count = 0
+                        for past_pred in self.past_predictions {
+                            if past_pred {
+                                fall_count += 1
+                            } else {
+                                non_fall_count += 1
+                            }
+                        }
+                        
+                        print(fall_count - non_fall_count)
+                        
+                        if pred! && fall_count > 15 {
+                            AudioServicesPlayAlertSound(SystemSoundID(1321))
+                        }
                     }
                     //self.intervals.append(DataInterval(idx: self.intvlIdx, p_ecg: Array(self.polarManager.ecg.suffix(13)), p_acc_x: Array(self.polarManager.acc_x.suffix(20)), p_acc_y: Array(self.polarManager.acc_y.suffix(20)), p_acc_z: Array(self.polarManager.acc_z.suffix(20))))
                 }
