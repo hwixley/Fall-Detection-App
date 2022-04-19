@@ -48,7 +48,7 @@ class DataWrangler: ObservableObject {
     }
     
     @objc func updateTimer() {
-        if MyData.fallModel.features == "all" {
+        /*if MyData.fallModel.features == "all" {
             self.motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: OperationQueue.main) { data, error in
                 guard let motionData = data, error == nil else {
                     return
@@ -79,7 +79,7 @@ class DataWrangler: ObservableObject {
                 self.intvlIdx += 1
                 
                 let data = self.getData()
-                if data != nil {
+                if data != nil && data!.count == 6000 {
                     let pred = self.mlModel.predict(data: data!)
 
                     if pred != nil {
@@ -93,23 +93,73 @@ class DataWrangler: ObservableObject {
                     }
                 }
             }
-        } else {
+        } else {*/
+        if MyData.fallModel.features == "polar" {
             if self.polarManager.deviceConnectionState == .connected(self.polarManager.deviceId) && self.polarManager.isRecording && self.polarManager.ecg.count >= 13 && self.polarManager.acc_x.count >= 20 && self.polarManager.acc_y.count >= 20 && self.polarManager.acc_z.count >= 20 {
-                self.intervals.append(DataInterval(idx: self.intvlIdx, p_ecg: Array(self.polarManager.ecg.suffix(13)), p_acc_x: Array(self.polarManager.acc_x.suffix(20)), p_acc_y: Array(self.polarManager.acc_y.suffix(20)), p_acc_z: Array(self.polarManager.acc_z.suffix(20))))
-            }
-            self.intvlIdx += 1
-            
-            let data = self.getData()
-            //print(data)
-            if data != nil {
-                let pred = self.mlModel.predict(data: data!)
-                //print("MODEL PREDICTION")
-                print(pred ?? "nil")
-                if pred != nil && pred! {
-                    AudioServicesPlayAlertSound(SystemSoundID(1321))
+                let ecg = Array(self.polarManager.ecg.suffix(260))
+                let accx = Array(self.polarManager.acc_x.suffix(400))
+                let accy = Array(self.polarManager.acc_y.suffix(400))
+                let accz = Array(self.polarManager.acc_z.suffix(400))
+                
+                
+                //self.intvlIdx += 1
+                if ecg.count == 260 && accx.count == 400 && accy.count == 400 && accz.count == 400 {
+                    
+                    let data = self.getAllData(ecg: ecg, accx: accx, accy: accy, accz: accz)
+                    //print(data ?? "data is nil")
+                    //if data != nil {
+                    //print("we're in")
+                    //print(data!.)
+                    let pred = self.mlModel.predict(data: data)
+                    //print("MODEL PREDICTION")
+                    print(pred ?? "nil")
+                    
+                    
+                    
+                    if pred != nil && pred! {
+                        AudioServicesPlayAlertSound(SystemSoundID(1321))
+                    }
+                    //self.intervals.append(DataInterval(idx: self.intvlIdx, p_ecg: Array(self.polarManager.ecg.suffix(13)), p_acc_x: Array(self.polarManager.acc_x.suffix(20)), p_acc_y: Array(self.polarManager.acc_y.suffix(20)), p_acc_z: Array(self.polarManager.acc_z.suffix(20))))
                 }
             }
+
+            //}
         }
+    }
+    
+    func getAllData(ecg: [Double], accx: [Double], accy: [Double], accz: [Double]) -> Data {
+        
+        var finalData = Data()
+        
+        //var output : [[Double]] = []
+
+        for i in 0..<20 {
+            let vec = Array(ecg[i*13..<i*13 + 13]) + Array(accx[i*20..<i*20 + 20]) + Array(accy[i*20..<i*20 + 20]) + Array(accz[i*20..<i*20 + 20])
+            
+            var intvl_output : [Double] =  []
+            
+            if vec.count == MyData.fallModel.intvl_size {
+                //output = output + vec + [Double(MyData.user!.height), Double(MyData.user!.weight)]
+                intvl_output = vec + [Double(MyData.user!.height), Double(MyData.user!.weight)]
+            } else {
+                intvl_output = []
+                break
+            }
+            //print(intvl_output.count)
+            
+            let intvl_num = zip(intvl_output, MyData.fallModel.xMin).map(-)
+            let intvl_den = zip(intvl_num, MyData.fallModel.xMax).map(/)
+            
+            //output.append(intvl_den)
+            let rowData = Array(intvl_den).map{ Float($0) }
+            //print(rowData.count)
+            //print(type(of: rowData))
+            
+            //output.append(contentsOf: rowData)
+            finalData.append(Data(bytes: rowData, count: rowData.count*4))
+        }
+        
+        return finalData
     }
     
     func getIntervals() -> [DataInterval] {
@@ -122,19 +172,77 @@ class DataWrangler: ObservableObject {
         }
     }
     
-    func getData() -> Data? {
+    func getData() -> Data {
         let winIntvls = self.getIntervals()
         
-        var output : [Double] = []
+        var finalData = Data()
+        
+        //var output : [[Double]] = []
         for intvl in winIntvls {
             let vec = intvl.getVector()
+            
+            var intvl_output : [Double] =  []
+            
             if vec.count == MyData.fallModel.intvl_size {
-                output = output + vec
+                //output = output + vec + [Double(MyData.user!.height), Double(MyData.user!.weight)]
+                intvl_output = vec + [Double(MyData.user!.height), Double(MyData.user!.weight)]
             } else {
-                output = []
+                intvl_output = []
                 break
             }
+            //print(intvl_output.count)
+            
+            let intvl_num = zip(intvl_output, MyData.fallModel.xMin).map(-)
+            let intvl_den = zip(intvl_num, MyData.fallModel.xMax).map(/)
+            
+            //output.append(intvl_den)
+            let rowData = Array(intvl_den).map{ Float($0) }
+            //print(rowData.count)
+            //print(type(of: rowData))
+            
+            //output.append(contentsOf: rowData)
+            finalData.append(Data(bytes: rowData, count: rowData.count*4))
         }
+        
+        return finalData
+        
+        //print(type(of: finalData))
+        /*print(winIntvls.count)
+        //print()
+        print(finalData.count)
+        
+        //var finalFinalData = Data()
+        //finalFinalData.append(finalData)
+        
+        //var final*/
+        //print(output.count)
+        
+        /*
+        if output.count == MyData.fallModel.window_size {
+             var finalData = Data()
+             for i in 0..<MyData.fallModel.window_size {
+                 let intvl = output[i].map { Float($0) }
+                 //let row = Array(output[idx..<idx+MyData.fallModel.intvl_size]).map { Float($0) }
+                 let reshaped = [[intvl]]
+                 finalData.append(Data(bytes: intvl, count: MyData.fallModel.num_features*4))
+             }
+             return finalData
+                        
+        } else {
+            //print(MyData.fallModel.window_size)
+            //print(MyData.fallModel.intvl_size)
+            //print("returning nil...")
+            return nil
+        }*/
+        
+        /*
+        print("BYTE SIZE")
+        print(finalData.count)
+        
+        return finalData*/
+        
+        
+        /*
         let user_num = zip([Double(MyData.user!.height), Double(MyData.user!.weight)], MyData.fallModel.xMin.suffix(2)).map(-)
         let user_den = zip(MyData.fallModel.xMax.suffix(2), MyData.fallModel.xMin.suffix(2)).map(-)
         let user_stats = zip(user_num, user_den).map(/)
@@ -151,5 +259,6 @@ class DataWrangler: ObservableObject {
         } else {
             return nil
         }
+        */
     }
 }

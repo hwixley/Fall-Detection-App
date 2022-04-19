@@ -10,6 +10,7 @@ target 'fall-detector' do
   pod 'Firebase/Firestore' #, '7.2-M1'
   pod 'Firebase/MLModelDownloader'
   pod 'TensorFlowLiteSwift'
+  #pod 'TensorFlowLiteSelectTfOps', '~> 0.0.1-nightly'
   pod 'PolarBleSdk', '~> 3.2'
   pod 'Alamofire'
 

@@ -123,11 +123,6 @@
 			<key>orderHint</key>
 			<integer>22</integer>
 		</dict>
-		<key>TensorFlowLite.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>23</integer>
-		</dict>
 		<key>TensorFlowLiteC.xcscheme</key>
 		<dict>
 			<key>isShown</key>

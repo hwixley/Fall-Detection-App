@@ -27,6 +27,7 @@
 		D077DD3227CE70C0004A58B2 /* all-window10-lag200-cnn-tf.tflite in Resources */ = {isa = PBXBuildFile; fileRef = D077DD3127CE70BF004A58B2 /* all-window10-lag200-cnn-tf.tflite */; };
 		D077DD3427CF8E9D004A58B2 /* SystemMisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D077DD3327CF8E9D004A58B2 /* SystemMisc.swift */; };
 		D077DD3627CFCCC4004A58B2 /* polar-window10-lag0-cnn-tf.tflite in Resources */ = {isa = PBXBuildFile; fileRef = D077DD3527CFC2FB004A58B2 /* polar-window10-lag0-cnn-tf.tflite */; };
+		D0BC5461280F08ED002EF3C0 /* resnet152-ws20-lag0.tflite in Resources */ = {isa = PBXBuildFile; fileRef = D0BC5460280F0891002EF3C0 /* resnet152-ws20-lag0.tflite */; };
 		D0BCE4B6279B1C5D0052CC9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */; };
 		D0BCE4B8279B1D8B0052CC9B /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D0BCE4B7279B1D8B0052CC9B /* Podfile */; };
 		D0BCE4BA279C17330052CC9B /* DataConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BCE4B9279C17330052CC9B /* DataConstants.swift */; };
@@ -46,6 +47,7 @@
 		D0C66CE22781C8F600C9D1ED /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CE12781C8F600C9D1ED /* HomeView.swift */; };
 		D0C66CE42781C98800C9D1ED /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CE32781C98800C9D1ED /* StatsView.swift */; };
 		D0C66CE62781C98F00C9D1ED /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C66CE52781C98F00C9D1ED /* MenuView.swift */; };
+		D0C860E1280AFB530053653F /* saved_model.tflite in Resources */ = {isa = PBXBuildFile; fileRef = D0C860E0280AFAA70053653F /* saved_model.tflite */; };
 		D0F7AAE6279AB3B700611182 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F7AAE5279AB3B700611182 /* AppState.swift */; };
 		D0F7AAE8279AB42000611182 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F7AAE7279AB42000611182 /* Recording.swift */; };
 		EDCF7D984D4E70346EC6EC72 /* Pods_fall_detector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1CC234839CDF952A97D80C3 /* Pods_fall_detector.framework */; };
@@ -78,6 +80,7 @@
 		D077DD3127CE70BF004A58B2 /* all-window10-lag200-cnn-tf.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = "all-window10-lag200-cnn-tf.tflite"; sourceTree = SOURCE_ROOT; };
 		D077DD3327CF8E9D004A58B2 /* SystemMisc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMisc.swift; sourceTree = "<group>"; };
 		D077DD3527CFC2FB004A58B2 /* polar-window10-lag0-cnn-tf.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = "polar-window10-lag0-cnn-tf.tflite"; sourceTree = SOURCE_ROOT; };
+		D0BC5460280F0891002EF3C0 /* resnet152-ws20-lag0.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = "resnet152-ws20-lag0.tflite"; sourceTree = SOURCE_ROOT; };
 		D0BCE4B5279B1C5D0052CC9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D0BCE4B7279B1D8B0052CC9B /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		D0BCE4B9279C17330052CC9B /* DataConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConstants.swift; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 		D0C66CE12781C8F600C9D1ED /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D0C66CE32781C98800C9D1ED /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		D0C66CE52781C98F00C9D1ED /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		D0C860E0280AFAA70053653F /* saved_model.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = saved_model.tflite; sourceTree = SOURCE_ROOT; };
 		D0F7AAE5279AB3B700611182 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D0F7AAE7279AB42000611182 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -231,6 +235,8 @@
 				D02EABCF27C7F4B6007DF6B4 /* CoreMotionData.swift */,
 				D0C0B3BB27C7E28B000FFAD7 /* CustomMLModel.swift */,
 				D077DD3127CE70BF004A58B2 /* all-window10-lag200-cnn-tf.tflite */,
+				D0BC5460280F0891002EF3C0 /* resnet152-ws20-lag0.tflite */,
+				D0C860E0280AFAA70053653F /* saved_model.tflite */,
 				D077DD3527CFC2FB004A58B2 /* polar-window10-lag0-cnn-tf.tflite */,
 				D077DD2D27CE43B0004A58B2 /* DataWrangler.swift */,
 				D077DD2F27CE512A004A58B2 /* Constants.swift */,
@@ -313,6 +319,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0BC5461280F08ED002EF3C0 /* resnet152-ws20-lag0.tflite in Resources */,
+				D0C860E1280AFB530053653F /* saved_model.tflite in Resources */,
 				D077DD3627CFCCC4004A58B2 /* polar-window10-lag0-cnn-tf.tflite in Resources */,
 				D05879C7277F381500427BAB /* Preview Assets.xcassets in Resources */,
 				D077DD3227CE70C0004A58B2 /* all-window10-lag200-cnn-tf.tflite in Resources */,
@@ -551,11 +559,78 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"FBLPromises\"",
+					"-framework",
+					"\"FirebaseAuth\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreDiagnostics\"",
+					"-framework",
+					"\"FirebaseFirestore\"",
+					"-framework",
+					"\"FirebaseInstallations\"",
+					"-framework",
+					"\"FirebaseMLModelDownloader\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GTMSessionFetcher\"",
+					"-framework",
+					"\"GoogleDataTransport\"",
+					"-framework",
+					"\"GoogleUtilities\"",
+					"-framework",
+					"\"PolarBleSdk\"",
+					"-framework",
+					"\"RxSwift\"",
+					"-framework",
+					"\"SafariServices\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SwiftProtobuf\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"TensorFlowLite\"",
+					"-framework",
+					"\"TensorFlowLiteC\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"absl\"",
+					"-framework",
+					"\"grpc\"",
+					"-framework",
+					"\"grpcpp\"",
+					"-framework",
+					"\"leveldb\"",
+					"-framework",
+					"\"nanopb\"",
+					"-framework",
+					"\"openssl_grpc\"",
+					"-weak_framework",
+					"\"CoreML\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ug4-honours-project.fall-detector";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -586,11 +661,78 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"CFNetwork\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"FBLPromises\"",
+					"-framework",
+					"\"FirebaseAuth\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseCoreDiagnostics\"",
+					"-framework",
+					"\"FirebaseFirestore\"",
+					"-framework",
+					"\"FirebaseInstallations\"",
+					"-framework",
+					"\"FirebaseMLModelDownloader\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"GTMSessionFetcher\"",
+					"-framework",
+					"\"GoogleDataTransport\"",
+					"-framework",
+					"\"GoogleUtilities\"",
+					"-framework",
+					"\"PolarBleSdk\"",
+					"-framework",
+					"\"RxSwift\"",
+					"-framework",
+					"\"SafariServices\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SwiftProtobuf\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"TensorFlowLite\"",
+					"-framework",
+					"\"TensorFlowLiteC\"",
+					"-framework",
+					"\"UIKit\"",
+					"-framework",
+					"\"absl\"",
+					"-framework",
+					"\"grpc\"",
+					"-framework",
+					"\"grpcpp\"",
+					"-framework",
+					"\"leveldb\"",
+					"-framework",
+					"\"nanopb\"",
+					"-framework",
+					"\"openssl_grpc\"",
+					"-weak_framework",
+					"\"CoreML\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ug4-honours-project.fall-detector";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

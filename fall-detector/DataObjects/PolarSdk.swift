@@ -22,8 +22,8 @@ class PolarBleSdkManager : ObservableObject {
     private var ppgDisposable: Disposable?
     private var ppiDisposable: Disposable?
     public var deviceId = MyData.polarDeviceID
-    private var maxEcgCount = 200
-    private var maxAccCount = 200
+    private var maxEcgCount = 300
+    private var maxAccCount = 500
     public var ecgStreamFail: Bool?
     public var accStreamFail: Bool?
     
@@ -68,15 +68,15 @@ class PolarBleSdkManager : ObservableObject {
         }
     }
     
-    func resetData(resetAcc: Bool = true) {
-        self.ecg = Array(self.ecg.suffix(from: self.ecg.count > 110 ? 110 : self.ecg.endIndex))
+    /*func resetData(resetAcc: Bool = true) {
+        self.ecg = Array(self.ecg.suffix(from: self.ecg.count > self.max ? 220 : self.ecg.endIndex))
         
         if resetAcc {
-            self.acc_x = Array(self.acc_x.suffix(from: self.acc_x.count > 200 ? 200 : self.acc_x.endIndex))
-            self.acc_y = Array(self.acc_y.suffix(from: self.acc_y.count > 200 ? 200 : self.acc_y.endIndex))
-            self.acc_z = Array(self.acc_z.suffix(from: self.acc_z.count > 200 ? 200 : self.acc_z.endIndex))
+            self.acc_x = Array(self.acc_x.suffix(from: self.acc_x.count > 400 ? 400 : self.acc_x.endIndex))
+            self.acc_y = Array(self.acc_y.suffix(from: self.acc_y.count > 400 ? 400 : self.acc_y.endIndex))
+            self.acc_z = Array(self.acc_z.suffix(from: self.acc_z.count > 400 ? 400 : self.acc_z.endIndex))
         }
-    }
+    }*/
     
     
     init() {

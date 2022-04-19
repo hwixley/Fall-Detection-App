@@ -1,2 +1,4 @@
 *.xcconfig
 fall-detector/Config.xcconfig
+resnet152-ws20-lag0.tflite
+saved_model.tflite
