@@ -15,11 +15,13 @@ struct mnSettingsView: View {
     @State var lagChoice = MyData.fallModel.lag/100
     @State var arcChoice = MyData.fallModel.architecture == "CNN" ? 0 : 1
     @State var notifChoice = MyData.user!.notif ? 0 : 1
+    @State var textSubmitted = false
+    @State var textSent = false
     
     let featureChoices = [0: "All Polar", 1: "All CoreMotion", 2:"Polar ECG", 3:"Polar Accelerometer", 4:"All"]
     let featureNames = ["polar", "coremotion", "ecg", "acc", "all"]
     let lagChoices = [0: "0 ms", 1: "100 ms", 2: "200 ms"]
-    let arcChoices = ["CNN", "LSTM"]
+    let arcChoices = ["ResNet152", "CNN", "LSTM"]
     
     var body: some View {
         NavigationView {
@@ -129,6 +131,26 @@ struct mnSettingsView: View {
                                 .frame(height: 30)
                                 .pickerStyle(SegmentedPickerStyle())
                             }
+                            
+                            if !textSubmitted {
+                                Button(action: {
+                                    if MyData.user!.contacts.count > 0 {
+                                        sendMessage(contact: MyData.user!.contacts[0]) { success in
+                                            self.textSent = success
+                                            self.textSubmitted = true
+                                        }
+                                    }
+                                }) {
+                                    SubButton(title: "Send Test Text Message", width: UIScreen.screenWidth - 60)
+                                }
+                                .buttonStyle(ClassicButtonStyle(useGradient: true))
+                                
+                            } else {
+                                Text( self.textSent ? "Text message sent!" : "Text failed to send...")
+                                    .modifier(ClassicText())
+                            }
+                            
+
                         }
                         .modifier(SectionStyle())
                     }
