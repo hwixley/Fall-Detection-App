@@ -21,6 +21,7 @@ class DataWrangler: ObservableObject {
     var intvlIdx = 0
     var lastPred = false
     var past_predictions : [Bool] = []
+    var past_classifications : [Bool] = []
     
     var lastHeading = -999.0
     
@@ -114,9 +115,11 @@ class DataWrangler: ObservableObject {
                     
                     if pred != nil {
                         self.past_predictions.append(pred!)
+                        //self.past_classifications.append(false)
                     }
                     if self.past_predictions.count > 20 {
                         self.past_predictions.remove(at: 0)
+                        self.past_classifications.remove(at: 0)
                         
                         var fall_count = 0
                         var non_fall_count = 0
@@ -128,11 +131,19 @@ class DataWrangler: ObservableObject {
                             }
                         }
                         
-                        print(fall_count - non_fall_count)
+                        //print(fall_count - non_fall_count)
                         
                         if pred! && fall_count > 15 {
-                            AudioServicesPlayAlertSound(SystemSoundID(1321))
+                            if !self.past_classifications.last! {
+                                AudioServicesPlayAlertSound(SystemSoundID(1321))
+                            }
+                            
+                            self.past_classifications.append(true)
+                        } else {
+                            self.past_classifications.append(false)
                         }
+                    } else {
+                        self.past_classifications.append(false)
                     }
                     //self.intervals.append(DataInterval(idx: self.intvlIdx, p_ecg: Array(self.polarManager.ecg.suffix(13)), p_acc_x: Array(self.polarManager.acc_x.suffix(20)), p_acc_y: Array(self.polarManager.acc_y.suffix(20)), p_acc_z: Array(self.polarManager.acc_z.suffix(20))))
                 }

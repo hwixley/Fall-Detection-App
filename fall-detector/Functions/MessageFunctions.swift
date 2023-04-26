@@ -50,7 +50,7 @@ func sendMessage(contact: Person, completion: @escaping ((Bool) -> Void)) {
                         msgBody += "\nWhich corresponds to the following address: \(addr)"
                         msgBody += "\nPlease get there ASAP their life may depend on it!"
                         
-                        let parameters = ["From": "+19107086043", "To": "+44" + contact.phone, "Body": msgBody]
+                        let parameters = ["From": "+447360267816", "To": "+44" + contact.phone, "Body": msgBody]
                             
                         AF.request(url, method: .post, parameters: parameters)
                             .authenticate(username: accountSID, password: authToken)
@@ -58,6 +58,7 @@ func sendMessage(contact: Person, completion: @escaping ((Bool) -> Void)) {
                                 print(response.response ?? "respoonse is nil")
                                 if response.response != nil {
                                     print(response.response!.statusCode)
+                                    print(response.error ?? "error is nil")
                                     if response.response!.statusCode == 201 {
                                         completion(true)
                                     } else {

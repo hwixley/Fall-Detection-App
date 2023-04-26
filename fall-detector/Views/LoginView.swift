@@ -33,7 +33,9 @@ struct LoginView: View {
                     Button(action: {
                         if isValidEmail(email) && isValidPass(password) {
                             showErr = false
+                            print("logging in...")
                             loginUser(email: email, password: password) { success in
+                                print(success)
                                 if success {
                                     appState.inappState.page = .main
                                 } else {
