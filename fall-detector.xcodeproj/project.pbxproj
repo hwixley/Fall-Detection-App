@@ -551,6 +551,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "fall-detector/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fall Detector";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to connect to the Polar H10 heart rate sensor to retrieve data for fall detection";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
@@ -653,6 +655,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "fall-detector/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fall Detector";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to connect to the Polar H10 heart rate sensor to retrieve data for fall detection";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location is always required so that this location can be sent to emergency contacts if a fall is detected.";
